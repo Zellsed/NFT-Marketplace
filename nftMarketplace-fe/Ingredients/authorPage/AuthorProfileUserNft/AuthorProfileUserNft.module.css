@@ -1,0 +1,93 @@
+.AuthorProfileUserNft {
+  width: 100%;
+  z-index: 22222;
+  margin-top: 5rem;
+}
+
+.AuthorProfileUserNft_box {
+  width: 80%;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr 4fr 1.3fr;
+  align-items: center;
+  background-color: var(--main-bg-color);
+  padding: 2.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: var(--box-shadow);
+  gap: 3rem;
+}
+
+.AuthorProfileUserNft_box_img_img {
+  border-radius: 1rem;
+}
+
+.AuthorProfileUserNft_box_info h2 {
+  font-size: 2.5rem;
+  line-height: 0;
+  margin-top: -5rem;
+}
+
+.AuthorProfileUserNft_box_info_address {
+  margin-top: -1rem;
+}
+
+.AuthorProfileUserNft_box_info_address input {
+  outline: none;
+  width: 37%;
+  font-size: 1rem;
+  border: none;
+  background-color: transparent;
+}
+
+.AuthorProfileUserNft_box_info_address_icon {
+  transition: all 0.3s ease-in;
+}
+
+.AuthorProfileUserNft_box_info_address_icon:hover {
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  color: var(--icons-color);
+}
+
+.AuthorProfileUserNft_box_info .description {
+  font-size: 13px;
+  line-height: 1.5rem;
+}
+
+.AuthorProfileUserNft_box_info p {
+  font-size: 1.1rem;
+  line-height: 1;
+  width: 90%;
+}
+
+.AuthorProfileUserNft_box_info_social {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+}
+
+.AuthorProfileUserNft_box_info_social a {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+  border-radius: 50%;
+  display: grid;
+  padding: 0.5rem;
+  border: 1px solid var(--icons-color);
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+
+.AuthorProfileUserNft_box_info_social a:hover {
+  box-shadow: var(--box-shadow);
+  background-color: var(--main-bg-color);
+  border: 1px solid var(--icons-color);
+  color: var(--icons-color);
+}
+
+.AuthorProfileUserNft_box_share {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 30%;
+}

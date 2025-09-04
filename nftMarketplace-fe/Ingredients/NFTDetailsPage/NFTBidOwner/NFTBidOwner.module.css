@@ -1,0 +1,87 @@
+.NFTBidOwner {
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.NFTBidOwner_owner {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.NFTBidOwner_owner h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.NFTBidOwner_owner_info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.NFTBidOwner_owner_info:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+}
+
+.NFTBidOwner_owner_info_box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.NFTBidOwner_owner_info_box_img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.NFTBidOwner_owner_info_box_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.NFTBidOwner_owner_info_box_name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 0;
+}
+
+.NFTBidOwner_owner_info_box_action {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.NFTBidOwner_owner_info_box_action span {
+  font-weight: bold;
+  color: var(--highlight-color);
+}
+
+.NFTBidOwner_owner_info_box_time {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--gray-color);
+}
+
+.NFTBidOwner_box_icon {
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.separator {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid var(--shadow-dark-color);
+  width: 100%;
+}

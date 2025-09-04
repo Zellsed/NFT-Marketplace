@@ -1,0 +1,157 @@
+.reSellToken {
+  width: 100%;
+  margin-block: 4rem;
+}
+
+.reSellToken_box {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.reSellToken_box h1 {
+  font-size: 3rem;
+}
+
+.reSellToken_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.audioContainer {
+  background-image: url("../img/audio.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.NFTCardTwo_box_NFT_audio_element {
+  box-shadow: 0px 2px 5px var(--icons-color);
+  border-radius: 2rem;
+}
+
+.NFTCardTwo_box_NFT_video,
+.NFTCardTwo_box_NFT_img {
+  border-radius: 1rem;
+}
+
+.reSellToken_box_infoWrapper {
+  padding: 1.5rem;
+  border: 2px solid var(--icons-color);
+  border-radius: 12px;
+}
+
+.reSellToken_box_infoContainer {
+  width: 400px;
+  height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.reSellToken_box_infoContainer h2 {
+  text-align: center;
+}
+
+.reSellToken_box_infoContainer p {
+  margin-top: 5rem;
+  text-align: center;
+}
+
+.reSellToken_box_infoContainer {
+  flex: 1;
+  max-width: 400px;
+}
+
+.reSellToken_box_infoContainer h2 {
+  font-size: 3rem;
+}
+
+.reSellToken_box_btn {
+  margin-block: 4rem;
+  display: flex;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .reSellToken_box {
+    width: 80%;
+  }
+
+  .reSellToken_box h1 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .reSellToken_container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reSellToken_box_infoContainer {
+    width: 90%;
+    height: auto;
+  }
+
+  .reSellToken_box_infoContainer h2 {
+    font-size: 2.5rem;
+  }
+
+  .reSellToken_box_infoContainer p {
+    margin-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .reSellToken {
+    margin-block: 2rem;
+  }
+
+  .reSellToken_box {
+    width: 90%;
+  }
+
+  .reSellToken_box h1 {
+    font-size: 2rem;
+  }
+
+  .reSellToken_container {
+    flex-direction: column;
+  }
+
+  .reSellToken_box_imageContainer {
+    width: 100%;
+  }
+
+  .NFTCardTwo_box_NFT_video,
+  .NFTCardTwo_box_NFT_img {
+    width: 100%;
+    height: auto;
+  }
+
+  .reSellToken_box_infoContainer {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .reSellToken_box_infoContainer h2 {
+    font-size: 2rem;
+  }
+
+  .reSellToken_box_infoContainer p {
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+
+  .reSellToken_box_btn {
+    margin-block: 2rem;
+  }
+}

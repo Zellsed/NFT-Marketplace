@@ -1,0 +1,61 @@
+.NFTBidProvance {
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.NFTBidProvance_box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--shadow-dark-color);
+  transition: background 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.NFTBidProvance_box:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.NFTBidProvance_box_img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.NFTBidProvance_box_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.NFTBidProvance_box_name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 0;
+}
+
+.NFTBidProvance_box_action {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.NFTBidProvance_box_action span {
+  font-weight: bold;
+  color: var(--highlight-color);
+}
+
+.NFTBidProvance_box_time {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--gray-color);
+}
+
+.NFTBidProvance_box_icon {
+  font-size: 1rem;
+  color: var(--primary-color);
+}

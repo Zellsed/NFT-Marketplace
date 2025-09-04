@@ -1,0 +1,61 @@
+.NFTBidHistory {
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.NFTBidHistory_box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--shadow-dark-color);
+  transition: background 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.NFTBidHistory_box:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.NFTBidHistory_box_img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.NFTBidHistory_box_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.NFTBidHistory_box_name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 0;
+}
+
+.NFTBidHistory_box_action {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.NFTBidHistory_box_action span {
+  font-weight: bold;
+  color: var(--highlight-color);
+}
+
+.NFTBidHistory_box_time {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--gray-color);
+}
+
+.NFTBidHistory_box_icon {
+  font-size: 1rem;
+  color: var(--primary-color);
+}
