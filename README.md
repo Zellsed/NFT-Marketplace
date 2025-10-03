@@ -1,4 +1,4 @@
-# Building and Deploying a Blockchain web3 Nft Marketplace
+# Building and Deploying a Blockchain Web3 Nft Marketplace
 
 ![Genesis Project](./public/img/nft%20marketplace.png)
 
