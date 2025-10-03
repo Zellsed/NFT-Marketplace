@@ -31,12 +31,15 @@ const NFTCardTwo = ({ NFTData }) => {
 
             <div className={Style.NFTCardTwo_box_img}>
               {el.fileExtension === "mp4" || el.fileExtension === "webm" ? (
-                <video controls autoPlay muted loop>
-                  <source
-                    src={el.pinataData}
-                    type={`video/${el.fileExtension}`}
-                  />
-                </video>
+                (console.log(el),
+                (
+                  <video controls autoPlay muted loop>
+                    <source
+                      src={el.pinataData}
+                      type={`video/${el.fileExtension}`}
+                    />
+                  </video>
+                ))
               ) : el.fileExtension === "mp3" ||
                 el.fileExtension === "wav" ||
                 el.fileExtension === "ogg" ? (
@@ -65,7 +68,9 @@ const NFTCardTwo = ({ NFTData }) => {
             <div className={Style.NFTCardTwo_box_info}>
               <div className={Style.NFTCardTwo_box_info_left}>
                 <LikeProfile />
-                <p>{el.name}</p>
+                <p>
+                  {el.name.slice(0, 15)}...{el.name.slice(-5)}
+                </p>
               </div>
 
               <small>

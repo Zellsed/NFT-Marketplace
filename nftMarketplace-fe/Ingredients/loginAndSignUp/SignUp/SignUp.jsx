@@ -46,7 +46,9 @@ const LoginAndSignUp = () => {
       data
     );
 
-    router.push("/login");
+    router.push("/login").then(() => {
+      window.location.reload();
+    });
   };
 
   return (

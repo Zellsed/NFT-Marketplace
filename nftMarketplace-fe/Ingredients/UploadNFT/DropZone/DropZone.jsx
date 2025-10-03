@@ -44,7 +44,7 @@ const DropZone = ({
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: "image/*, video/*, audio/*",
-    maxSize: 5000000,
+    maxSize: 50000000,
   });
 
   return (

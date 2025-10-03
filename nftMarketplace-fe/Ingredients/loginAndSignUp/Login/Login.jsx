@@ -41,7 +41,9 @@ const Login = () => {
     localStorage.setItem("access_token", token);
     localStorage.setItem("expires_at", expiresAt.toString());
 
-    router.push("/");
+    router.push("/").then(() => {
+      window.location.reload();
+    });
   };
 
   return (

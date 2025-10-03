@@ -9,7 +9,7 @@ import {
   UserInformationRepository,
   UserRepository,
 } from 'src/core/lib/database/repositories';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { loginAuthDto } from './dto/loginAuth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { forgetPasswordDto } from './dto/forgetPassword.dto';

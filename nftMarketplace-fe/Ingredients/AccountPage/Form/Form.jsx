@@ -48,7 +48,9 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
       }
     );
 
-    router.push("/");
+    router.push("/").then(() => {
+      window.location.reload();
+    });
   };
 
   return (
