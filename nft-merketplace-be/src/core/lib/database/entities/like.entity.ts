@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  BeforeUpdate,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 import { NftEntity } from './nft.entity';
 
@@ -22,4 +28,23 @@ export class LikeEntity {
 
   @ManyToOne(() => NftEntity, (nft) => nft.likes)
   nft: NftEntity;
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @BeforeUpdate()
+  updateDates() {
+    this.updatedAt = new Date();
+  }
 }

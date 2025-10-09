@@ -32,6 +32,11 @@ export class NftMarketplaceController {
     return await this.nftMarketplaceService.getAllNfts(req.requestTime, body);
   }
 
+  @Get('nfts')
+  async getListNfts(@Req() req: Request, @Query() body: getNFTDto) {
+    return await this.nftMarketplaceService.getListNfts(req.requestTime, body);
+  }
+
   @Get('top-5-nfts')
   async getTop5Nfts() {
     const page = 1;

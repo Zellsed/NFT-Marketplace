@@ -1,5 +1,6 @@
 import { CryptoLegend } from 'src/common/enum';
 import {
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -74,13 +75,6 @@ export class NftEntity {
   fileSize: string;
 
   @Column({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @Column({
     type: 'text',
     name: 'owner',
     nullable: true,
@@ -117,4 +111,23 @@ export class NftEntity {
 
   @OneToMany(() => LikeEntity, (like) => like.nft)
   likes: LikeEntity[];
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @BeforeUpdate()
+  updateDates() {
+    this.updatedAt = new Date();
+  }
 }

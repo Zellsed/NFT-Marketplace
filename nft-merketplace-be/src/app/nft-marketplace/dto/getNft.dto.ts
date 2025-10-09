@@ -9,15 +9,15 @@ import {
 import { PagingDto } from 'src/core/dto/base.dto';
 
 export class getNFTDto extends PagingDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   sort?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   fields?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name?: string;
 
@@ -39,7 +39,7 @@ export class getNFTDto extends PagingDto {
   @Type(() => Number)
   ratingsQuantity?: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @IsPositive()
   @Type(() => Number)
@@ -49,4 +49,10 @@ export class getNFTDto extends PagingDto {
   @IsNumber()
   @Type(() => Number)
   priceDiscount?: number;
+}
+
+export class getListNFTDto extends PagingDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
 }

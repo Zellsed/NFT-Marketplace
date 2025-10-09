@@ -10,7 +10,7 @@ import {
   NftHistoryEntity,
   UserEntity,
 } from 'src/core/lib/database/entities';
-import { getNFTDto } from './dto/getNft.dto';
+import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 import { createNFTDto } from './dto/createNft.dto';
 import { updateNFTDto } from './dto/updateNft.dto';
 import { DefaultPaging, History } from 'src/common/enum';
@@ -122,6 +122,47 @@ export class NftMarketplaceService {
     } else {
       qb.orderBy('nft.created_at', 'DESC');
     }
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      totalRows: totalRows,
+      data: data,
+    };
+  }
+
+  async getListNfts(requestTime: string, body: getListNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      name,
+    } = body;
+
+    const qb = this.nftRepo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.name' as 'name',
+        'nft.price' as 'price',
+        'nft. description' as 'description',
+        'nft.pinata_data' as 'pinata_data',
+        'nft.category' as 'category',
+        'nft.file_extension' as 'file_extension',
+        'nft.owner' as 'owner',
+        'nft.seller' as 'seller',
+        'nft.token_id' as 'token_id',
+        'nft.secret_nfts' as 'secret_nfts',
+      ])
+      .andWhere('nft.secret_nfts = :secret_nfts', { secret_nfts: false });
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -327,7 +368,16 @@ export class NftMarketplaceService {
     return categoryCounts;
   }
 
-  async getTopCreatorsByTotalSales() {}
+  async getTopCreatorsByTotalSales() {
+    const data = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
+    const existUser = await this.userRepo.findOne({ where: { account: data } });
+
+    if (!existUser) {
+      throw new Error('User not found');
+    }
+
+    console.log('existUser', existUser);
+  }
 
   async getUserNft(id: number) {
     const existNft = await this.nftRepo.findOne({ where: { tokenId: id } });

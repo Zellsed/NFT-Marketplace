@@ -31,15 +31,12 @@ const NFTCardTwo = ({ NFTData }) => {
 
             <div className={Style.NFTCardTwo_box_img}>
               {el.fileExtension === "mp4" || el.fileExtension === "webm" ? (
-                (console.log(el),
-                (
-                  <video controls autoPlay muted loop>
-                    <source
-                      src={el.pinataData}
-                      type={`video/${el.fileExtension}`}
-                    />
-                  </video>
-                ))
+                <video controls autoPlay muted loop>
+                  <source
+                    src={el.pinataData}
+                    type={`video/${el.fileExtension}`}
+                  />
+                </video>
               ) : el.fileExtension === "mp3" ||
                 el.fileExtension === "wav" ||
                 el.fileExtension === "ogg" ? (

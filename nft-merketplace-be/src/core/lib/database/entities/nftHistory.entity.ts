@@ -1,4 +1,5 @@
 import {
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -25,13 +26,6 @@ export class NftHistoryEntity {
     nullable: true,
   })
   historyType: History;
-
-  @Column({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
 
   @Column({
     type: 'text',
@@ -64,4 +58,23 @@ export class NftHistoryEntity {
   @ManyToOne(() => NftEntity, (nft) => nft.history)
   @JoinColumn({ name: 'nft_id' })
   nft: NftEntity;
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @BeforeUpdate()
+  updateDates() {
+    this.updatedAt = new Date();
+  }
 }

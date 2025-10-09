@@ -70,12 +70,13 @@ const Filter = () => {
             onClick={() => openFilter()}
           >
             <FaFilter />
-            <span>Filter</span> {filter ? <FaAngleDown /> : <FaAngleUp />}
+            {/* <span>Filter</span> {filter ? <FaAngleDown /> : <FaAngleUp />} */}
+            <span>Filter</span>
           </div>
         </div>
       </div>
 
-      {filter && (
+      {/* {filter && (
         <div className={Style.filter_box_items}>
           <div className={Style.filter_box_items_box}>
             <div className={Style.filter_box_items_box_item}>
@@ -121,7 +122,7 @@ const Filter = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

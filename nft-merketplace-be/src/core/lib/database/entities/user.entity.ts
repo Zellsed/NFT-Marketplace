@@ -1,4 +1,5 @@
 import {
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -111,4 +112,23 @@ export class UserEntity {
 
   @OneToMany(() => LikeEntity, (like) => like.user)
   likes: LikeEntity[];
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @BeforeUpdate()
+  updateDates() {
+    this.updatedAt = new Date();
+  }
 }
