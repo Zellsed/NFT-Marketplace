@@ -109,7 +109,7 @@ const transferFunds = () => {
               ) : (
                 <Button
                   btnName="Transfer Funds"
-                  onClicks={() =>
+                  onClick={() =>
                     transferEther(tranferAccount, tranferAmount, message)
                   }
                   classStyle={Style.button}
@@ -157,7 +157,7 @@ const transferFunds = () => {
 
                 <Button
                   btnName="Message"
-                  onClicks={() => (
+                  onClick={() => (
                     setReadMessage(el.message), setOpenBox(true)
                   )}
                   classStyle={Style.readButton}

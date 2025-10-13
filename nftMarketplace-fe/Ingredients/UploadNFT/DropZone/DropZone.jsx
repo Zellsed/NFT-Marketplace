@@ -26,7 +26,7 @@ const DropZone = ({
     const fileExtension = file?.name.split(".").pop().toLowerCase();
     const fileSize = (file?.size / (1024 * 1024)).toFixed(2);
 
-    const url = await uploadToIPFS(acceptedFile[0]);
+    const url = await uploadToIPFS(file);
 
     setFileSz(fileSize);
 

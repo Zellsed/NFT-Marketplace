@@ -8,6 +8,8 @@ npx hardhat node
 npx hardhat run scripts/deploy.js --network localhost
 
 npx hardhat run scripts/deploy.js --network sepolia_ETH
+
+npx hardhat run scripts/deploy.js --network holesky_ETH
 ```
 
 ## ETH Nework Testnet Sepolia And Holesky

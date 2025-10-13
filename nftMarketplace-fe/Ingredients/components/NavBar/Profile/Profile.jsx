@@ -139,8 +139,13 @@ const Profile = ({}) => {
                 <Link href={{ pathname: "/account" }}>Edit Profile</Link>
               </p>
             </div>
+             <div className={Style.profile_menu_one_item}>
+              <FaUserEdit />
+              <p>
+                <Link href={{ pathname: "/transferToken" }}>Transfer Token</Link>
+              </p>
+            </div>
           </div>
-
           <div className={Style.profile_menu_two}>
             <div className={Style.profile_menu_one_item}>
               <MdHelpCenter />

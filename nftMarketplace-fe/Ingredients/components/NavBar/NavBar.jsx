@@ -12,6 +12,7 @@ import { Discover, HelpCenter, Notification, Profile, SideBar } from "./index";
 import { Button } from "../componentsindex";
 import images from "../../../img";
 import { DiJqueryLogo } from "react-icons/di";
+import { FaCoins } from "react-icons/fa";
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
@@ -37,6 +38,8 @@ const NavBar = () => {
   const [token, setToken] = useState(null);
 
   const [information, setInformation] = useState({});
+
+  const [tokenWebBalance, setTokenWebBalance] = useState(0);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("access_token");
@@ -133,7 +136,7 @@ const NavBar = () => {
     setOpenSideMenu((prev) => !prev);
   };
 
-  const { currentAccount, connectWallet, openError } = useContext(
+  const { currentAccount, connectWallet, openError, tokenBalance } = useContext(
     NFTMarketplaceContext
   );
 
@@ -151,9 +154,16 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    if (currentAccount) {
-      checkAccount();
-    }
+    const fetchBalance = async () => {
+      if (currentAccount) {
+        await checkAccount();
+
+        const balance = await tokenBalance(currentAccount);
+        setTokenWebBalance(balance);
+      }
+    };
+
+    fetchBalance();
   }, [currentAccount]);
 
   useEffect(() => {
@@ -218,7 +228,7 @@ const NavBar = () => {
             )}
           </div>
 
-          <div
+          {/* <div
             className={Style.navbar_container_right_notify}
             ref={notificationRef}
           >
@@ -227,6 +237,56 @@ const NavBar = () => {
               onClick={() => openNotification()}
             />
             {notification && <Notification />}
+          </div> */}
+
+          <div
+            className={Style.tokenBalance}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              backgroundColor: "#1a1a1a",
+              padding: "6px 12px",
+              borderRadius: "12px",
+              fontWeight: "700",
+              color: "#FFD700",
+              lineHeight: 1,
+              boxShadow: "0 0 8px rgba(255, 215, 0, 0.2)",
+            }}
+          >
+            <FaCoins
+              style={{
+                fontSize: "18px",
+                verticalAlign: "middle",
+                marginBottom: "2px",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                lineHeight: "1.1",
+              }}
+            >
+              <span style={{ fontSize: "15px" }}>
+                {tokenWebBalance.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+              <span
+                style={{
+                  fontSize: "11px",
+                  color: "#FFD700",
+                  opacity: 0.9,
+                  marginTop: "-2px",
+                }}
+              >
+                ZELL
+              </span>
+            </div>
           </div>
 
           <div className={Style.navbar_container_right_button}>

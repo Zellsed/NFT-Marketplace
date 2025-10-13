@@ -5,15 +5,25 @@ import Router from "next/router";
 import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/router";
+import { PinataSDK } from "pinata";
 
 import {
   NFTMarketplaceAddress,
   NFTMarketplaceABI,
   TransferFundsAddress,
   TransferFundsABI,
+  TranferTokenAddress,
+  TranferTokenABI,
+  CustomTokenAddress,
+  CustomTokenABI,
 } from "./constant";
 
 dotenv.config();
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
+  pinataGateway: process.env.NEXT_PUBLIC_GETWAY_PINATA,
+});
 
 const fetchContract = (signerOrProvider) =>
   new ethers.Contract(
@@ -36,6 +46,27 @@ const connectingWithSmartContract = async () => {
   }
 };
 
+const fetchCustomTokenContract = (signerOrProvider) =>
+  new ethers.Contract(
+    CustomTokenAddress,
+    CustomTokenABI,
+    signerOrProvider
+  );
+
+const connectingWithCustomTokenSmartContract = async () => {
+  try {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchCustomTokenContract(signer);
+
+    return contract;
+  } catch (error) {
+    console.log("Something went wrong while connecting with smart contract");
+  }
+};
+
 export const NFTMarketplaceContext = React.createContext();
 
 export const NFTMarketplaceProvider = ({ children }) => {
@@ -48,6 +79,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
 
   const [accountBalance, setAccountBalance] = useState("");
+
+  const [baseCoinNetwork, setBaseCoinNetwork] = useState("");
 
   const router = useRouter();
 
@@ -74,7 +107,27 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const bal = ethers.utils.formatEther(getBalance);
 
+      const network = await provider.getNetwork();
+
+      // console.log("Connected chainId:", network.chainId);
+      // console.log("Network name:", network.name);
+
+      let coinSymbol = "Unknown";
+
+      switch (network.chainId) {
+        case 17000:
+          coinSymbol = "ETH";
+          break;
+        case 31337:
+          coinSymbol = "ETH";
+          break;
+        default:
+          coinSymbol = `Unknown Chain (${network.chainId})`;
+          break;
+      }
+
       setAccountBalance(bal);
+      setBaseCoinNetwork(coinSymbol);
     } catch (error) {
       setError("Something Wrong while connecting to wallet");
       setOpenError(true);
@@ -110,22 +163,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const upload = await pinata.upload.public.file(file);
 
-      const response = await axios({
-        method: "POST",
-        url: process.env.NEXT_PUBLIC_URL_POST_PINATA,
-        data: formData,
-        headers: {
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.data && response.data.IpfsHash) {
-        const fileUrl = `${process.env.NEXT_PUBLIC_URL_IMAGE_URL}${response.data.IpfsHash}`;
+      if (upload.cid) {
+        const fileUrl = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
 
         return fileUrl;
       } else {
@@ -174,43 +215,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
     });
 
     try {
-      const response = await axios({
-        method: "POST",
-        url: process.env.NEXT_PUBLIC_URL_POST_PINATA_JSON,
-        data: data,
-        headers: {
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY,
-          "Content-Type": "application/json",
-        },
-      });
-      const url = `${process.env.NEXT_PUBLIC_URL_IMAGE_URL}${response.data.IpfsHash}`;
+      const upload = await pinata.upload.public.json(data);
+
+      const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
 
       const { transaction, tokenId } = await createSale(url, price);
 
-      if (transaction) {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
-          {
-            name: name,
-            description: description,
-            price: price,
-            pinataData: pinataData,
-            category: category,
-            fileExtension: fileExtension,
-            fileSize: fileSize,
-            createdAt: createdAt,
-            owner: transaction.to,
-            seller: transaction.from,
-            tokenId: tokenId,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
+      console.log('transaction', transaction);
+      console.log('tokenId', tokenId);
 
-      router.push("/searchPage");
+      // if (transaction) {
+      //   await axios.post(
+      //     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
+      //     {
+      //       name: name,
+      //       description: description,
+      //       price: price,
+      //       pinataData: pinataData,
+      //       category: category,
+      //       fileExtension: fileExtension,
+      //       fileSize: fileSize,
+      //       createdAt: createdAt,
+      //       owner: transaction.to,
+      //       seller: transaction.from,
+      //       tokenId: tokenId,
+      //     },
+      //     {
+      //       headers: { Authorization: `Bearer ${token}` },
+      //     }
+      //   );
+      // }
+
+      // router.push("/searchPage");
     } catch (error) {
       setError("Error while creating NFT");
       setOpenError(true);
@@ -219,32 +255,31 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const createSale = async (url, formInputPrice, isReselling, id) => {
     try {
-      const price = ethers.utils.parseUnits(formInputPrice, "ether");
+      const price = Number(formInputPrice);
 
       const contract = await connectingWithSmartContract();
+      const customTokenContract = await connectingWithCustomTokenSmartContract();
 
       const listingPrice = await contract.getListingPrice();
 
-      const transaction = !isReselling
-        ? await contract.createToken(url, price, {
-            value: listingPrice.toString(),
-          })
-        : await contract.reSellToken(id, price, {
-            value: listingPrice.toString(),
-          });
+      const approval = await customTokenContract.approve(contract.address, listingPrice);
 
-      const txRecceipt = await transaction.wait();
+      // const transaction = !isReselling
+      //   ? await contract.createToken(url, price)
+      //   : await contract.reSellToken(id, price);
 
-      const event = txRecceipt.events?.find((e) => e.event === "Transfer");
+      // const txRecceipt = await transaction.wait();
 
-      if (!event) {
-        console.error("Transfer event not found", txRecceipt.events);
-        return;
-      }
+      // const event = txRecceipt.events?.find((e) => e.event === "Transfer");
 
-      const tokenId = event.args.tokenId.toNumber();
+      // if (!event) {
+      //   console.error("Transfer event not found", txRecceipt.events);
+      //   return;
+      // }
 
-      return { transaction, tokenId };
+      // const tokenId = event.args.tokenId.toNumber();
+
+      // return { transaction, tokenId };
     } catch (error) {
       setError("Error while creating sale");
       setOpenError(true);
@@ -444,6 +479,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchTransferTokenContract = (signerOrProvider) =>
+    new ethers.Contract(TranferTokenAddress, TranferTokenABI, signerOrProvider);
+
+  const connectToTransferTokenContract = async () => {
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = fetchTransferTokenContract(signer);
+
+      return contract;
+    } catch (error) {
+      console.log("Something went wrong while connecting with smart contract");
+    }
+  };
+
   const transferEther = async (isAddress, price, message) => {
     try {
       if (currentAccount) {
@@ -510,6 +562,62 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const tranferToken = async (baseCoin, tokenAmount) => {
+    try {
+      if (baseCoin) {
+        const contract = await connectToTransferTokenContract();
+
+        const unFormatedAmount = ethers.utils.parseEther(tokenAmount);
+
+        const transaction = await contract.buyWebTokenWithBaseCoin(baseCoin, {
+          value: unFormatedAmount,
+        });
+
+        setLoading(true);
+
+        transaction.wait();
+
+        setLoading(false);
+
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const depositToken = async () => {
+    try {
+      const transferTokenContract = await connectToTransferTokenContract();
+
+      const deposit = await transferTokenContract.depositToken(
+        "5000000000000000000000000"
+      );
+
+      setLoading(true);
+
+      await deposit.wait();
+
+      setLoading(false);
+
+      window.location.reload();
+    } catch (error) {
+      console.log("Error depositToken:", error);
+    }
+  };
+
+  const tokenBalance = async (address) => {
+    try {
+      const contract = await connectToTransferTokenContract();
+
+      const balance = await contract.getUserActualBalance(address);
+
+      return balance.toString();
+    } catch (error) {
+      console.log("Error tokenBalance:", error);
+    }
+  };
+
   return (
     <NFTMarketplaceContext.Provider
       value={{
@@ -533,6 +641,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
         accountBalance,
         transactionCount,
         transactions,
+        baseCoinNetwork,
+        tranferToken,
+        depositToken,
+        tokenBalance,
       }}
     >
       {children}
