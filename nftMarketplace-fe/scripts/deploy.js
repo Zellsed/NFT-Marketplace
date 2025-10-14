@@ -12,7 +12,7 @@ async function main() {
   await customToken.approve(tranferToken.address, "10000000000000000000000000");
 
   const NFTMarketplace = await hre.ethers.getContractFactory("NFTMarketplace");
-  const nftMarketplace = await NFTMarketplace.deploy(tranferToken.address);
+  const nftMarketplace = await NFTMarketplace.deploy(customToken.address);
   await nftMarketplace.deployed();
 
   const TransferFunds = await hre.ethers.getContractFactory("TransferFunds");

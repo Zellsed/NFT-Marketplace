@@ -59,6 +59,16 @@ const AuthorNFTCardBox = ({
     }
   }, [token]);
 
+  useEffect(() => {
+    console.log("collectiables:", collectiables);
+    console.log("created:", created);
+    console.log("like:", like);
+    console.log("follower:", follower);
+    console.log("following:", following);
+    console.log("nfts:", nfts);
+    console.log("myNfts:", myNfts);
+  }, []);
+
   return (
     <div className={Style.AuthorNFTCardBox}>
       {collectiables && <NFTCardTwo NFTData={nfts} />}

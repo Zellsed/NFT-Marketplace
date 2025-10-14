@@ -37,7 +37,7 @@ const NFTBidOwner = ({ dataTab }) => {
 
                   <div className={Style.NFTBidOwner_owner_info_box_action}>
                     Owner NFT price -{" "}
-                    <span>{dataTab.ownerNft.history.price} ETH</span>
+                    <span>{dataTab.ownerNft.history.price} ZELL</span>
                   </div>
 
                   <small className={Style.NFTBidOwner_owner_info_box_time}>
@@ -90,7 +90,7 @@ const NFTBidOwner = ({ dataTab }) => {
 
                   <div className={Style.NFTBidOwner_owner_info_box_action}>
                     Create NFT price -{" "}
-                    <span>{dataTab.createNft.history.price} ETH</span>
+                    <span>{dataTab.createNft.history.price} ZELL</span>
                   </div>
 
                   <small className={Style.NFTBidOwner_owner_info_box_time}>

@@ -32,7 +32,7 @@ const SliderCard = ({ el, i }) => {
         <div className={Style.sliderCard_box_price}>
           <div className={Style.sliderCard_box_price_box}>
             <small>Current Bid</small>
-            <p>{el.price} ETH</p>
+            <p>{el.price} ZELL</p>
           </div>
 
           <div className={Style.sliderCard_box_price_time}>

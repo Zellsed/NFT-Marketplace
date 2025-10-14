@@ -74,7 +74,7 @@ const DayComponets = ({ el, i }) => {
             </div>
 
             <div className={Style.daysComponets_box_title_info_price}>
-              <small>1.255 ETH</small>
+              <small>1.255 ZELL</small>
             </div>
           </div>
         </div>

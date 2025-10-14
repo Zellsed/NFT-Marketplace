@@ -155,7 +155,7 @@ const FollowerTabCard = ({ el, i }) => {
               {""}{" "}
             </h4>
             <p>
-              {userDetail.name || ""} - {el.total || 0} ETH
+              {userDetail.name || ""} - {el.total || 0} ZELL
             </p>
           </div>
 

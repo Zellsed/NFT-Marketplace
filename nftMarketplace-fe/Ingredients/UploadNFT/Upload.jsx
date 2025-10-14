@@ -246,7 +246,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                   <strong>Description:</strong> {description || ""}
                 </p>
                 <p>
-                  <strong>Price:</strong> {price || ""} ETH
+                  <strong>Price:</strong> {price || ""} ZELL
                 </p>
                 <p>
                   <strong>Category:</strong> {category || ""}
@@ -307,7 +307,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                   </div>
                   <div className={Style.detail_item}>
                     <strong>Price:</strong>
-                    <span>{price || "0"} ETH</span>
+                    <span>{price || "0"} ZELL</span>
                   </div>
                   <div className={Style.detail_item}>
                     <strong>Category:</strong>

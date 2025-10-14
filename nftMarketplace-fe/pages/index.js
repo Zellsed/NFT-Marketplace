@@ -47,19 +47,19 @@ const Home = () => {
     <div className={Style.homePage}>
       <HeroSection />
       <Service />
-      <BigNFTSilder />
+      {/* <BigNFTSilder /> */}
       <Title
         heading="Audio Collection"
         paragraph="Audio Collection is a dedicated collection of NFTs for audio-based creations, including digital music, podcasts, sound effects, and other exclusive audio content. It offers artists, music producers, and content creators a unique way to share and monetize their recordings through blockchain technology."
       />
       <AudioLive />
-      {creators.length === 0 ? (
+      {/* {creators.length === 0 ? (
         <Loader />
       ) : (
         <FollowerTab TopCreator={creators} />
-      )}
+      )} */}
       <Slider NFTData={nfts} />
-      <Collection />
+      {/* <Collection /> */}
       <Title
         heading="Featured NFTs"
         paragraph="Discover the most outstanding NFTs in all topics of life."

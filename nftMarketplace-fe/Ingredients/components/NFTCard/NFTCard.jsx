@@ -102,7 +102,7 @@ const NFTCard = ({ NFTData }) => {
                       className={Style.NFTCard_box_update_details_price_box_bid}
                     >
                       <small>Current Bid</small>
-                      <p>{el.price} ETH</p>
+                      <p>{el.price} ZELL</p>
                     </div>
                   </div>
                 </div>

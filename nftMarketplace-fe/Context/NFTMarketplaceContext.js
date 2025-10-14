@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import Web3Modal from "web3modal";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import Router from "next/router";
 import axios from "axios";
 import dotenv from "dotenv";
@@ -22,7 +22,7 @@ dotenv.config();
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
-  pinataGateway: process.env.NEXT_PUBLIC_GETWAY_PINATA,
+  pinataGateway: process.env.NEXT_PUBLIC_PINATA_GETWAY,
 });
 
 const fetchContract = (signerOrProvider) =>
@@ -47,11 +47,7 @@ const connectingWithSmartContract = async () => {
 };
 
 const fetchCustomTokenContract = (signerOrProvider) =>
-  new ethers.Contract(
-    CustomTokenAddress,
-    CustomTokenABI,
-    signerOrProvider
-  );
+  new ethers.Contract(CustomTokenAddress, CustomTokenABI, signerOrProvider);
 
 const connectingWithCustomTokenSmartContract = async () => {
   try {
@@ -81,6 +77,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [accountBalance, setAccountBalance] = useState("");
 
   const [baseCoinNetwork, setBaseCoinNetwork] = useState("");
+
+  const [tokenSymbol, setTokenSymbol] = useState("");
 
   const router = useRouter();
 
@@ -128,6 +126,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       setAccountBalance(bal);
       setBaseCoinNetwork(coinSymbol);
+
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
+
+      setTokenSymbol(await customTokenContract.symbol());
     } catch (error) {
       setError("Something Wrong while connecting to wallet");
       setOpenError(true);
@@ -221,32 +224,29 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const { transaction, tokenId } = await createSale(url, price);
 
-      console.log('transaction', transaction);
-      console.log('tokenId', tokenId);
+      if (transaction) {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
+          {
+            name: name,
+            description: description,
+            price: price,
+            pinataData: pinataData,
+            category: category,
+            fileExtension: fileExtension,
+            fileSize: fileSize,
+            createdAt: createdAt,
+            owner: transaction.to,
+            seller: transaction.from,
+            tokenId: tokenId,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
 
-      // if (transaction) {
-      //   await axios.post(
-      //     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
-      //     {
-      //       name: name,
-      //       description: description,
-      //       price: price,
-      //       pinataData: pinataData,
-      //       category: category,
-      //       fileExtension: fileExtension,
-      //       fileSize: fileSize,
-      //       createdAt: createdAt,
-      //       owner: transaction.to,
-      //       seller: transaction.from,
-      //       tokenId: tokenId,
-      //     },
-      //     {
-      //       headers: { Authorization: `Bearer ${token}` },
-      //     }
-      //   );
-      // }
-
-      // router.push("/searchPage");
+      router.push("/searchPage");
     } catch (error) {
       setError("Error while creating NFT");
       setOpenError(true);
@@ -255,31 +255,41 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const createSale = async (url, formInputPrice, isReselling, id) => {
     try {
-      const price = Number(formInputPrice);
+      const price = ethers.utils.parseUnits(formInputPrice.toString(), 18);
 
       const contract = await connectingWithSmartContract();
-      const customTokenContract = await connectingWithCustomTokenSmartContract();
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
 
       const listingPrice = await contract.getListingPrice();
+      const approveListingPrice = ethers.utils.parseUnits(
+        listingPrice.toString(),
+        18
+      );
 
-      const approval = await customTokenContract.approve(contract.address, listingPrice);
+      const approval = await customTokenContract.approve(
+        contract.address,
+        approveListingPrice
+      );
 
-      // const transaction = !isReselling
-      //   ? await contract.createToken(url, price)
-      //   : await contract.reSellToken(id, price);
+      await approval.wait();
 
-      // const txRecceipt = await transaction.wait();
+      const transaction = !isReselling
+        ? await contract.createToken(url, price)
+        : await contract.reSellToken(id, price);
 
-      // const event = txRecceipt.events?.find((e) => e.event === "Transfer");
+      const txRecceipt = await transaction.wait();
 
-      // if (!event) {
-      //   console.error("Transfer event not found", txRecceipt.events);
-      //   return;
-      // }
+      const event = txRecceipt.events?.find((e) => e.event === "Transfer");
 
-      // const tokenId = event.args.tokenId.toNumber();
+      if (!event) {
+        console.error("Transfer event not found", txRecceipt.events);
+        return;
+      }
 
-      // return { transaction, tokenId };
+      const tokenId = event.args.tokenId.toNumber();
+
+      return { transaction, tokenId };
     } catch (error) {
       setError("Error while creating sale");
       setOpenError(true);
@@ -302,17 +312,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
           async ({ tokenId, seller, owner, price: unformattedPrice }) => {
             const tokenURI = await contract.tokenURI(tokenId);
 
+            const { data } = await axios.get(tokenURI);
+
+            const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
             const {
-              data: {
-                pinataData,
-                name,
-                description,
-                category,
-                fileExtension,
-                fileSize,
-                createdAt,
-              },
-            } = await axios.get(tokenURI);
+              pinataData,
+              name,
+              description,
+              category,
+              fileExtension,
+              fileSize,
+              createdAt,
+            } = metadata;
 
             const price = ethers.utils.formatUnits(
               unformattedPrice.toString(),
@@ -369,6 +381,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
           async ({ tokenId, seller, owner, price: unformattedPrice }) => {
             const tokenURI = await contract.tokenURI(tokenId);
 
+            const { data } = await axios.get(tokenURI);
+
+            const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
             const {
               data: {
                 pinataData,
@@ -379,7 +395,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 fileSize,
                 createdAt,
               },
-            } = await axios.get(tokenURI);
+            } = metadata;
 
             const price = ethers.utils.formatUnits(
               unformattedPrice.toString(),
@@ -425,11 +441,18 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const buyNFT = async (nft, token) => {
     try {
       const contract = await connectingWithSmartContract();
-      const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
+      const price = ethers.utils.parseUnits(nft.price.toString(), 18);
 
-      const transaction = await contract.createMarketSale(nft.tokenId, {
-        value: price,
-      });
+      const approval = await customTokenContract.approve(
+        contract.address,
+        price
+      );
+
+      await approval.wait();
+
+      const transaction = await contract.createMarketSale(nft.tokenId);
 
       const existTransaction = await transaction.wait();
 
@@ -645,6 +668,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         tranferToken,
         depositToken,
         tokenBalance,
+        tokenSymbol,
       }}
     >
       {children}

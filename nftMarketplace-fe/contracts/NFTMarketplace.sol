@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "hardhat/console.sol";
 
@@ -13,9 +14,10 @@ contract NFTMarketplace is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
 
-    uint256 listingPrice = 0.025 ether;
+    uint256 listingPrice = 25; // 25 WEB
 
     address private owner;
+    IERC20 public webToken;
 
     mapping(uint256 => MarketItem) private idMarketItem;
 
@@ -35,11 +37,15 @@ contract NFTMarketplace is ERC721URIStorage {
         bool sold
     );
 
-    constructor() ERC721("NFT Metavarse Token", "NFTMT") {
+    constructor(
+        address _webTokenAddress
+    ) ERC721("NFT Metavarse Token", "NFTMT") {
         owner = payable(msg.sender);
+        webToken = IERC20(_webTokenAddress);
     }
 
-    function updateListingPrice(uint256 _listingPrice) public payable {
+    function updateListingPrice(uint256 _listingPrice) public {
+        require(msg.sender == owner, "Only owner can update listing price");
         listingPrice = _listingPrice;
     }
 
@@ -50,7 +56,7 @@ contract NFTMarketplace is ERC721URIStorage {
     function createToken(
         string memory _tokenURI,
         uint256 _price
-    ) public payable returns (uint256) {
+    ) public returns (uint256) {
         _tokenIds.increment();
 
         uint256 newTokenId = _tokenIds.current();
@@ -65,10 +71,13 @@ contract NFTMarketplace is ERC721URIStorage {
 
     function createMarketItem(uint256 _tokenId, uint256 _price) private {
         require(_price > 0, "Price must be al lest 1");
-        require(
-            msg.value == listingPrice,
-            "Price must be equal to listing price"
+
+        bool success = webToken.transferFrom(
+            msg.sender,
+            address(this),
+            listingPrice
         );
+        require(success, "Token transfer failed for listing price");
 
         idMarketItem[_tokenId] = MarketItem(
             _tokenId,
@@ -89,15 +98,18 @@ contract NFTMarketplace is ERC721URIStorage {
         );
     }
 
-    function reSellToken(uint256 _tokenId, uint256 _price) public payable {
+    function reSellToken(uint256 _tokenId, uint256 _price) public {
         require(
             idMarketItem[_tokenId].owner == msg.sender,
             "Only item owner con perform this operation"
         );
-        require(
-            msg.value == listingPrice,
-            "Price must be equal to listing price"
+
+        bool success = webToken.transferFrom(
+            msg.sender,
+            address(this),
+            listingPrice
         );
+        require(success, "Token transfer failed for listing fee");
 
         idMarketItem[_tokenId].sold = false;
         idMarketItem[_tokenId].price = _price;
@@ -109,16 +121,17 @@ contract NFTMarketplace is ERC721URIStorage {
         _transfer(msg.sender, address(this), _tokenId);
     }
 
-    function createMarketSale(uint256 _tokenId) public payable {
-        uint256 price = idMarketItem[_tokenId].price;
+    function createMarketSale(uint256 _tokenId) public {
+        uint256 price = idMarketItem[_tokenId].price / 1 ether;
 
-        require(
-            msg.value == price,
-            "Please submit the asking price in order to complete the sale"
-        );
+        bool success = webToken.transferFrom(msg.sender, address(this), price);
+        require(success, "Token transfer failed for NFT price");
 
-        payable(owner).transfer(listingPrice);
-        payable(idMarketItem[_tokenId].seller).transfer(msg.value);
+        webToken.transfer(owner, listingPrice);
+
+        uint256 sellerProceeds = price;
+
+        webToken.transfer(idMarketItem[_tokenId].seller, sellerProceeds);
 
         idMarketItem[_tokenId].owner = payable(msg.sender);
         idMarketItem[_tokenId].sold = true;

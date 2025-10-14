@@ -243,8 +243,8 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
               >
                 <small>Current Bid</small>
                 <p>
-                  {nft.price} ETH{" "}
-                  <span>( ≈ ${Number(nft.price * usdPrice).toFixed(2)})</span>
+                  {nft.price} ZELL{" "}
+                  {/* <span>( ≈ ${Number(nft.price * usdPrice).toFixed(2)})</span> */}
                 </p>
               </div>
             </div>

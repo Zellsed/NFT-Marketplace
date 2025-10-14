@@ -51,7 +51,7 @@ const AudioCard = ({ NFTData }) => {
             </h4>
             <div className={Style.audioCard_box_details_info_price}>
               <small>Price</small>
-              <p>{NFTData.price} ETH</p>
+              <p>{NFTData.price} ZELL</p>
             </div>
           </div>
 

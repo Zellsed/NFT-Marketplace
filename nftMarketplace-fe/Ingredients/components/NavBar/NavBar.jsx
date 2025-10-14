@@ -136,9 +136,13 @@ const NavBar = () => {
     setOpenSideMenu((prev) => !prev);
   };
 
-  const { currentAccount, connectWallet, openError, tokenBalance } = useContext(
-    NFTMarketplaceContext
-  );
+  const {
+    currentAccount,
+    connectWallet,
+    openError,
+    tokenBalance,
+    tokenSymbol,
+  } = useContext(NFTMarketplaceContext);
 
   const checkAccount = async () => {
     try {
@@ -284,7 +288,7 @@ const NavBar = () => {
                   marginTop: "-2px",
                 }}
               >
-                ZELL
+                {tokenSymbol}
               </span>
             </div>
           </div>

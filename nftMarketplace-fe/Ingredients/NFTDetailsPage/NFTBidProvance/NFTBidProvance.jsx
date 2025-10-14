@@ -34,7 +34,7 @@ const NFTBidProvance = ({ dataTab }) => {
                       {el.user.name} - {el.history.seller}
                     </h3>
                     <div className={Style.NFTBidProvance_box_action}>
-                      Create NFT price - <span>{el.history.price} ETH</span>
+                      Create NFT price - <span>{el.history.price} ZELL</span>
                     </div>
                   </div>
                 )}
@@ -45,7 +45,7 @@ const NFTBidProvance = ({ dataTab }) => {
                       {el.user.name} - {el.history.owner}
                     </h3>
                     <div className={Style.NFTBidProvance_box_action}>
-                      Buy NFT price - <span>{el.history.price} ETH</span>
+                      Buy NFT price - <span>{el.history.price} ZELL</span>
                     </div>
                   </div>
                 )}
@@ -56,7 +56,7 @@ const NFTBidProvance = ({ dataTab }) => {
                       {el.user.name} - {el.history.seller}
                     </h3>
                     <div className={Style.NFTBidProvance_box_action}>
-                      Resell NFT price - <span>{el.history.price} ETH</span>
+                      Resell NFT price - <span>{el.history.price} ZELL</span>
                     </div>
                   </div>
                 )}

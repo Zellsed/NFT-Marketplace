@@ -1,8 +1,8 @@
 import nftMarketplace from "../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json";
 import transferFunds from "../artifacts//contracts/TransferFunds.sol/TransferFunds.json";
 import nftAuction from "../artifacts/contracts/BiddingContract.sol/NftAuction.json";
-import customToken from "../artifacts/contracts/TranferToken.sol/CustomToken.json"
-import tranferToken from "../artifacts/contracts/TranferToken.sol/TranferToken.json"
+import customToken from "../artifacts/contracts/TranferToken.sol/CustomToken.json";
+import tranferToken from "../artifacts/contracts/TranferToken.sol/TranferToken.json";
 
 export const NFTMarketplaceAddress =
   "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
