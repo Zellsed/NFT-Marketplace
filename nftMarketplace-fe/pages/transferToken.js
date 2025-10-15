@@ -22,7 +22,8 @@ const TransferToken = () => {
   const [openBox, setOpenBox] = useState(false);
 
   const isOwnerAddress =
-    currentAccount?.toLowerCase() === process.env.NEXT_PUBLIC_OWNER_ADDRESS;
+    currentAccount?.toLowerCase() ===
+    "0xea6e19af950e2878ba67a59facedb6ff3ab6519e";
 
   const handleDeposit = async () => {
     try {
@@ -36,7 +37,6 @@ const TransferToken = () => {
   return (
     <div className={Style.transfer}>
       <div className={Style.transfer_box}>
-        
         <h1>Transfer Token</h1>
 
         <div className={Style.transfer_box_box}>

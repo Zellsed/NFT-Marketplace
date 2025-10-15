@@ -119,6 +119,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         case 31337:
           coinSymbol = "ETH";
           break;
+        case 80002:
+          coinSymbol = "POLY";
+          break;
         default:
           coinSymbol = `Unknown Chain (${network.chainId})`;
           break;
@@ -300,7 +303,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider();
       // const provider = new ethers.providers.JsonRpcProvider(
-      //   "https://eth-sepolia.g.alchemy.com/v2/XbTCI1sk-nWg_2lJu90LU9FjQS6I94qj"
+      //   "https://eth-holesky.g.alchemy.com/v2/XbTCI1sk-nWg_2lJu90LU9FjQS6I94qj"
       // );
 
       const contract = fetchContract(provider);
@@ -386,15 +389,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const metadata = typeof data === "string" ? JSON.parse(data) : data;
 
             const {
-              data: {
-                pinataData,
-                name,
-                description,
-                category,
-                fileExtension,
-                fileSize,
-                createdAt,
-              },
+              pinataData,
+              name,
+              description,
+              category,
+              fileExtension,
+              fileSize,
+              createdAt,
             } = metadata;
 
             const price = ethers.utils.formatUnits(
@@ -587,7 +588,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const tranferToken = async (baseCoin, tokenAmount) => {
     try {
-      if (baseCoin) {
+      if (baseCoin === "ETH") {
         const contract = await connectToTransferTokenContract();
 
         const unFormatedAmount = ethers.utils.parseEther(tokenAmount);
@@ -603,6 +604,24 @@ export const NFTMarketplaceProvider = ({ children }) => {
         setLoading(false);
 
         window.location.reload();
+      } else {
+        const contract = await connectToTransferTokenContract();
+        const customTokenContract =
+          await connectingWithCustomTokenSmartContract();
+
+        const unFormatedAmount = ethers.utils.parseEther(tokenAmount);
+
+        const transaction = await contract.buyWebTokenWithBaseCoin(baseCoin, {
+          value: unFormatedAmount,
+        });
+
+        // setLoading(true);
+
+        // transaction.wait();
+
+        // setLoading(false);
+
+        // window.location.reload();
       }
     } catch (error) {
       console.log(error);

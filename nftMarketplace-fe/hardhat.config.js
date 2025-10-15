@@ -16,5 +16,11 @@ module.exports = {
         `0x${"1557bfbc8a2c0cbf60840c233d2079fdadbd65b7d923f29c8ab00bfee96e119e"}`,
       ],
     },
+    polygon_Amoy: {
+      url: "https://polygon-amoy.infura.io/v3/46a29745c9034ef89339cb8e2ed8f425",
+      accounts: [
+        `0x${"65d6bd90f5240e3f97be2b250d5f3851464be30cf895453e288ec1d4a0ff97bc"}`,
+      ],
+    },
   },
 };

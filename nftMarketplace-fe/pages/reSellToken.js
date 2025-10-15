@@ -28,11 +28,13 @@ const reSellToken = () => {
 
     const { data } = await axios.get(tokenURI);
 
-    setImage(data.pinataData);
-    setName(data.name);
-    setDescription(data.description);
-    setExtension(data.fileExtension);
-    setCategory(data.category);
+    const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+    setImage(metadata.pinataData);
+    setName(metadata.name);
+    setDescription(metadata.description);
+    setExtension(metadata.fileExtension);
+    setCategory(metadata.category);
   };
 
   useEffect(() => {
