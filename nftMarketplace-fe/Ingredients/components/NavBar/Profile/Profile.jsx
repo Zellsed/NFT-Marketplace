@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaUserAlt, FaRegImage, FaUserEdit } from "react-icons/fa";
+import { FaUserAlt, FaRegImage, FaUserEdit, FaCoins } from "react-icons/fa";
 import { MdHelpCenter } from "react-icons/md";
 import {
   TbDownloadOff,
@@ -139,10 +139,12 @@ const Profile = ({}) => {
                 <Link href={{ pathname: "/account" }}>Edit Profile</Link>
               </p>
             </div>
-             <div className={Style.profile_menu_one_item}>
-              <FaUserEdit />
+            <div className={Style.profile_menu_one_item}>
+              <FaCoins />
               <p>
-                <Link href={{ pathname: "/transferToken" }}>Transfer Token</Link>
+                <Link href={{ pathname: "/transferToken" }}>
+                  Transfer Token
+                </Link>
               </p>
             </div>
           </div>

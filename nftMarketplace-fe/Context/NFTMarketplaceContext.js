@@ -615,13 +615,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
           value: unFormatedAmount,
         });
 
-        // setLoading(true);
+        setLoading(true);
 
-        // transaction.wait();
+        transaction.wait();
 
-        // setLoading(false);
+        setLoading(false);
 
-        // window.location.reload();
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -630,11 +630,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const depositToken = async () => {
     try {
+      // const customTokenContract =
+      //   await connectingWithCustomTokenSmartContract();
       const transferTokenContract = await connectToTransferTokenContract();
 
-      const deposit = await transferTokenContract.depositToken(
-        "5000000000000000000000000"
-      );
+      // const price = ethers.utils.parseUnits("10000000", 18);
+
+      // const approval = await customTokenContract.approve(
+      //   transferTokenContract.address,
+      //   price
+      // );
+
+      // await approval.wait();
+
+      const amount = ethers.utils.parseUnits("5000000", 18);
+
+      const deposit = await transferTokenContract.depositToken(amount);
 
       setLoading(true);
 

@@ -23,7 +23,7 @@ const TransferToken = () => {
 
   const isOwnerAddress =
     currentAccount?.toLowerCase() ===
-    "0xea6e19af950e2878ba67a59facedb6ff3ab6519e";
+    process.env.NEXT_PUBLIC_OWNER_ADDRESS.toLowerCase();
 
   const handleDeposit = async () => {
     try {
@@ -33,6 +33,11 @@ const TransferToken = () => {
       console.error("Deposit failed:", error);
     }
   };
+
+  useEffect(() => {
+    console.log("Current Account:", currentAccount);
+    console.log("Is Owner Address:", isOwnerAddress);
+  }, []);
 
   return (
     <div className={Style.transfer}>
