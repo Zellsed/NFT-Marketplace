@@ -1,3 +1,48 @@
+.create_button_container {
+  position: relative;
+  display: inline-block;
+}
+
+.create_menu_box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 8px 0;
+  margin-top: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.create_menu_item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+  font-weight: 500;
+}
+
+.create_menu_item:hover {
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+}
+
+.create_menu_item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.create_menu_item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.create_menu_item:not(:last-child) {
+  border-bottom: 1px solid #444;
+}
+
 .navbar {
   width: 100%;
   padding-block: 1.5rem;
@@ -87,12 +132,11 @@
 }
 
 .tokenBalance {
-  font-size: 1.2rem;       
-  font-weight: 700;        
-  color: #FFD700;         
-  margin-right: 1rem;       
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin-right: 1rem;
 }
-
 
 .navbar_container_right_button {
   position: relative;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { MdNotifications } from "react-icons/md";
-import { BsSearch } from "react-icons/bs";
+import { BsChevronDown, BsSearch } from "react-icons/bs";
 import { CgMenuLeft, CgMenuRight } from "react-icons/cg";
 
 import Style from "./NavBar.module.css";
@@ -25,6 +25,7 @@ const NavBar = () => {
   const [notification, setNotification] = useState(false);
   const [profile, setProfile] = useState(false);
   const [openSideMenu, setOpenSideMenu] = useState(false);
+  const [createMenu, setCreateMenu] = useState(false);
 
   const router = useRouter();
 
@@ -32,6 +33,7 @@ const NavBar = () => {
   const helpRef = useRef(null);
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
+  const createMenuRef = useRef(null);
 
   const [account, setAccount] = useState(false);
 
@@ -53,6 +55,7 @@ const NavBar = () => {
     setHelp(false);
     setNotification(false);
     setProfile(false);
+    setCreateMenu(false);
   };
 
   useEffect(() => {
@@ -132,6 +135,14 @@ const NavBar = () => {
     setNotification(false);
   };
 
+  const openCreateMenu = () => {
+    setCreateMenu((prev) => !prev);
+    setHelp(false);
+    setDiscover(false);
+    setNotification(false);
+    setProfile(false);
+  };
+
   const openSideBar = () => {
     setOpenSideMenu((prev) => !prev);
   };
@@ -192,6 +203,29 @@ const NavBar = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const CreateMenu = () => (
+    <div className={Style.create_menu_box}>
+      <div
+        className={Style.create_menu_item}
+        onClick={() => {
+          router.push("uploadNFT");
+          setCreateMenu(false);
+        }}
+      >
+        Create NFT
+      </div>
+      <div
+        className={Style.create_menu_item}
+        onClick={() => {
+          router.push("uploadNFTCollection");
+          setCreateMenu(false);
+        }}
+      >
+        Create NFT Collection
+      </div>
+    </div>
+  );
 
   return (
     <div className={Style.navbar}>
@@ -307,10 +341,35 @@ const NavBar = () => {
                 onClick={() => router.push("login")}
               />
             ) : (
-              <Button
-                btnName="Create NFT"
-                onClick={() => router.push("uploadNFT")}
-              />
+              <div
+                className={Style.create_button_container}
+                ref={createMenuRef}
+              >
+                <Button
+                  btnName={
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      Create
+                      <BsChevronDown
+                        style={{
+                          fontSize: "12px",
+                          transition: "transform 0.2s",
+                          transform: createMenu
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    </div>
+                  }
+                  onClick={openCreateMenu}
+                />
+                {createMenu && <CreateMenu />}
+              </div>
             )}
           </div>
 

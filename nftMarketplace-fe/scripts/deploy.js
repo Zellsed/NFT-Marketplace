@@ -10,28 +10,31 @@ async function main() {
   await tranferToken.deployed();
 
   const price = ethers.utils.parseUnits("10000000", 18);
-
   await customToken.approve(tranferToken.address, price);
+  await tranferToken.depositToken(price);
+
+  const NFTCollection1155 = await hre.ethers.getContractFactory(
+    "NFTCollection1155"
+  );
+  const nftCollection1155 = await NFTCollection1155.deploy();
+  await nftCollection1155.deployed();
 
   const NFTMarketplace = await hre.ethers.getContractFactory("NFTMarketplace");
-  const nftMarketplace = await NFTMarketplace.deploy(customToken.address);
+  const nftMarketplace = await NFTMarketplace.deploy(
+    customToken.address,
+    nftCollection1155.address
+  );
   await nftMarketplace.deployed();
 
   const TransferFunds = await hre.ethers.getContractFactory("TransferFunds");
   const transferFunds = await TransferFunds.deploy();
   await transferFunds.deployed();
 
-  // const NftAuction = await hre.ethers.getContractFactory("NftAuction");
-  // const nftAuction = await NftAuction.deploy();
-  // await nftAuction.deployed();
-
-  // await tranferToken.depositToken("5000000000000000000000000");
-
-  console.log(`NFTMarketplace deployed to ${nftMarketplace.address}`);
-  console.log(`TransferFunds deployed to ${transferFunds.address}`);
-  // console.log(`NftAuction deployed to ${nftAuction.address}`);
   console.log(`CustomToken deployed to ${customToken.address}`);
   console.log(`TranferToken deployed to ${tranferToken.address}`);
+  console.log("NFTCollection1155 deployed to:", nftCollection1155.address);
+  console.log(`NFTMarketplace deployed to ${nftMarketplace.address}`);
+  console.log(`TransferFunds deployed to ${transferFunds.address}`);
 }
 
 main().catch((error) => {

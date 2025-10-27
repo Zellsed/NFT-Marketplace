@@ -5,19 +5,30 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 
 import "hardhat/console.sol";
 
-contract NFTMarketplace is ERC721URIStorage {
+interface INFTCollection1155 {
+    function createCollection(
+        string memory uri,
+        uint256 totalSupply
+    ) external returns (uint256);
+}
+
+contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
+    Counters.Counter private _itemIds1155;
 
     uint256 listingPrice = 25; // 25 WEB
 
     address private owner;
     IERC20 public webToken;
+    address public immutable nftCollection1155;
 
     mapping(uint256 => MarketItem) private idMarketItem;
 
@@ -37,11 +48,33 @@ contract NFTMarketplace is ERC721URIStorage {
         bool sold
     );
 
+    struct MarketItem1155 {
+        uint256 itemId;
+        address nftContract;
+        uint256 tokenId;
+        uint256 amount;
+        uint256 price;
+        address payable seller;
+        bool sold;
+    }
+
+    mapping(uint256 => MarketItem1155) private idMarketItem1155;
+
+    event MarketItem1155Created(
+        uint256 indexed itemId,
+        uint256 tokenId,
+        uint256 amount,
+        uint256 price,
+        address seller
+    );
+
     constructor(
-        address _webTokenAddress
+        address _webTokenAddress,
+        address _nftCollection1155Address
     ) ERC721("NFT Metavarse Token", "NFTMT") {
         owner = payable(msg.sender);
         webToken = IERC20(_webTokenAddress);
+        nftCollection1155 = _nftCollection1155Address;
     }
 
     function updateListingPrice(uint256 _listingPrice) public {
@@ -67,6 +100,22 @@ contract NFTMarketplace is ERC721URIStorage {
         createMarketItem(newTokenId, _price);
 
         return newTokenId;
+    }
+
+    function createToken1155(
+        string memory _uri,
+        uint256 _totalSupply,
+        uint256 _pricePerToken
+    ) external returns (uint256 itemId) {
+        require(_totalSupply > 0, "Supply > 0");
+        require(_pricePerToken > 0, "Price > 0");
+
+        uint256 tokenId = INFTCollection1155(nftCollection1155)
+            .createCollection(_uri, _totalSupply);
+
+        itemId = createMarketItem1155(tokenId, _totalSupply, _pricePerToken);
+
+        return itemId;
     }
 
     function createMarketItem(uint256 _tokenId, uint256 _price) private {
@@ -96,6 +145,50 @@ contract NFTMarketplace is ERC721URIStorage {
             _price,
             false
         );
+    }
+
+    function createMarketItem1155(
+        uint256 _tokenId,
+        uint256 _amount,
+        uint256 _pricePerToken
+    ) private returns (uint256 itemId) {
+        IERC1155(nftCollection1155).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _tokenId,
+            _amount,
+            ""
+        );
+
+        bool success = webToken.transferFrom(
+            msg.sender,
+            address(this),
+            listingPrice
+        );
+        require(success, "Listing fee failed");
+
+        _itemIds1155.increment();
+        itemId = _itemIds1155.current();
+
+        idMarketItem1155[itemId] = MarketItem1155({
+            itemId: itemId,
+            nftContract: nftCollection1155,
+            tokenId: _tokenId,
+            amount: _amount,
+            price: _pricePerToken,
+            seller: payable(msg.sender),
+            sold: false
+        });
+
+        emit MarketItem1155Created(
+            itemId,
+            _tokenId,
+            _amount,
+            _pricePerToken,
+            msg.sender
+        );
+
+        return itemId;
     }
 
     function reSellToken(uint256 _tokenId, uint256 _price) public {
@@ -163,6 +256,33 @@ contract NFTMarketplace is ERC721URIStorage {
         return items;
     }
 
+    function fetchMarketItems1155()
+        public
+        view
+        returns (MarketItem1155[] memory)
+    {
+        uint256 itemCount = _itemIds1155.current();
+        uint256 unsoldCount = 0;
+
+        for (uint256 i = 1; i <= itemCount; i++) {
+            if (!idMarketItem1155[i].sold) {
+                unsoldCount++;
+            }
+        }
+
+        MarketItem1155[] memory items = new MarketItem1155[](unsoldCount);
+        uint256 currentIndex = 0;
+
+        for (uint256 i = 1; i <= itemCount; i++) {
+            if (!idMarketItem1155[i].sold) {
+                items[currentIndex] = idMarketItem1155[i];
+                currentIndex++;
+            }
+        }
+
+        return items;
+    }
+
     function fetchMyNFTs() public view returns (MarketItem[] memory) {
         uint256 totalCount = _tokenIds.current();
         uint256 itemCount = 0;
@@ -215,5 +335,37 @@ contract NFTMarketplace is ERC721URIStorage {
             }
         }
         return items;
+    }
+
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external pure override returns (bytes4) {
+        return this.onERC1155Received.selector;
+    }
+
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external pure override returns (bytes4) {
+        return this.onERC1155BatchReceived.selector;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        virtual
+        override(ERC721URIStorage, ERC1155Receiver)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

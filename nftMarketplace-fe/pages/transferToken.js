@@ -14,30 +14,10 @@ const TransferToken = () => {
     accountBalance,
     baseCoinNetwork,
     tranferToken,
-    depositToken,
+    // depositToken,
   } = useContext(NFTMarketplaceContext);
 
   const [tranferAmount, setTranferAmount] = useState("");
-  const [hasDeposited, setHasDeposited] = useState(false);
-  const [openBox, setOpenBox] = useState(false);
-
-  const isOwnerAddress =
-    currentAccount?.toLowerCase() ===
-    process.env.NEXT_PUBLIC_OWNER_ADDRESS.toLowerCase();
-
-  const handleDeposit = async () => {
-    try {
-      await depositToken();
-      setHasDeposited(true);
-    } catch (error) {
-      console.error("Deposit failed:", error);
-    }
-  };
-
-  useEffect(() => {
-    console.log("Current Account:", currentAccount);
-    console.log("Is Owner Address:", isOwnerAddress);
-  }, []);
 
   return (
     <div className={Style.transfer}>
@@ -93,14 +73,6 @@ const TransferToken = () => {
                   btnName="Transfer Token"
                   onClick={() => tranferToken(baseCoinNetwork, tranferAmount)}
                   classStyle={Style.button}
-                />
-              )}
-
-              {isOwnerAddress && !hasDeposited && (
-                <Button
-                  btnName="Deposit Token"
-                  onClick={() => handleDeposit()}
-                  classStyle={`${Style.button} ${Style.depositButton}`}
                 />
               )}
             </div>

@@ -628,36 +628,36 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const depositToken = async () => {
-    try {
-      // const customTokenContract =
-      //   await connectingWithCustomTokenSmartContract();
-      const transferTokenContract = await connectToTransferTokenContract();
+  // const depositToken = async () => {
+  //   try {
+  //     // const customTokenContract =
+  //     //   await connectingWithCustomTokenSmartContract();
+  //     const transferTokenContract = await connectToTransferTokenContract();
 
-      // const price = ethers.utils.parseUnits("10000000", 18);
+  //     // const price = ethers.utils.parseUnits("10000000", 18);
 
-      // const approval = await customTokenContract.approve(
-      //   transferTokenContract.address,
-      //   price
-      // );
+  //     // const approval = await customTokenContract.approve(
+  //     //   transferTokenContract.address,
+  //     //   price
+  //     // );
 
-      // await approval.wait();
+  //     // await approval.wait();
 
-      const amount = ethers.utils.parseUnits("5000000", 18);
+  //     const amount = ethers.utils.parseUnits("5000000", 18);
 
-      const deposit = await transferTokenContract.depositToken(amount);
+  //     const deposit = await transferTokenContract.depositToken(amount);
 
-      setLoading(true);
+  //     setLoading(true);
 
-      await deposit.wait();
+  //     await deposit.wait();
 
-      setLoading(false);
+  //     setLoading(false);
 
-      window.location.reload();
-    } catch (error) {
-      console.log("Error depositToken:", error);
-    }
-  };
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.log("Error depositToken:", error);
+  //   }
+  // };
 
   const tokenBalance = async (address) => {
     try {
@@ -696,7 +696,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         transactions,
         baseCoinNetwork,
         tranferToken,
-        depositToken,
+        // depositToken,
         tokenBalance,
         tokenSymbol,
       }}
