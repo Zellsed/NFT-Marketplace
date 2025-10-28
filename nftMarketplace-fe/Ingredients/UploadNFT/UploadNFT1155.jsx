@@ -13,8 +13,9 @@ import { Button } from "../components/componentsindex";
 import { DropZone } from "../UploadNFT/uplaodNFTIndex";
 import { useRouter } from "next/router";
 
-const Upload = ({ uploadToIPFS, createNFT }) => {
+const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
   const [price, setPrice] = useState("");
+  const [totalSupply, setTotalSupply] = useState("");
   const [active, setActive] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -106,7 +107,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
           <label htmlFor="nft">Item Name</label>
           <input
             type="text"
-            placeholder="NFT Name"
+            placeholder="NFT Collection Name"
             className={formStyle.Form_box_input_userName}
             onChange={(e) => setName(e.target.value)}
           />
@@ -119,7 +120,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
             id=""
             cols="30"
             rows="6"
-            placeholder="something about yourself NFT in few words"
+            placeholder="something about yourself NFT collection in few words"
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
           <p>
@@ -165,6 +166,27 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
 
         <div className={formStyle.Form_box_input_social}>
           <div className={formStyle.Form_box_input}>
+            <label htmlFor="price">Total Supply</label>
+            <div className={formStyle.Form_box_input_box}>
+              <div className={formStyle.Form_box_input_box_icon}>
+                <AiTwotonePropertySafety />
+              </div>
+              <input
+                type="text"
+                placeholder="Total Supply of NFT Collection"
+                onChange={(e) => setTotalSupply(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+        <p>
+          Please specify the total number of NFTs you want to mint in this
+          collection. This determines how many tokens will be available for
+          purchase.
+        </p>
+
+        <div className={formStyle.Form_box_input_social}>
+          <div className={formStyle.Form_box_input}>
             <label htmlFor="price">Price</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
@@ -179,8 +201,8 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
           </div>
         </div>
         <p>
-          Please enter the price for your NFT. This will be the amount buyers
-          must pay to purchase your digital asset.
+          Please enter the price for your NFT collection. This will be the
+          amount buyers must pay to purchase your digital asset.
         </p>
 
         <div className={Style.upload_box_btn}>
@@ -188,9 +210,10 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
             btnName="Upload"
             onClick={async () => {
               const createdAt = Date.now();
-              createNFT(
+              createNFT1155(
                 name,
                 price,
+                totalSupply,
                 image,
                 description,
                 router,
@@ -208,58 +231,6 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
             onClick={() => setShowPreview(true)}
             classStyle={Style.upload_box_btn_style}
           />
-          {/* {showPreview && (
-            <div className={Style.preview_modal}>
-              <div className={Style.preview_content}>
-                <h2>Preview NFT</h2>
-                {image ? (
-                  fileExtension === "mp4" || fileExtension === "webm" ? (
-                    <video controls autoPlay muted loop>
-                      <source src={image} type={`video/${fileExtension}`} />
-                    </video>
-                  ) : fileExtension === "mp3" ||
-                    fileExtension === "wav" ||
-                    fileExtension === "ogg" ? (
-                    <audio
-                      controls
-                      style={{ display: "block", margin: "auto" }}
-                    >
-                      <source src={image} type={`audio/${fileExtension}`} />
-                    </audio>
-                  ) : (
-                    <Image
-                      src={image}
-                      alt="nft image"
-                      width={450}
-                      height={450}
-                      type={`image/${fileExtension}`}
-                    />
-                  )
-                ) : (
-                  <p>No Media Selected</p>
-                )}
-
-                <p>
-                  <strong>Name:</strong> {name || ""}
-                </p>
-                <p>
-                  <strong>Description:</strong> {description || ""}
-                </p>
-                <p>
-                  <strong>Price:</strong> {price || ""} ZELL
-                </p>
-                <p>
-                  <strong>Category:</strong> {category || ""}
-                </p>
-
-                <Button
-                  btnName="Close"
-                  onClick={() => setShowPreview(false)}
-                  classStyle={Style.upload_box_btn_style}
-                />
-              </div>
-            </div>
-          )} */}
 
           {showPreview && (
             <div className={Style.preview_modal}>
@@ -306,6 +277,10 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                     <span>{description || "N/A"}</span>
                   </div>
                   <div className={Style.detail_item}>
+                    <strong>Total Supply:</strong>
+                    <span>{totalSupply || "0"}</span>
+                  </div>
+                  <div className={Style.detail_item}>
                     <strong>Price:</strong>
                     <span>{price || "0"} ZELL</span>
                   </div>
@@ -330,4 +305,4 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
   );
 };
 
-export default Upload;
+export default UploadNFT1155;

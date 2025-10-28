@@ -16,6 +16,8 @@ import {
   TranferTokenABI,
   CustomTokenAddress,
   CustomTokenABI,
+  NFTCollection1155Address,
+  NFTCollection1155ABI,
 } from "./constant";
 
 dotenv.config();
@@ -256,6 +258,72 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const createNFT1155 = async (
+    name,
+    price,
+    totalSupply,
+    pinataData,
+    description,
+    router,
+    category,
+    fileExtension,
+    fileSize,
+    createdAt,
+    token
+  ) => {
+    // if (
+    //   !name ||
+    //   !description ||
+    //   !price ||
+    //   !totalSupply ||
+    //   !pinataData ||
+    //   !category ||
+    //   !fileExtension ||
+    //   !fileSize ||
+    //   !createdAt ||
+    //   !token
+    // ) {
+    //   return setError("Data is missing"), setOpenError(true);
+    // }
+
+    console.log("createNFT1155 called with:", {
+      name,
+      price,
+      totalSupply,
+      pinataData,
+      description,
+      router,
+      category,
+      fileExtension,
+      fileSize,
+      createdAt,
+      token,
+    });
+
+    const data = JSON.stringify({
+      name,
+      description,
+      pinataData,
+      category,
+      fileExtension,
+      fileSize,
+      createdAt,
+    });
+
+    const upload = await pinata.upload.public.json(data);
+
+    const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
+
+    console.log("Metadata URL:", url);
+
+    await createSale1155(url, totalSupply, price);
+    // try {
+    // } catch (error) {
+    //   setError("Error while creating NFT1155");
+    //   setOpenError(true);
+    // }
+  };
+
   const createSale = async (url, formInputPrice, isReselling, id) => {
     try {
       const price = ethers.utils.parseUnits(formInputPrice.toString(), 18);
@@ -295,6 +363,74 @@ export const NFTMarketplaceProvider = ({ children }) => {
       return { transaction, tokenId };
     } catch (error) {
       setError("Error while creating sale");
+      setOpenError(true);
+    }
+  };
+
+  const createSale1155 = async (url, totalSupply, formInputPrice) => {
+    try {
+      const price = ethers.utils.parseUnits(formInputPrice.toString(), 18);
+
+      console.log("Price:", price.toString());
+
+      const nftCollection1155Contract =
+        await connectToNftCollection1155Contract();
+      const contract = await connectingWithSmartContract();
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
+
+      const listingPrice = await contract.getListingPrice();
+      console.log("listingPrice:", listingPrice);
+      const approveListingPrice = ethers.utils.parseUnits(
+        listingPrice.toString(),
+        18
+      );
+
+      console.log("Tesst 1");
+
+      const approval = await customTokenContract.approve(
+        contract.address,
+        approveListingPrice
+      );
+
+      await approval.wait();
+
+      console.log("Tesst 2");
+
+      const txApprove1155 = await nftCollection1155Contract.setApprovalForAll(
+        contract.address,
+        true
+      );
+
+      await txApprove1155.wait();
+      console.log("✅ Approved Marketplace to manage ERC1155 tokens");
+
+      const transaction = await contract.createToken1155(
+        url,
+        totalSupply,
+        price
+      );
+
+      const txRecceipt = await transaction.wait();
+
+      console.log("txRecceipt:", txRecceipt);
+
+      // const event = txRecceipt.events?.find((e) => e.event === "Transfer");
+
+      // if (!event) {
+      //   console.error("Transfer event not found", txRecceipt.events);
+      //   return;
+      // }
+
+      // const tokenId = event.args.tokenId.toNumber();
+    } catch (error) {
+      console.error("❌ Error while creating sale1155:", error);
+      if (error.data && error.data.message) {
+        console.error("EVM Revert Reason:", error.data.message);
+      } else if (error.error && error.error.message) {
+        console.error("EVM Revert Reason:", error.error.message);
+      }
+      setError("Error while creating sale1155");
       setOpenError(true);
     }
   };
@@ -520,6 +656,27 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchNftCollection1155Contract = (signerOrProvider) =>
+    new ethers.Contract(
+      NFTCollection1155Address,
+      NFTCollection1155ABI,
+      signerOrProvider
+    );
+
+  const connectToNftCollection1155Contract = async () => {
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = fetchNftCollection1155Contract(signer);
+
+      return contract;
+    } catch (error) {
+      console.log("Something went wrong while connecting with smart contract");
+    }
+  };
+
   const transferEther = async (isAddress, price, message) => {
     try {
       if (currentAccount) {
@@ -628,37 +785,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  // const depositToken = async () => {
-  //   try {
-  //     // const customTokenContract =
-  //     //   await connectingWithCustomTokenSmartContract();
-  //     const transferTokenContract = await connectToTransferTokenContract();
-
-  //     // const price = ethers.utils.parseUnits("10000000", 18);
-
-  //     // const approval = await customTokenContract.approve(
-  //     //   transferTokenContract.address,
-  //     //   price
-  //     // );
-
-  //     // await approval.wait();
-
-  //     const amount = ethers.utils.parseUnits("5000000", 18);
-
-  //     const deposit = await transferTokenContract.depositToken(amount);
-
-  //     setLoading(true);
-
-  //     await deposit.wait();
-
-  //     setLoading(false);
-
-  //     window.location.reload();
-  //   } catch (error) {
-  //     console.log("Error depositToken:", error);
-  //   }
-  // };
-
   const tokenBalance = async (address) => {
     try {
       const contract = await connectToTransferTokenContract();
@@ -699,6 +825,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         // depositToken,
         tokenBalance,
         tokenSymbol,
+        createNFT1155,
       }}
     >
       {children}

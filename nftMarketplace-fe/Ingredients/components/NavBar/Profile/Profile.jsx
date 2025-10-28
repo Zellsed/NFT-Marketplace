@@ -142,9 +142,7 @@ const Profile = ({}) => {
             <div className={Style.profile_menu_one_item}>
               <FaCoins />
               <p>
-                <Link href={{ pathname: "/transferToken" }}>
-                  Transfer Token
-                </Link>
+                <Link href={{ pathname: "/transferToken" }}>Buy Token WEB</Link>
               </p>
             </div>
           </div>

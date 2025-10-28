@@ -71,8 +71,10 @@ import avatar from "./avatar.jpg";
 import zellsed from "./Zellsed.jpg";
 import background from "./background.jpg";
 import hqbackground from "./HQbackground.jpg";
+import game from "./Game.png";
 
 export default {
+  game,
   hqbackground,
   background,
   zellsed,

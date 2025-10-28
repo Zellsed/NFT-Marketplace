@@ -4,20 +4,20 @@ import nftCollection1155 from "../artifacts/contracts/NFTCollection1155.sol/NFTC
 import nftMarketplace from "../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json";
 import transferFunds from "../artifacts//contracts/TransferFunds.sol/TransferFunds.json";
 
-export const CustomTokenAddress = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
+export const CustomTokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const CustomTokenABI = customToken.abi;
 
-export const TranferTokenAddress = "0x9A676e781A523b5d0C0e43731313A708CB607508";
+export const TranferTokenAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 export const TranferTokenABI = tranferToken.abi;
 
 export const NFTCollection1155Address =
-  "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
+  "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
 export const NFTCollection1155ABI = nftCollection1155.abi;
 
 export const NFTMarketplaceAddress =
-  "0x68B1D87F95878fE05B998F19b66F4baba5De1aed";
+  "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
 export const NFTMarketplaceABI = nftMarketplace.abi;
 
 export const TransferFundsAddress =
-  "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
+  "0x0165878A594ca255338adfa4d48449f69242Eb8F";
 export const TransferFundsABI = transferFunds.abi;

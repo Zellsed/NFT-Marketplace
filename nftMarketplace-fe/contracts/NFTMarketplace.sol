@@ -110,10 +110,33 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         require(_totalSupply > 0, "Supply > 0");
         require(_pricePerToken > 0, "Price > 0");
 
-        uint256 tokenId = INFTCollection1155(nftCollection1155)
-            .createCollection(_uri, _totalSupply);
+        bool success = webToken.transferFrom(
+            msg.sender,
+            address(this),
+            listingPrice
+        );
+        require(success, "Listing fee failed");
 
-        itemId = createMarketItem1155(tokenId, _totalSupply, _pricePerToken);
+        _itemIds1155.increment();
+        itemId = _itemIds1155.current();
+
+        idMarketItem1155[itemId] = MarketItem1155({
+            itemId: itemId,
+            nftContract: nftCollection1155,
+            tokenId: tokenId,
+            amount: _totalSupply,
+            price: _pricePerToken,
+            seller: payable(msg.sender),
+            sold: false
+        });
+
+        emit MarketItem1155Created(
+            itemId,
+            tokenId,
+            _totalSupply,
+            _pricePerToken,
+            msg.sender
+        );
 
         return itemId;
     }

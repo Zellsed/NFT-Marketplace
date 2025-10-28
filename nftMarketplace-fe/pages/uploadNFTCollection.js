@@ -2,23 +2,22 @@ import React, { useContext, useEffect, useState } from "react";
 
 import Style from "../styles/uploadNFT.module.css";
 
-import { Upload } from "../Ingredients/UploadNFT/uplaodNFTIndex";
+import { UploadNFT1155 } from "../Ingredients/UploadNFT/uplaodNFTIndex";
 
 import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 
 const uploadNFTCollection = () => {
-  // const { uploadToIPFS, createNFT } = useContext(NFTMarketplaceContext);
+  const { uploadToIPFS, createNFT1155 } = useContext(NFTMarketplaceContext);
 
   return (
     <div className={Style.uploadNFT}>
-      <h1>Test</h1>
-      {/* <div className={Style.uploadNFT_box}>
+      <div className={Style.uploadNFT_box}>
         <div className={Style.uploadNFT_box_heading}>
-          <h1>Create New NFT</h1>
+          <h1>Create New NFT Collection</h1>
           <p>
-            Create a new NFT by uploading your digital asset, setting a price,
-            and adding relevant details. Share your unique creation with the
-            world!
+            Create a new NFT collection by uploading your digital asset, setting
+            a price, and adding relevant details. Share your unique creation
+            with the world!
           </p>
         </div>
 
@@ -31,9 +30,12 @@ const uploadNFTCollection = () => {
         </div>
 
         <div className={Style.uploadNFT_box_form}>
-          <Upload uploadToIPFS={uploadToIPFS} createNFT={createNFT} />
+          <UploadNFT1155
+            uploadToIPFS={uploadToIPFS}
+            createNFT1155={createNFT1155}
+          />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
