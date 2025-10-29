@@ -15,11 +15,26 @@ contract NFTCollection1155 is ERC1155 {
 
     constructor() ERC1155("") {}
 
+    function createCollectionForMarketplace(
+        string memory _uri,
+        uint256 _supply,
+        address marketplace
+    ) external returns (uint256) {
+        currentTokenId++;
+        collections[currentTokenId] = CollectionInfo({
+            totalSupply: _supply,
+            minted: _supply,
+            uri: _uri
+        });
+        _mint(marketplace, currentTokenId, _supply, "");
+        return currentTokenId;
+    }
+
     function createCollection(string memory _uri, uint256 _supply) external returns (uint256) {
         currentTokenId++;
         collections[currentTokenId] = CollectionInfo({
             totalSupply: _supply,
-            minted: 0,
+            minted: _supply,
             uri: _uri
         });
         _mint(msg.sender, currentTokenId, _supply, "");

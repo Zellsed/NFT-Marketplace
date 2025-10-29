@@ -70,7 +70,7 @@ import audio from "./audio.jpg";
 import avatar from "./avatar.jpg";
 import zellsed from "./Zellsed.jpg";
 import background from "./background.jpg";
-import hqbackground from "./HQbackground.jpg";
+import hqbackground from "./NFTbackground.png";
 import game from "./Game.png";
 
 export default {

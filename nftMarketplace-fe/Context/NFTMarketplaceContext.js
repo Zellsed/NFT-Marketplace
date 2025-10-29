@@ -258,72 +258,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const createNFT1155 = async (
-    name,
-    price,
-    totalSupply,
-    pinataData,
-    description,
-    router,
-    category,
-    fileExtension,
-    fileSize,
-    createdAt,
-    token
-  ) => {
-    // if (
-    //   !name ||
-    //   !description ||
-    //   !price ||
-    //   !totalSupply ||
-    //   !pinataData ||
-    //   !category ||
-    //   !fileExtension ||
-    //   !fileSize ||
-    //   !createdAt ||
-    //   !token
-    // ) {
-    //   return setError("Data is missing"), setOpenError(true);
-    // }
-
-    console.log("createNFT1155 called with:", {
-      name,
-      price,
-      totalSupply,
-      pinataData,
-      description,
-      router,
-      category,
-      fileExtension,
-      fileSize,
-      createdAt,
-      token,
-    });
-
-    const data = JSON.stringify({
-      name,
-      description,
-      pinataData,
-      category,
-      fileExtension,
-      fileSize,
-      createdAt,
-    });
-
-    const upload = await pinata.upload.public.json(data);
-
-    const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
-
-    console.log("Metadata URL:", url);
-
-    await createSale1155(url, totalSupply, price);
-    // try {
-    // } catch (error) {
-    //   setError("Error while creating NFT1155");
-    //   setOpenError(true);
-    // }
-  };
-
   const createSale = async (url, formInputPrice, isReselling, id) => {
     try {
       const price = ethers.utils.parseUnits(formInputPrice.toString(), 18);
@@ -367,11 +301,64 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const createNFT1155 = async (
+    name,
+    price,
+    totalSupply,
+    pinataData,
+    description,
+    router,
+    category,
+    fileExtension,
+    fileSize,
+    createdAt,
+    token
+  ) => {
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !totalSupply ||
+      !pinataData ||
+      !category ||
+      !fileExtension ||
+      !fileSize ||
+      !createdAt ||
+      !token
+    ) {
+      return setError("Data is missing"), setOpenError(true);
+    }
+
+    const data = JSON.stringify({
+      name,
+      description,
+      pinataData,
+      category,
+      fileExtension,
+      fileSize,
+      createdAt,
+    });
+    try {
+      const upload = await pinata.upload.public.json(data);
+
+      const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
+
+      const { transaction, tokenId } = await createSale1155(
+        url,
+        totalSupply,
+        price
+      );
+
+      router.push("/searchPage");
+    } catch (error) {
+      setError("Error while creating NFT1155");
+      setOpenError(true);
+    }
+  };
+
   const createSale1155 = async (url, totalSupply, formInputPrice) => {
     try {
       const price = ethers.utils.parseUnits(formInputPrice.toString(), 18);
-
-      console.log("Price:", price.toString());
 
       const nftCollection1155Contract =
         await connectToNftCollection1155Contract();
@@ -380,13 +367,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
         await connectingWithCustomTokenSmartContract();
 
       const listingPrice = await contract.getListingPrice();
-      console.log("listingPrice:", listingPrice);
+
       const approveListingPrice = ethers.utils.parseUnits(
         listingPrice.toString(),
         18
       );
-
-      console.log("Tesst 1");
 
       const approval = await customTokenContract.approve(
         contract.address,
@@ -395,15 +380,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       await approval.wait();
 
-      console.log("Tesst 2");
-
       const txApprove1155 = await nftCollection1155Contract.setApprovalForAll(
         contract.address,
         true
       );
 
       await txApprove1155.wait();
-      console.log("✅ Approved Marketplace to manage ERC1155 tokens");
 
       const transaction = await contract.createToken1155(
         url,
@@ -413,23 +395,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const txRecceipt = await transaction.wait();
 
-      console.log("txRecceipt:", txRecceipt);
+      const event = txRecceipt.events?.find(
+        (e) => e.event === "MarketItem1155Created"
+      );
 
-      // const event = txRecceipt.events?.find((e) => e.event === "Transfer");
-
-      // if (!event) {
-      //   console.error("Transfer event not found", txRecceipt.events);
-      //   return;
-      // }
-
-      // const tokenId = event.args.tokenId.toNumber();
-    } catch (error) {
-      console.error("❌ Error while creating sale1155:", error);
-      if (error.data && error.data.message) {
-        console.error("EVM Revert Reason:", error.data.message);
-      } else if (error.error && error.error.message) {
-        console.error("EVM Revert Reason:", error.error.message);
+      if (!event) {
+        console.error(
+          "MarketItem1155Created event not found",
+          txRecceipt.events
+        );
+        return;
       }
+
+      const tokenId = event.args.tokenId.toNumber();
+
+      return { transaction, tokenId };
+    } catch (error) {
       setError("Error while creating sale1155");
       setOpenError(true);
     }
@@ -502,8 +483,90 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchNFTs1155 = async () => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider();
+
+      const contract = fetchContract(provider);
+
+      const data = await contract.fetchMarketItems1155();
+
+      const items = await Promise.all(
+        data.map(
+          async ({
+            itemId,
+            nftContract,
+            tokenId,
+            amount,
+            amountAvailable,
+            totalPrice,
+            price,
+            seller,
+            owner,
+          }) => {
+            const nft = new ethers.Contract(
+              nftContract,
+              NFTCollection1155ABI,
+              provider
+            );
+            const tokenURI = await nft.uri(tokenId);
+
+            const { data } = await axios.get(tokenURI);
+
+            const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+            const {
+              pinataData,
+              name,
+              description,
+              category,
+              fileExtension,
+              fileSize,
+              createdAt,
+            } = metadata;
+
+            const totalPriceData = ethers.utils.formatUnits(
+              totalPrice.toString(),
+              "ether"
+            );
+
+            const priceData = ethers.utils.formatUnits(
+              price.toString(),
+              "ether"
+            );
+
+            return {
+              itemId: itemId.toString(),
+              price: priceData,
+              totalPrice: totalPriceData,
+              amount: amount.toString(),
+              amountAvailable: amountAvailable.toString(),
+              tokenId: tokenId.toString(),
+              seller,
+              owner,
+              pinataData,
+              name,
+              description,
+              tokenURI,
+              category,
+              fileExtension,
+              fileSize,
+              createdAt,
+            };
+          }
+        )
+      );
+
+      return items;
+    } catch (error) {
+      setError("Error while fetching NFTs");
+      setOpenError(true);
+    }
+  };
+
   useEffect(() => {
     fetchNFTs();
+    fetchNFTs1155();
   }, []);
 
   const fetchMyNFTsOrListedNFTs = async (type) => {
@@ -805,6 +868,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         uploadToIPFS,
         createNFT,
         fetchNFTs,
+        fetchNFTs1155,
         fetchMyNFTsOrListedNFTs,
         buyNFT,
         createSale,

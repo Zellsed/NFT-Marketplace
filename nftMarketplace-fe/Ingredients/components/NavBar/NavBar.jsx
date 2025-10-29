@@ -309,7 +309,7 @@ const NavBar = () => {
               }}
             >
               <span style={{ fontSize: "15px" }}>
-                {tokenWebBalance.toLocaleString(undefined, {
+                {tokenWebBalance?.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
                 })}

@@ -20,7 +20,7 @@ import {
 } from "react-icons/ti";
 import { BiTransferAlt, BiDollar } from "react-icons/bi";
 
-import Style from "./NFTDescription.module.css";
+import Style from "./NFTCollectionDescription.module.css";
 import images from "../../../img";
 import { Button } from "../../components/componentsindex";
 import {
@@ -33,7 +33,7 @@ import {
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 import axios from "axios";
 
-const NFTDescription = ({ nft, userInformation, user, token }) => {
+const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
   const [history, setHistory] = useState(true);
@@ -243,10 +243,36 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
               >
                 <small>Current Bid</small>
                 <p>
-                  {nft.price} ZELL{" "}
+                  {nft.totalPrice} ZELL{" "}
                   {/* <span>( ≈ ${Number(nft.price * usdPrice).toFixed(2)})</span> */}
                 </p>
               </div>
+            </div>
+
+            <div
+              className={Style.NFTDescription_box_profile_biding_box_quantity}
+            >
+              <small className={Style.quantity_title}>Quantity</small>
+              <div className={Style.quantity_box}>
+                <div className={Style.quantity_item}>
+                  <small>Available</small>
+                  <p>{nft.amountAvailable || 0}</p>
+                </div>
+                <div className={Style.quantity_divider}></div>
+                <div className={Style.quantity_item}>
+                  <small>Total</small>
+                  <p>{nft.amount || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={
+                Style.NFTDescription_box_profile_biding_box_pricePerItem
+              }
+            >
+              <small>Price per NFT</small>
+              <p>{nft.price} ZELL </p>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
@@ -302,4 +328,4 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   );
 };
 
-export default NFTDescription;
+export default NFTCollectionDescription;

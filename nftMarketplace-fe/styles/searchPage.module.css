@@ -1,3 +1,13 @@
+.searchPage {
+  width: 100%;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+}
+
 .banner_container {
   width: 80%;
   margin: 0 auto;
@@ -14,5 +24,46 @@
 @media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
   .banner_container {
     width: 90%;
+  }
+}
+
+.sectionTitle {
+  width: 100%;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin: 2rem 0 1rem 0;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.noNFTText {
+  width: 100%;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #aaa;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.sectionTitle,
+.noNFTText {
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .searchPage {
+    padding: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.3rem;
+  }
+
+  .noNFTText {
+    font-size: 1rem;
   }
 }

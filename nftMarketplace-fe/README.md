@@ -5,6 +5,10 @@
 ```shell
 npx hardhat node
 
+npx hardhat clean
+
+npx hardhat compile
+
 npx hardhat run scripts/deploy.js --network localhost
 
 npx hardhat run scripts/deploy.js --network sepolia_ETH

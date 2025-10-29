@@ -2,7 +2,16 @@ require("@nomicfoundation/hardhat-toolbox");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.27",
+  // solidity: "0.8.27",
+  solidity: {
+    version: "0.8.27",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   networks: {
     // sepolia_ETH: {
     //   url: "https://eth-sepolia.g.alchemy.com/v2/XbTCI1sk-nWg_2lJu90LU9FjQS6I94qj",

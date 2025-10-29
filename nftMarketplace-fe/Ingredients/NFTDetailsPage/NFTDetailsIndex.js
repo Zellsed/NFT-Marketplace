@@ -4,6 +4,7 @@ import NFTTabs from "./NFTTabs/NFTTabs";
 import NFTBidHistory from "./NFTBidHistory/NFTBidHistory";
 import NFTBidProvance from "./NFTBidProvance/NFTBidProvance";
 import NFTBidOwner from "./NFTBidOwner/NFTBidOwner";
+import NFTCollectionDescription from "./NFTDescription/NFTCollectionDescription";
 
 export {
   NFTDescription,
@@ -12,4 +13,5 @@ export {
   NFTBidHistory,
   NFTBidProvance,
   NFTBidOwner,
+  NFTCollectionDescription,
 };

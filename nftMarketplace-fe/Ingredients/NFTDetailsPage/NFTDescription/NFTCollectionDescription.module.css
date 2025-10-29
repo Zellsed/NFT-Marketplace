@@ -132,6 +132,79 @@
   justify-content: space-between;
 }
 
+.NFTDescription_box_profile_biding_box_quantity {
+  margin-top: 1.5rem;
+  border: 2px solid var(--icons-color, #3b82f6);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.quantity_title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--icons-color, #3b82f6);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quantity_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.quantity_item {
+  flex: 1;
+  padding: 0.8rem 1rem;
+}
+
+.quantity_item small {
+  display: block;
+  color: #bbb;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.quantity_item p {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.quantity_divider {
+  width: 1px;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem {
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 10px 20px;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem small {
+  display: block;
+  color: #ffd700;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem p {
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+}
+
 .NFTDescription_box_profile_biding_box_price_bid {
   flex: 1;
   border: 2px solid var(--icons-color, #3b82f6);

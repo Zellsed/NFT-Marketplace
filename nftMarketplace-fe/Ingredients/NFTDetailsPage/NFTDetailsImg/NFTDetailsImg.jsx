@@ -15,36 +15,32 @@ const NFTDetailsImg = ({ nft, token }) => {
   const [likeCount, setLikeCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const openDescription = () => setDescription((prev) => !prev);
-  const openDetails = () => setDetails((prev) => !prev);
+  const toggleDescription = () => setDescription((prev) => !prev);
+  const toggleDetails = () => setDetails((prev) => !prev);
 
   const likeNFT = async () => {
     if (isLoading) return;
-
     setIsLoading(true);
 
-    const previousLikeStatus = likeStatus;
-    const previousLikeCount = likeCount;
+    const prevLiked = likeStatus;
+    const prevCount = likeCount;
 
-    setLikeStatus(!previousLikeStatus);
-    setLikeCount(previousLikeStatus ? likeCount - 1 : likeCount + 1);
+    setLikeStatus(!prevLiked);
+    setLikeCount(prevLiked ? likeCount - 1 : likeCount + 1);
 
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/like-user`,
         { nftId: nft.tokenId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setLikeStatus(response.data.liked);
-      setLikeCount(
-        response.data.liked ? previousLikeCount + 1 : previousLikeCount - 1
-      );
+      setLikeStatus(res.data.liked);
+      setLikeCount(res.data.liked ? prevCount + 1 : prevCount - 1);
     } catch (error) {
       console.error("Error liking NFT:", error);
-
-      setLikeStatus(previousLikeStatus);
-      setLikeCount(previousLikeCount);
+      setLikeStatus(prevLiked);
+      setLikeCount(prevCount);
     }
 
     setIsLoading(false);
@@ -53,119 +49,107 @@ const NFTDetailsImg = ({ nft, token }) => {
   useEffect(() => {
     if (!nft?.tokenId) return;
 
-    const fetchNftData = async () => {
+    const fetchLikeData = async () => {
       try {
-        const likeResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/nft-likes?id=${nft.tokenId}`
-        );
+        const [countRes, statusRes] = await Promise.all([
+          axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/nft-likes?id=${nft.tokenId}`
+          ),
+          axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/like-status?id=${nft.tokenId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
 
-        setLikeCount(likeResponse.data.likeCount);
-
-        const statusResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/like-status?id=${nft.tokenId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        setLikeStatus(statusResponse.data.exists);
+        setLikeCount(countRes.data.likeCount);
+        setLikeStatus(statusRes.data.exists);
       } catch (error) {
-        console.error("Error fetching NFT data:", error);
+        console.error("Error fetching like data:", error);
       }
     };
 
-    fetchNftData();
-  }, [nft?.tokenId]);
+    fetchLikeData();
+  }, [nft?.tokenId, token]);
 
   return (
     <div className={Style.NFTDetailsImg}>
       <div className={Style.NFTDetailsImg_box}>
-        <div className={Style.NFTDetailsImg_box_NFT}>
-          <div className={Style.NFTDetailsImg_box_NFT_like}>
-            <h3>{nft.category}</h3>
+        <div className={Style.NFTDetailsImg_header}>
+          <h3 className={Style.NFTCategory}>{nft.category}</h3>
 
-            <p
-              onClick={likeNFT}
-              style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
-            >
-              {likeStatus ? (
-                <AiFillHeart
-                  className={Style.NFTDetailsImg_box_NFT_like_icon}
-                />
-              ) : (
-                <AiOutlineHeart
-                  className={Style.NFTDetailsImg_box_NFT_like_icon}
-                />
-              )}
-              <span>{likeCount}</span>
-            </p>
-          </div>
-
-          <div className={Style.NFTDetailsImg_box_NFT_img}>
-            {["mp4", "webm"].includes(nft.fileExtension) ? (
-              <video
-                controls
-                autoPlay
-                muted
-                loop
-                className={Style.NFTDetailsImg_box_NFT_img_img}
-              >
-                <source
-                  src={nft.pinataData}
-                  type={`video/${nft.fileExtension}`}
-                />
-              </video>
-            ) : ["mp3", "wav", "ogg"].includes(nft.fileExtension) ? (
-              <audio
-                controls
-                className={Style.NFTCardTwo_box_NFT_audio_element}
-              >
-                <source
-                  src={nft.pinataData}
-                  type={`audio/${nft.fileExtension}`}
-                />
-              </audio>
-            ) : (
-              <Image
-                src={nft.pinataData}
-                alt="NFT image"
-                width={800}
-                height={800}
-                objectFit="cover"
-                className={Style.NFTDetailsImg_box_NFT_img_img}
-              />
-            )}
+          <div
+            className={`${Style.likeButton} ${likeStatus ? Style.liked : ""} ${
+              isLoading ? Style.disabled : ""
+            }`}
+            onClick={likeNFT}
+          >
+            {likeStatus ? <AiFillHeart /> : <AiOutlineHeart />}
+            <span>{likeCount}</span>
           </div>
         </div>
 
+        <div className={Style.NFTDetailsImg_media}>
+          {["mp4", "webm"].includes(nft.fileExtension) ? (
+            <video controls autoPlay muted loop className={Style.NFTMedia}>
+              <source
+                src={nft.pinataData}
+                type={`video/${nft.fileExtension}`}
+              />
+            </video>
+          ) : ["mp3", "wav", "ogg"].includes(nft.fileExtension) ? (
+            <audio controls className={Style.NFTAudio}>
+              <source
+                src={nft.pinataData}
+                type={`audio/${nft.fileExtension}`}
+              />
+            </audio>
+          ) : (
+            <Image
+              src={nft.pinataData}
+              alt="NFT image"
+              width={800}
+              height={800}
+              className={Style.NFTMedia}
+            />
+          )}
+        </div>
+
+        <div className={Style.NFTMetaInfo}>
+          <h2 className={Style.NFTName}>
+            {nft.name.length > 20 ? nft.name.slice(0, 20) + "..." : nft.name}
+          </h2>
+        </div>
+
         <div
-          className={Style.NFTDetailsImg_box_description}
-          onClick={openDescription}
+          className={Style.NFTDetailsImg_section}
+          onClick={toggleDescription}
         >
           <p>Description</p>
           {description ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
         {description && (
-          <div className={Style.NFTDetailsImg_box_description_box}>
+          <div className={Style.NFTDetailsImg_content}>
             <p>{nft.description}</p>
           </div>
         )}
 
-        <div className={Style.NFTDetailsImg_box_details} onClick={openDetails}>
+        <div className={Style.NFTDetailsImg_section} onClick={toggleDetails}>
           <p>Details</p>
           {details ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
         {details && (
-          <div className={Style.NFTDetailsImg_box_details_box}>
+          <div className={Style.NFTDetailsImg_content}>
             <p>
               <small>File Size:</small> {nft.fileSize} MB
             </p>
             <p>
-              <small>File Extension:</small> {nft.fileExtension}
+              <small>File Type:</small> {nft.fileExtension}
             </p>
             <p>
-              <small>NFT Owner:</small> {nft.owner}
+              <small>Owner:</small> {nft.owner}
             </p>
             <p>
-              <small>NFT Seller:</small> {nft.seller}
+              <small>Seller:</small> {nft.seller}
             </p>
             <p>
               <small>Token ID:</small> {nft.tokenId}
