@@ -416,69 +416,183 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const reSellToken1155 = async (tokenURI, quantity, price, id) => {
-    console.log("quantity", quantity);
-    console.log("price", price);
-    console.log("id", id);
-    try {
-      if (!id || !quantity || !price) {
-        throw new Error("Missing parameters for resell");
-      }
+  // const reSellToken1155 = async (tokenURI, quantity, price, id) => {
+  //   console.log("quantity", quantity);
+  //   console.log("price", price);
+  //   console.log("id", id);
+  //   try {
+  //     if (!id || !quantity || !price) {
+  //       throw new Error("Missing parameters for resell");
+  //     }
 
-      const nftCollection1155Contract =
-        await connectToNftCollection1155Contract();
-      const contract = await connectingWithSmartContract();
-      const customTokenContract =
-        await connectingWithCustomTokenSmartContract();
+  //     const nftCollection1155Contract =
+  //       await connectToNftCollection1155Contract();
+  //     const contract = await connectingWithSmartContract();
+  //     const customTokenContract =
+  //       await connectingWithCustomTokenSmartContract();
 
-      const newPrice = ethers.utils.parseUnits(price.toString(), 18);
+  //     const newPrice = ethers.utils.parseUnits(price.toString(), 18);
 
-      const listingPrice = await contract.getListingPrice();
+  //     const listingPrice = await contract.getListingPrice();
 
-      const approvalFee = await customTokenContract.approve(
-        contract.address,
-        listingPrice
-      );
-      await approvalFee.wait();
+  //     const approvalFee = await customTokenContract.approve(
+  //       contract.address,
+  //       listingPrice
+  //     );
+  //     await approvalFee.wait();
 
-      const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
-        contract.address,
-        true
-      );
-      await txApproveNFT.wait();
+  //     const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
+  //       contract.address,
+  //       true
+  //     );
+  //     await txApproveNFT.wait();
 
-      const transaction = await contract.reSellToken1155(
-        id,
-        quantity,
-        newPrice
-      );
+  //     const transaction = await contract.reSellToken1155(
+  //       id,
+  //       quantity,
+  //       newPrice
+  //     );
 
-      const receipt = await transaction.wait();
+  //     const receipt = await transaction.wait();
 
-      console.log("receipt", receipt);
+  //     console.log("receipt", receipt);
 
-      const event = receipt.events?.find(
-        (e) => e.event === "MarketItem1155Created"
-      );
+  //     const event = receipt.events?.find(
+  //       (e) => e.event === "MarketItem1155Created"
+  //     );
 
-      if (!event) {
-        console.warn("Event MarketItem1155Created not found", receipt.events);
-        return;
-      }
+  //     if (!event) {
+  //       console.warn("Event MarketItem1155Created not found", receipt.events);
+  //       return;
+  //     }
 
-      const newItemId = event.args.itemId.toNumber();
-      const resellPrice = ethers.utils.formatUnits(newPrice, 18);
+  //     const newItemId = event.args.itemId.toNumber();
+  //     const resellPrice = ethers.utils.formatUnits(newPrice, 18);
 
-      console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
-      console.log(
-        `TokenId: ${tokenId}, Amount: ${sellAmount}, Price: ${resellPrice} WEB`
-      );
+  //     console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
+  //     console.log(
+  //       `TokenId: ${tokenId}, Amount: ${sellAmount}, Price: ${resellPrice} WEB`
+  //     );
 
-      // return { transaction, newItemId };
-    } catch (error) {
-      setError("Error while creating sale1155");
-      setOpenError(true);
-    }
+  //     // return { transaction, newItemId };
+  //   } catch (error) {
+  //     setError("Error while creating sale1155");
+  //     setOpenError(true);
+  //   }
+  // };
+
+  const reSellToken1155 = async (id, quantity, price) => {
+    console.log("🟩 Start reSellToken1155");
+    console.log("➡️ Params:", { id, quantity, price });
+
+    // try {
+    //   if (!id || !quantity || !price) {
+    //     throw new Error("❌ Missing parameters for resell");
+    //   }
+
+    //   // 1️⃣ Kết nối các contract
+    //   console.log("🔹 Connecting to contracts...");
+    //   const nftCollection1155Contract =
+    //     await connectToNftCollection1155Contract();
+    //   const contract = await connectingWithSmartContract();
+    //   const customTokenContract =
+    //     await connectingWithCustomTokenSmartContract();
+
+    //   if (!contract || !customTokenContract || !nftCollection1155Contract) {
+    //     throw new Error("❌ Failed to connect to contracts");
+    //   }
+
+    //   console.log("✅ Connected to contracts");
+    //   console.log("🪙 Marketplace contract:", contract.address);
+    //   console.log("🪙 NFT1155 contract:", nftCollection1155Contract.address);
+
+    //   // 2️⃣ Chuyển đổi giá
+    //   const newPrice = ethers.utils.parseUnits(price.toString(), 18);
+    //   console.log("💰 New price (wei):", newPrice.toString());
+
+    //   // 3️⃣ Lấy phí listing
+    //   const listingPrice = await contract.getListingPrice();
+    //   console.log("💸 Listing price (wei):", listingPrice.toString());
+
+    //   // 4️⃣ Approve token WEB cho marketplace
+    //   console.log("🔹 Approving marketplace to spend WEB tokens...");
+    //   const approvalFee = await customTokenContract.approve(
+    //     contract.address,
+    //     listingPrice
+    //   );
+    //   console.log("🕒 Waiting for approvalFee tx to confirm...");
+    //   const approvalFeeReceipt = await approvalFee.wait();
+    //   console.log("✅ WEB token approved:", approvalFeeReceipt.transactionHash);
+
+    //   // 5️⃣ Approve NFT1155 cho marketplace
+    //   console.log("🔹 Approving NFT1155 for marketplace...");
+    //   const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
+    //     contract.address,
+    //     true
+    //   );
+    //   console.log("🕒 Waiting for setApprovalForAll...");
+    //   const approveNFTReceipt = await txApproveNFT.wait();
+    //   console.log(
+    //     "✅ NFT1155 approval done:",
+    //     approveNFTReceipt.transactionHash
+    //   );
+
+    //   // 6️⃣ Gọi hàm reSellToken1155 trên smart contract
+    //   console.log("🚀 Calling reSellToken1155 on smart contract...");
+    //   console.log("📦 Params:", {
+    //     id,
+    //     quantity,
+    //     newPrice: newPrice.toString(),
+    //   });
+
+    //   const transaction = await contract.reSellToken1155(
+    //     id,
+    //     quantity,
+    //     newPrice
+    //   );
+
+    //   console.log("🕒 Waiting for transaction confirmation...");
+    //   const receipt = await transaction.wait();
+
+    //   console.log("✅ Transaction confirmed:", receipt.transactionHash);
+    //   console.log("🧾 Full receipt:", receipt);
+
+    //   // 7️⃣ Kiểm tra event phát ra
+    //   const event = receipt.events?.find(
+    //     (e) => e.event === "MarketItem1155Created"
+    //   );
+
+    //   if (!event) {
+    //     console.warn(
+    //       "⚠️ Event MarketItem1155Created not found",
+    //       receipt.events
+    //     );
+    //     return;
+    //   }
+
+    //   const newItemId = event.args.itemId.toNumber();
+    //   const resellPrice = ethers.utils.formatUnits(newPrice, 18);
+
+    //   console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
+    //   console.log(
+    //     `TokenId: ${id}, Amount: ${quantity}, Price: ${resellPrice} WEB`
+    //   );
+
+    //   // return { transaction, newItemId };
+    // } catch (error) {
+    //   console.error("❌ Error in reSellToken1155:", error);
+
+    //   // Nếu là lỗi RPC từ MetaMask hoặc Hardhat
+    //   if (error.data) {
+    //     console.error("🔍 Revert reason:", error.data.message || error.data);
+    //   }
+    //   if (error.reason) {
+    //     console.error("🔍 Error reason:", error.reason);
+    //   }
+
+    //   setError(`Error while creating sale1155: ${error.message}`);
+    //   setOpenError(true);
+    // }
   };
 
   const fetchNFTs = async () => {

@@ -20,7 +20,13 @@ const ReSellToken = () => {
   const [balance, setBalance] = useState(0);
 
   const router = useRouter();
-  const { id, tokenURI, tokenQuantity, token } = router.query;
+  const { id, tokenURI, tokenQuantity, nftData, token } = router.query;
+
+  console.log("id", id);
+  console.log("tokenURI", tokenURI);
+  console.log("tokenQuantity", tokenQuantity);
+  console.log("nftData", nftData);
+  console.log("token", token);
 
   const fetchNFT = async () => {
     if (!tokenURI) return;
@@ -55,7 +61,7 @@ const ReSellToken = () => {
         return;
       }
 
-      await reSellToken1155(tokenURI, quantity, price, true, id);
+      await reSellToken1155(id, quantity, price);
       // router.push("/author");
     } catch (error) {
       console.log("Error while resell", error);

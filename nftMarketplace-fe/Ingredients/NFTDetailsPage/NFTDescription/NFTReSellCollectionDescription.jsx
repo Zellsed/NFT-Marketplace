@@ -39,6 +39,7 @@ const NFTReSellCollectionDescription = ({
   user,
   token,
 }) => {
+  console.log("nft", nft);
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
   const [history, setHistory] = useState(true);
@@ -269,7 +270,7 @@ const NFTReSellCollectionDescription = ({
                 btnName="List on Marketplace"
                 onClick={() =>
                   router.push(
-                    `/reSellToken1155?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&tokenQuantity=${nft.balance}&token=${token}`
+                    `/reSellToken1155?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&tokenQuantity=${nft.balance}&nftData=${nft}&token=${token}`
                   )
                 }
                 classStyle={Style.button}
