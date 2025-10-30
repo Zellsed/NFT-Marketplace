@@ -190,7 +190,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         _itemIds1155.increment();
         itemId = _itemIds1155.current();
 
-        uint256 _price = _pricePerToken / _totalSupply;
+        uint256 _price = _pricePerToken * _totalSupply;
 
         idMarketItem1155[itemId] = MarketItem1155({
             itemId: itemId,
@@ -198,20 +198,23 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
             tokenId: tokenId,
             amount: _totalSupply,
             amountAvailable: _totalSupply,
-            totalPrice: _pricePerToken,
-            price: _price,
+            totalPrice: _price,
+            price: _pricePerToken,
             seller: payable(msg.sender),
             owner: payable(address(this)),
             sold: false
         });
+
+        activeListings[itemId] = true;
+        userListings1155[msg.sender].push(itemId);
 
         emit MarketItem1155Created(
             itemId,
             tokenId,
             _totalSupply,
             _totalSupply,
-            _pricePerToken,
             _price,
+            _pricePerToken,
             msg.sender,
             address(this)
         );
@@ -349,10 +352,10 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
             itemId: newItemId,
             nftContract: nftCollection1155,
             tokenId: _tokenId,
-            amount: _sellAmount,
-            amountAvailable: _sellAmount,
-            totalPrice: _newPrice,
-            price: _newPrice / _sellAmount,
+            amount: userBalance,
+            amountAvailable: userBalance - _sellAmount,
+            totalPrice: _newPrice * _sellAmount,
+            price: _newPrice,
             seller: payable(msg.sender),
             owner: payable(address(this)),
             sold: false
@@ -364,10 +367,10 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         emit MarketItem1155Created(
             newItemId,
             _tokenId,
-            _sellAmount,
-            _sellAmount,
+            userBalance,
+            userBalance - _sellAmount,
+            _newPrice * _sellAmount,
             _newPrice,
-            _newPrice / _sellAmount,
             msg.sender,
             address(this)
         );
@@ -391,41 +394,6 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
                 currentIndex += 1;
             }
         }
-        return items;
-    }
-
-    function fetchMarketItems1155()
-        public
-        view
-        returns (MarketItem1155[] memory)
-    {
-        uint256 itemCount = _itemIds1155.current();
-        uint256 availableCount = 0;
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            if (
-                activeListings[i] &&
-                idMarketItem1155[i].amountAvailable > 0 &&
-                !idMarketItem1155[i].sold
-            ) {
-                availableCount++;
-            }
-        }
-
-        MarketItem1155[] memory items = new MarketItem1155[](availableCount);
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            if (
-                activeListings[i] &&
-                idMarketItem1155[i].amountAvailable > 0 &&
-                !idMarketItem1155[i].sold
-            ) {
-                items[currentIndex] = idMarketItem1155[i];
-                currentIndex++;
-            }
-        }
-
         return items;
     }
 
@@ -456,30 +424,6 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         return items;
     }
 
-    function fetchMyNFTs1155() public view returns (MarketItem1155[] memory) {
-        uint256 itemCount = _itemIds1155.current();
-
-        mapping(uint256 => bool) memory processedTokens;
-        uint256 uniqueCount = 0;
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            uint256 tokenId = idMarketItem1155[i].tokenId;
-            if (!processedTokens[tokenId]) {
-                uint256 balance = IERC1155(nftCollection1155).balanceOf(
-                    user,
-                    tokenId
-                );
-                if (balance > 0) {
-                    uniqueCount++;
-                    processedTokens[tokenId] = true;
-                }
-            }
-        }
-
-        OwnedNFT[] memory ownedNFTs = new OwnedNFT[](uniqueCount);
-        uint256 currentIndex = 0;
-    }
-
     function fetchItemsListed() public view returns (MarketItem[] memory) {
         uint256 totalCount = _tokenIds.current();
         uint256 itemCount = 0;
@@ -507,30 +451,28 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         return items;
     }
 
-    function fetchItemsListed1155()
+    function fetchMarketItems1155()
         public
         view
         returns (MarketItem1155[] memory)
     {
         uint256 itemCount = _itemIds1155.current();
-        uint256 listedCount = 0;
+        uint256 availableCount = 0;
+
+        for (uint256 i = 1; i <= itemCount; i++) {
+            if (
+                idMarketItem1155[i].amountAvailable > 0 &&
+                !idMarketItem1155[i].sold
+            ) {
+                availableCount++;
+            }
+        }
+
+        MarketItem1155[] memory items = new MarketItem1155[](availableCount);
         uint256 currentIndex = 0;
 
         for (uint256 i = 1; i <= itemCount; i++) {
             if (
-                idMarketItem1155[i].seller == msg.sender &&
-                idMarketItem1155[i].amountAvailable > 0 &&
-                !idMarketItem1155[i].sold
-            ) {
-                listedCount++;
-            }
-        }
-
-        MarketItem1155[] memory items = new MarketItem1155[](listedCount);
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            if (
-                idMarketItem1155[i].seller == msg.sender &&
                 idMarketItem1155[i].amountAvailable > 0 &&
                 !idMarketItem1155[i].sold
             ) {

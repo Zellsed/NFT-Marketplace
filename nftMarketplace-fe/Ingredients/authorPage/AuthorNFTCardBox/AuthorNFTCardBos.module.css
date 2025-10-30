@@ -6,16 +6,97 @@
 .AuthorNFTCardBox_box {
   width: 80%;
   margin: 0 auto;
-
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
+}
+
+.mainTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--icons-color);
+  margin: 2rem 0;
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--icons-color);
+}
+
+.nftSections {
+  width: 100%;
+}
+
+.nftSection {
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--icons-color);
+  margin: 3rem 0 1.5rem 0;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--shadow-dark-color);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--icons-color);
+  font-size: 1.2rem;
+  background-color: var(--main-bg-color);
+  border-radius: 1rem;
+  margin: 2rem auto;
+  width: 80%;
+  box-shadow: 0px 2px 5px var(--icons-color);
+}
+
+.noNFTText {
+  text-align: center;
+  color: var(--icons-color);
+  font-size: 1.1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: var(--main-bg-color);
+  border-radius: 0.5rem;
+  font-style: italic;
+}
+
+.debugInfo {
+  text-align: left;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: var(--shadow-dark-color);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.debugInfo p {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.debugInfo ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.debugInfo li {
+  margin-bottom: 0.3rem;
 }
 
 @media screen and (max-width: 35em) {
   .AuthorNFTCardBox_box {
     width: 90%;
     grid-template-columns: 1fr;
+  }
+
+  .mainTitle {
+    font-size: 2rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
   }
 }
 

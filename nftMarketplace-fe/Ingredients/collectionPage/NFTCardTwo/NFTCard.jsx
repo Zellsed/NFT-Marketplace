@@ -8,11 +8,14 @@ import { format } from "timeago.js";
 import Style from "./NFTCollectionCardTwo.module.css";
 import { LikeProfile } from "../../components/componentsindex";
 
-const NFTCardTwo = ({ NFTData }) => {
+const NFTCard = ({ NFTData }) => {
   return (
     <div className={Style.NFTCardTwo}>
       {NFTData?.filter((el) => el !== null).map((el, i) => (
-        <Link href={{ pathname: "/NFTCollection-details", query: el }} key={i}>
+        <Link
+          href={{ pathname: "/NFTReSellCollection-details", query: el }}
+          key={i}
+        >
           <div className={Style.NFTCardTwo_box} key={i + 1}>
             <div className={Style.NFTCardTwo_box_like}>
               <div className={Style.NFTCardTwo_box_like_box}>
@@ -80,9 +83,9 @@ const NFTCardTwo = ({ NFTData }) => {
                 <small>Current Bid</small>
                 <p>{el.price} ZELL</p>
 
-                {el.amountAvailable && (
+                {el.balance && (
                   <span className={Style.NFTCardTwo_box_price_amount}>
-                    Quantity: {el.amountAvailable}
+                    Quantity: {el.balance}
                   </span>
                 )}
               </div>
@@ -98,4 +101,4 @@ const NFTCardTwo = ({ NFTData }) => {
   );
 };
 
-export default NFTCardTwo;
+export default NFTCard;

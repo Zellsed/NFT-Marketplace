@@ -1,0 +1,390 @@
+.NFTDescription {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: var(--text-color, #fff);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.NFTDescription_box {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.NFTDescription_box_share {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.NFTDescription_box_share p {
+  background: var(--icons-color, #3b82f6);
+  color: black;
+  padding: 0.6rem 1.2rem;
+  border-radius: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.NFTDescription_box_share_box {
+  gap: 1.8rem;
+  font-size: 1.5rem;
+}
+
+.NFTDescription_box_share_box_icon {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.NFTDescription_box_share_box_icon:hover {
+  color: var(--icons-color, #3b82f6);
+  transform: rotate(90deg);
+}
+
+.NFTDescription_box_share_box_social {
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  width: 12rem;
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.NFTDescription_box_share_box_social a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.NFTDescription_box_share_box_social a:hover {
+  background: var(--icons-color, #3b82f6);
+  color: #fff;
+}
+
+.NFTDescription_box_profile h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin: 1.2rem 0;
+  color: #fff;
+}
+
+.NFTDescription_box_profile_box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+.NFTDescription_box_profile_box_left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.NFTDescription_box_profile_box_left_img {
+  border-radius: 50%;
+  border: 2px solid var(--icons-color, #3b82f6);
+}
+
+.NFTDescription_box_profile_box_left_info small {
+  font-size: 1rem;
+  color: #bbb;
+}
+
+.NFTDescription_box_profile_box_left_info span {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.NFTDescription_box_profile_box_left_info span:hover {
+  color: var(--icons-color, #3b82f6);
+}
+
+/* --- BIDDING SECTION --- */
+.NFTDescription_box_profile_biding {
+  margin-top: 1.5rem;
+  line-height: 1.6;
+}
+
+.NFTDescription_box_profile_biding p {
+  font-size: 1.1rem;
+  color: #ccc;
+}
+
+.NFTDescription_box_profile_biding_box_price {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.NFTDescription_box_profile_biding_box_quantity {
+  margin-top: 1.5rem;
+  border: 2px solid var(--icons-color, #3b82f6);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.quantity_title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--icons-color, #3b82f6);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quantity_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.quantity_item {
+  flex: 1;
+  padding: 0.8rem 1rem;
+}
+
+.quantity_item small {
+  display: block;
+  color: #bbb;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.quantity_item p {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.quantity_divider {
+  width: 1px;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem {
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 10px 20px;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem small {
+  display: block;
+  color: #ffd700;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.NFTDescription_box_profile_biding_box_pricePerItem p {
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+}
+
+.NFTDescription_box_profile_biding_box_price_bid {
+  flex: 1;
+  border: 2px solid var(--icons-color, #3b82f6);
+  border-radius: 0.8rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.NFTDescription_box_profile_biding_box_price_bid small {
+  font-size: 1rem;
+  color: var(--icons-color, #3b82f6);
+}
+
+.NFTDescription_box_profile_biding_box_price_bid p {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.NFTDescription_box_profile_biding_box_button {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.button {
+  padding: 1.1rem 2.3rem;
+  background: var(--icons-color, #3b82f6);
+  /* color: white; */
+  color: black;
+  border-radius: 2.2rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: background 0.2s ease;
+}
+.button:hover {
+  background: #2563eb;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modalContent {
+  background: #111;
+  border: 1px solid #ffd700;
+  border-radius: 16px;
+  padding: 30px 40px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.modalContent h3 {
+  color: #ffd700;
+  margin-bottom: 10px;
+}
+
+.modalContent p {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.inputQuantity {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ffd700;
+  background: #222;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+.inputQuantity:focus {
+  border-color: #fff;
+}
+
+.modalButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: none;
+  color: #ff4d4f;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  text-decoration: underline;
+}
+
+.NFTDescription_box_profile_biding_box_tabs {
+  margin-top: 3rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.NFTDescription_box_profile_biding_box_tabs button {
+  font-size: 1rem;
+  padding: 0.8rem 1.7rem;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.NFTDescription_box_profile_biding_box_tabs button:hover {
+  border-color: var(--icons-color, #3b82f6);
+  color: var(--icons-color, #3b82f6);
+}
+
+.NFTDescription_box_profile_biding_box_card {
+  margin-top: 1.8rem;
+  padding: 1.8rem;
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.05rem;
+}
+
+@media screen and (max-width: 768px) {
+  .NFTDescription {
+    padding: 1.2rem;
+    font-size: 1rem;
+  }
+
+  .NFTDescription_box_profile h1 {
+    font-size: 2rem;
+  }
+
+  .NFTDescription_box_profile_box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .NFTDescription_box_profile_biding_box_price {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .NFTDescription_box_profile_biding_box_tabs button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,193 @@
+.reSellToken {
+  width: 100%;
+  min-height: 100vh;
+  padding: 4rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0d0d0d;
+}
+
+.reSellToken_container {
+  display: flex;
+  gap: 3rem;
+  background: #1a1a1a;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 80%;
+  max-width: 1200px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.reSellToken_preview {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview_image,
+.preview_media {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 1rem;
+  border: 2px solid #2e2e2e;
+  object-fit: cover;
+}
+
+.preview_audio {
+  width: 100%;
+  border-radius: 1rem;
+  background: #222;
+}
+
+.reSellToken_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f9f9f9;
+  margin-bottom: 1rem;
+}
+
+.reSellToken_info h2 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.desc {
+  color: #ccc;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.details {
+  margin-top: 1rem;
+  color: #bfbfbf;
+  font-size: 1rem;
+}
+
+.quantityInput {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quantityInput label {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.quantityInput input {
+  width: 50%;
+  min-width: 150px;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #333;
+  background: linear-gradient(145deg, #111, #1a1a1a);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.quantityInput input:hover {
+  border-color: #00c4ff;
+}
+
+.quantityInput input:focus {
+  border-color: #00c4ff;
+  box-shadow: 0 0 10px rgba(0, 196, 255, 0.5);
+}
+
+.priceInput {
+  margin-top: 2rem;
+}
+
+.priceInput label {
+  display: block;
+  color: #ddd;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.priceField {
+  position: relative;
+}
+
+.priceField input {
+  width: 100%;
+  padding: 0.8rem 2.5rem 0.8rem 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid #333;
+  background: #0e0e0e;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.ethIcon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00c4ff;
+  font-size: 1.2rem;
+}
+
+.resellBtn {
+  margin-top: 2rem;
+  background: linear-gradient(90deg, #00c4ff, #7d2cff);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.resellBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0, 196, 255, 0.4);
+}
+
+@media screen and (max-width: 900px) {
+  .reSellToken_container {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .reSellToken_preview {
+    width: 100%;
+  }
+
+  .preview_image,
+  .preview_media {
+    max-width: 100%;
+  }
+
+  .quantityInput input {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 500px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .reSellToken_info h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -9,21 +9,21 @@ import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 import Style from "../styles/reSellToken1155.module.css";
 
 const ReSellToken = () => {
-  const { createSale } = useContext(NFTMarketplaceContext);
-
+  const { reSellToken1155 } = useContext(NFTMarketplaceContext);
   const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [image, setImage] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [fileExtension, setExtension] = useState("");
   const [category, setCategory] = useState("");
+  const [balance, setBalance] = useState(0);
 
   const router = useRouter();
-  const { id, tokenURI, token } = router.query;
+  const { id, tokenURI, tokenQuantity, token } = router.query;
 
   const fetchNFT = async () => {
     if (!tokenURI) return;
-
     try {
       const { data } = await axios.get(tokenURI);
       const metadata = typeof data === "string" ? JSON.parse(data) : data;
@@ -33,42 +33,32 @@ const ReSellToken = () => {
       setDescription(metadata.description);
       setExtension(metadata.fileExtension);
       setCategory(metadata.category);
-    } catch (error) {
-      console.log("Error fetching NFT:", error);
+      setBalance(tokenQuantity || 0);
+    } catch (err) {
+      console.log("Error fetching NFT:", err);
     }
   };
 
   useEffect(() => {
-    if (router.isReady) fetchNFT();
-  }, [router.isReady, id]);
+    fetchNFT();
+  }, [id]);
 
   const resell = async () => {
     try {
-      const { transaction, tokenId } = await createSale(
-        tokenURI,
-        price,
-        true,
-        id
-      );
-
-      if (transaction) {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/resell-nft`,
-          {
-            tokenId: tokenId,
-            owner: transaction.to,
-            seller: transaction.from,
-            price: price,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      if (!price || price <= 0) {
+        alert("Please enter a valid price!");
+        return;
       }
 
-      router.push("/author");
+      if (!quantity || quantity <= 0 || quantity > balance) {
+        alert("Invalid quantity to sell!");
+        return;
+      }
+
+      await reSellToken1155(tokenURI, quantity, price, true, id);
+      // router.push("/author");
     } catch (error) {
-      console.log("Error while resell:", error);
+      console.log("Error while resell", error);
     }
   };
 
@@ -76,42 +66,52 @@ const ReSellToken = () => {
     <div className={Style.reSellToken}>
       <div className={Style.reSellToken_container}>
         <div className={Style.reSellToken_preview}>
-          {image ? (
-            fileExtension === "mp4" || fileExtension === "webm" ? (
-              <video controls className={Style.preview_media}>
-                <source src={image} type={`video/${fileExtension}`} />
-              </video>
-            ) : fileExtension === "mp3" ||
-              fileExtension === "wav" ||
-              fileExtension === "ogg" ? (
-              <audio controls className={Style.preview_audio}>
-                <source src={image} type={`audio/${fileExtension}`} />
-              </audio>
-            ) : (
-              <Image
-                src={image}
-                alt="NFT Preview"
-                width={500}
-                height={500}
-                className={Style.preview_image}
-              />
-            )
+          {fileExtension === "mp4" || fileExtension === "webm" ? (
+            <video controls className={Style.preview_media}>
+              <source src={image} type={`video/${fileExtension}`} />
+            </video>
+          ) : fileExtension === "mp3" ||
+            fileExtension === "wav" ||
+            fileExtension === "ogg" ? (
+            <audio controls className={Style.preview_audio}>
+              <source src={image} type={`audio/${fileExtension}`} />
+            </audio>
           ) : (
-            <p>Loading NFT preview...</p>
+            <Image
+              src={image}
+              alt="NFT"
+              width={500}
+              height={500}
+              className={Style.preview_image}
+            />
           )}
         </div>
 
         <div className={Style.reSellToken_info}>
-          <h1 className={Style.title}>Resell Your NFT</h1>
-          {name && <h2>{name}</h2>}
-          {description && <p className={Style.desc}>{description}</p>}
+          <h1 className={Style.title}>Resell NFT Collection</h1>
+          <h2>{name}</h2>
+          <p className={Style.desc}>{description}</p>
 
           <div className={Style.details}>
-            {category && (
-              <p>
-                <strong>Category:</strong> {category}
-              </p>
-            )}
+            <p>
+              <strong>Category:</strong> {category}
+            </p>
+            <p>
+              <strong>Available:</strong> {balance}
+            </p>
+          </div>
+
+          <div className={Style.quantityInput}>
+            <label htmlFor="quantity">Quantity to sell</label>
+            <input
+              id="quantity"
+              type="number"
+              min={1}
+              max={balance}
+              value={quantity}
+              placeholder="Enter quantity"
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
           </div>
 
           <div className={Style.priceInput}>
@@ -121,11 +121,9 @@ const ReSellToken = () => {
                 id="price"
                 type="number"
                 min={0.001}
-                step="0.001"
                 placeholder="Enter price (WEB)"
                 onChange={(e) => setPrice(e.target.value)}
               />
-              <FaEthereum className={Style.ethIcon} />
             </div>
           </div>
 

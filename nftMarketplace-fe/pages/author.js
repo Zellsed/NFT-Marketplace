@@ -53,7 +53,7 @@ const author = () => {
 
   const {
     fetchMyNFTsOrListedNFTs,
-    fetchMyNFTsCollectionOrListedNFTs,
+    fetchMyNFTsOrListedNFTs1155,
     currentAccount,
   } = useContext(NFTMarketplaceContext);
 
@@ -101,8 +101,8 @@ const author = () => {
       setNfts(item?.reverse());
     });
 
-    fetchMyNFTsCollectionOrListedNFTs("fetchItemsListed1155").then((item) => {
-      setNfts(item?.reverse());
+    fetchMyNFTsOrListedNFTs1155("fetchItemsListed").then((item) => {
+      setNfts1155(item?.reverse());
     });
   }, []);
 
@@ -111,8 +111,8 @@ const author = () => {
       setMyNfts(item?.reverse());
     });
 
-    fetchMyNFTsCollectionOrListedNFTs("fetchMyNFTs1155").then((item) => {
-      setNfts(item?.reverse());
+    fetchMyNFTsOrListedNFTs1155("fetchMyNFTs").then((item) => {
+      setMyNfts1155(item?.reverse());
     });
   }, []);
 

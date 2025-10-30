@@ -5,6 +5,8 @@ import NFTBidHistory from "./NFTBidHistory/NFTBidHistory";
 import NFTBidProvance from "./NFTBidProvance/NFTBidProvance";
 import NFTBidOwner from "./NFTBidOwner/NFTBidOwner";
 import NFTCollectionDescription from "./NFTDescription/NFTCollectionDescription";
+import NFTReSellCollectiondetailsDetailPage from "./NFTReSellCollectiondetailsDetailPage";
+import NFTReSellCollectionDescription from "./NFTDescription/NFTReSellCollectionDescription";
 
 export {
   NFTDescription,
@@ -14,4 +16,6 @@ export {
   NFTBidProvance,
   NFTBidOwner,
   NFTCollectionDescription,
+  NFTReSellCollectiondetailsDetailPage,
+  NFTReSellCollectionDescription,
 };
