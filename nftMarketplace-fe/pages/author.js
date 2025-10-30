@@ -51,12 +51,16 @@ const author = () => {
   const [follower, setFollower] = useState(false);
   const [following, setFollowing] = useState(false);
 
-  const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
-    NFTMarketplaceContext
-  );
+  const {
+    fetchMyNFTsOrListedNFTs,
+    fetchMyNFTsCollectionOrListedNFTs,
+    currentAccount,
+  } = useContext(NFTMarketplaceContext);
 
   const [nfts, setNfts] = useState([]);
   const [myNfts, setMyNfts] = useState([]);
+  const [nfts1155, setNfts1155] = useState([]);
+  const [myNfts1155, setMyNfts1155] = useState([]);
 
   const [token, setToken] = useState(null);
   const [data, setData] = useState({});
@@ -96,11 +100,19 @@ const author = () => {
     fetchMyNFTsOrListedNFTs("fetchItemsListed").then((item) => {
       setNfts(item?.reverse());
     });
+
+    fetchMyNFTsCollectionOrListedNFTs("fetchItemsListed1155").then((item) => {
+      setNfts(item?.reverse());
+    });
   }, []);
 
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((item) => {
       setMyNfts(item?.reverse());
+    });
+
+    fetchMyNFTsCollectionOrListedNFTs("fetchMyNFTs1155").then((item) => {
+      setNfts(item?.reverse());
     });
   }, []);
 
@@ -157,6 +169,8 @@ const author = () => {
         following={following}
         nfts={nfts}
         myNfts={myNfts}
+        nfts1155={nfts1155}
+        myNfts1155={myNfts1155}
         token={token}
       />
       <Title

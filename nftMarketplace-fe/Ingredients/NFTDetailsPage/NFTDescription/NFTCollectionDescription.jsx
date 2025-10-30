@@ -47,6 +47,9 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
 
   const [userAccount, setUserAccount] = useState("");
 
+  const [showQuantityInput, setShowQuantityInput] = useState(false);
+  const [buyQuantity, setBuyQuantity] = useState(0);
+
   const router = useRouter();
 
   const openNFTMenu = () => {
@@ -83,7 +86,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
     }
   };
 
-  const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext);
+  const { buyNFT1155, currentAccount } = useContext(NFTMarketplaceContext);
 
   const bidHistory = async () => {
     try {
@@ -242,10 +245,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                 }
               >
                 <small>Current Bid</small>
-                <p>
-                  {nft.totalPrice} ZELL{" "}
-                  {/* <span>( ≈ ${Number(nft.price * usdPrice).toFixed(2)})</span> */}
-                </p>
+                <p>{nft.totalPrice} ZELL </p>
               </div>
             </div>
 
@@ -277,7 +277,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
               {currentAccount == nft.seller?.toLowerCase() ? (
-                <p>You cannoy buy your own NFT</p>
+                <p>You cannot buy your own NFT</p>
               ) : currentAccount == nft.owner?.toLowerCase() ? (
                 <Button
                   icon=<FaWallet />
@@ -290,12 +290,60 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                   classStyle={Style.button}
                 />
               ) : (
-                <Button
-                  icon=<FaWallet />
-                  btnName="Buy NFT"
-                  onClick={() => buyNFT(nft, token)}
-                  classStyle={Style.button}
-                />
+                <>
+                  <Button
+                    icon=<FaWallet />
+                    btnName="Buy NFT"
+                    onClick={() => setShowQuantityInput(true)}
+                    classStyle={Style.button}
+                  />
+
+                  {showQuantityInput && (
+                    <div className={Style.modalOverlay}>
+                      <div className={Style.modalContent}>
+                        <h3>Buy NFT</h3>
+                        <p>Available: {nft.amountAvailable || 0}</p>
+
+                        <input
+                          type="number"
+                          min="1"
+                          max={nft.amountAvailable || 1}
+                          value={buyQuantity}
+                          onChange={(e) =>
+                            setBuyQuantity(Number(e.target.value))
+                          }
+                          className={Style.inputQuantity}
+                          placeholder="Enter quantity"
+                        />
+
+                        <div className={Style.modalButtons}>
+                          <Button
+                            icon=<FaWallet />
+                            btnName="Confirm Buy"
+                            onClick={() => {
+                              if (
+                                buyQuantity > 0 &&
+                                buyQuantity <= (nft.amountAvailable || 1)
+                              ) {
+                                buyNFT1155(nft, buyQuantity, token);
+                                setShowQuantityInput(false);
+                              } else {
+                                alert("Invalid quantity!");
+                              }
+                            }}
+                            classStyle={Style.button}
+                          />
+                          <button
+                            className={Style.cancelBtn}
+                            onClick={() => setShowQuantityInput(false)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 

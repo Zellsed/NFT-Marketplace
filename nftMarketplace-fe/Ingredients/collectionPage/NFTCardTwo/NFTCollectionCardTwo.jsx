@@ -9,7 +9,6 @@ import Style from "./NFTCollectionCardTwo.module.css";
 import { LikeProfile } from "../../components/componentsindex";
 
 const NFTCardTwo = ({ NFTData }) => {
-  console.log("NFTData in NFTCardTwo:", NFTData);
   return (
     <div className={Style.NFTCardTwo}>
       {NFTData?.filter((el) => el !== null).map((el, i) => (

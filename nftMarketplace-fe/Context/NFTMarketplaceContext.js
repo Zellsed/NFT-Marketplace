@@ -634,8 +634,109 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchMyNFTsCollectionOrListedNFTs = async (type) => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider();
+
+      const contract = fetchContract(provider);
+
+      // const data =
+      //   type == "fetchItemsListed"
+      //     ? await contract.fetchItemsListed1155()
+      //     : await contract.fetchMyNFTs1155();
+
+      const data = await contract.fetchMyNFTs1155();
+
+      console.log("data:", data);
+
+      const data2 = await contract.fetchItemsListed1155();
+
+      console.log("data:", data2);
+
+      const items = await Promise.all(
+        data.map(
+          async ({
+            itemId,
+            nftContract,
+            tokenId,
+            amount,
+            amountAvailable,
+            totalPrice,
+            price,
+            seller,
+            owner,
+          }) => {
+            console.log("nftContract:", nftContract);
+            console.log("tokenId:", tokenId);
+            console.log("seller:", seller);
+            console.log("owner:", owner);
+            console.log("price:", price);
+            console.log("totalPrice:", totalPrice);
+            console.log("amount:", amount);
+            console.log("amountAvailable:", amountAvailable);
+            const nft = new ethers.Contract(
+              nftContract,
+              NFTCollection1155ABI,
+              provider
+            );
+            const tokenURI = await nft.uri(tokenId);
+
+            const { data } = await axios.get(tokenURI);
+
+            console.log("data:", data);
+
+            // const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+            // const {
+            //   pinataData,
+            //   name,
+            //   description,
+            //   category,
+            //   fileExtension,
+            //   fileSize,
+            //   createdAt,
+            // } = metadata;
+
+            // const price = ethers.utils.formatUnits(
+            //   unformattedPrice.toString(),
+            //   "ether"
+            // );
+
+            // const countTokenLike = await axios.get(
+            //   `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/nft-likes?id=${tokenId}`
+            // );
+
+            // const likes = countTokenLike.data.likeCount;
+
+            // return {
+            //   price,
+            //   tokenId: tokenId.toNumber(),
+            //   seller,
+            //   owner,
+            //   pinataData,
+            //   name,
+            //   description,
+            //   tokenURI,
+            //   category,
+            //   fileExtension,
+            //   fileSize,
+            //   createdAt,
+            //   likes,
+            // };
+          }
+        )
+      );
+
+      return items;
+    } catch (error) {
+      setError("Error while fetching listed NFTs");
+      setOpenError(true);
+    }
+  };
+
   useEffect(() => {
     fetchMyNFTsOrListedNFTs();
+    fetchMyNFTsCollectionOrListedNFTs();
   }, []);
 
   const buyNFT = async (nft, token) => {
@@ -672,6 +773,59 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       router.push("/author");
     } catch (error) {
+      setError("Error while buying NFT");
+      setOpenError(true);
+    }
+  };
+
+  const buyNFT1155 = async (nft, quantity, token) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
+      const NFTColelction1155Contract =
+        await connectToNftCollection1155Contract();
+      const price = ethers.utils.parseUnits(nft.price.toString(), 18);
+
+      const totalPrice = price.mul(BigNumber.from(quantity));
+
+      const approval = await customTokenContract.approve(
+        contract.address,
+        totalPrice
+      );
+
+      await approval.wait();
+
+      await NFTColelction1155Contract.setApprovalForAll(contract.address, true);
+
+      console.log("Buying NFT1155:", nft, "Quantity:", quantity);
+
+      const transaction = await contract.buyToken1155(nft.itemId, quantity);
+
+      const existTransaction = await transaction.wait();
+
+      console.log("existTransaction:", existTransaction);
+
+      //  if (existTransaction) {
+      //    await axios.post(
+      //      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/buy-nft`,
+      //      {
+      //        nftId: nft.tokenId,
+      //        owner: existTransaction.from,
+      //        seller: existTransaction.to,
+      //      },
+      //      {
+      //        headers: { Authorization: `Bearer ${token}` },
+      //      }
+      //    );
+      //  }
+
+      //  router.push("/author");
+    } catch (error) {
+      console.error("Error while buying NFT1155:", error);
+
+      if (error.data) console.error("Error data:", error.data);
+      if (error.reason) console.error("Error reason:", error.reason);
       setError("Error while buying NFT");
       setOpenError(true);
     }
@@ -870,7 +1024,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         fetchNFTs,
         fetchNFTs1155,
         fetchMyNFTsOrListedNFTs,
+        fetchMyNFTsCollectionOrListedNFTs,
         buyNFT,
+        buyNFT1155,
         createSale,
         currentAccount,
         titleData,

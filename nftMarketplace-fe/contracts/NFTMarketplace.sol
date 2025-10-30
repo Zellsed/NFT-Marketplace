@@ -67,7 +67,16 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         bool sold;
     }
 
+    struct OwnedNFT {
+        uint256 tokenId;
+        uint256 balance;
+        address nftContract;
+    }
+
     mapping(uint256 => MarketItem1155) private idMarketItem1155;
+
+    mapping(address => uint256[]) private userListings1155;
+    mapping(uint256 => bool) private activeListings;
 
     event MarketItem1155Created(
         uint256 indexed itemId,
@@ -261,7 +270,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         require(item.amountAvailable >= _buyQuantity, "Not enough available");
         require(!item.sold, "Item fully sold");
 
-        uint256 totalPrice = item.price * _buyQuantity;
+        uint256 totalPrice = (item.price / 1 ether) * _buyQuantity;
 
         bool success = webToken.transferFrom(
             msg.sender,
@@ -287,11 +296,11 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         );
 
         item.amountAvailable -= _buyQuantity;
+        item.totalPrice -= totalPrice;
 
         if (item.amountAvailable == 0) {
             item.sold = true;
-            item.owner = payable(msg.sender);
-            item.seller = payable(address(0));
+            activeListings[_itemId] = false;
         }
 
         emit MarketItem1155Sold(
@@ -305,18 +314,16 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
     }
 
     function reSellToken1155(
-        uint256 _itemId,
+        uint256 _tokenId,
         uint256 _sellAmount,
         uint256 _newPrice
     ) public {
         require(_sellAmount > 0, "Amount > 0");
         require(_newPrice > 0, "Price > 0");
 
-        MarketItem1155 storage item = idMarketItem1155[_itemId];
-
-        uint256 userBalance = IERC1155(item.nftContract).balanceOf(
+        uint256 userBalance = IERC1155(nftCollection1155).balanceOf(
             msg.sender,
-            item.tokenId
+            _tokenId
         );
         require(userBalance >= _sellAmount, "Insufficient balance");
 
@@ -327,35 +334,42 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         );
         require(success, "Listing fee failed");
 
-        IERC1155(item.nftContract).safeTransferFrom(
+        IERC1155(nftCollection1155).safeTransferFrom(
             msg.sender,
             address(this),
-            item.tokenId,
+            _tokenId,
             _sellAmount,
             ""
         );
 
-        if (item.amountAvailable == 0) {
-            item.amount = _sellAmount;
-            item.amountAvailable = _sellAmount;
-            item.price = _newPrice;
-            item.seller = payable(msg.sender);
-            item.owner = payable(address(this));
-            item.sold = false;
-        } else {
-            item.amountAvailable += _sellAmount;
-            item.price = _newPrice;
-            item.seller = payable(msg.sender);
-            item.owner = payable(address(this));
-            item.sold = false;
-        }
+        _itemIds1155.increment();
+        uint256 newItemId = _itemIds1155.current();
 
-        emit MarketItem1155Relisted(
-            _itemId,
-            item.tokenId,
+        idMarketItem1155[newItemId] = MarketItem1155({
+            itemId: newItemId,
+            nftContract: nftCollection1155,
+            tokenId: _tokenId,
+            amount: _sellAmount,
+            amountAvailable: _sellAmount,
+            totalPrice: _newPrice,
+            price: _newPrice / _sellAmount,
+            seller: payable(msg.sender),
+            owner: payable(address(this)),
+            sold: false
+        });
+
+        userListings1155[msg.sender].push(newItemId);
+        activeListings[newItemId] = true;
+
+        emit MarketItem1155Created(
+            newItemId,
+            _tokenId,
+            _sellAmount,
             _sellAmount,
             _newPrice,
-            msg.sender
+            _newPrice / _sellAmount,
+            msg.sender,
+            address(this)
         );
     }
 
@@ -390,6 +404,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
         for (uint256 i = 1; i <= itemCount; i++) {
             if (
+                activeListings[i] &&
                 idMarketItem1155[i].amountAvailable > 0 &&
                 !idMarketItem1155[i].sold
             ) {
@@ -402,6 +417,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
         for (uint256 i = 1; i <= itemCount; i++) {
             if (
+                activeListings[i] &&
                 idMarketItem1155[i].amountAvailable > 0 &&
                 !idMarketItem1155[i].sold
             ) {
@@ -442,25 +458,26 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
     function fetchMyNFTs1155() public view returns (MarketItem1155[] memory) {
         uint256 itemCount = _itemIds1155.current();
-        uint256 myItemCount = 0;
+
+        mapping(uint256 => bool) memory processedTokens;
+        uint256 uniqueCount = 0;
+
+        for (uint256 i = 1; i <= itemCount; i++) {
+            uint256 tokenId = idMarketItem1155[i].tokenId;
+            if (!processedTokens[tokenId]) {
+                uint256 balance = IERC1155(nftCollection1155).balanceOf(
+                    user,
+                    tokenId
+                );
+                if (balance > 0) {
+                    uniqueCount++;
+                    processedTokens[tokenId] = true;
+                }
+            }
+        }
+
+        OwnedNFT[] memory ownedNFTs = new OwnedNFT[](uniqueCount);
         uint256 currentIndex = 0;
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            if (idMarketItem1155[i].owner == msg.sender) {
-                myItemCount++;
-            }
-        }
-
-        MarketItem1155[] memory items = new MarketItem1155[](myItemCount);
-
-        for (uint256 i = 1; i <= itemCount; i++) {
-            if (idMarketItem1155[i].owner == msg.sender) {
-                items[currentIndex] = idMarketItem1155[i];
-                currentIndex++;
-            }
-        }
-
-        return items;
     }
 
     function fetchItemsListed() public view returns (MarketItem[] memory) {
