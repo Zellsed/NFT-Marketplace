@@ -69,7 +69,7 @@ const NFTCard = ({ NFTData }) => {
               <div className={Style.NFTCardTwo_box_info_left}>
                 <LikeProfile />
                 <p>
-                  {el.name.slice(0, 15)}...{el.name.slice(-5)}
+                  {el?.name.slice(0, 15)}...{el?.name.slice(-5)}
                 </p>
               </div>
 

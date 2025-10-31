@@ -70,7 +70,7 @@ const TransferToken = () => {
                 <Loader />
               ) : (
                 <Button
-                  btnName="Transfer Token"
+                  btnName="Buy Token WEB"
                   onClick={() => tranferToken(baseCoinNetwork, tranferAmount)}
                   classStyle={Style.button}
                 />

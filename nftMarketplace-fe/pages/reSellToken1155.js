@@ -62,7 +62,8 @@ const ReSellToken = () => {
       }
 
       await reSellToken1155(id, quantity, price);
-      // router.push("/author");
+
+      router.push("/author");
     } catch (error) {
       console.log("Error while resell", error);
     }

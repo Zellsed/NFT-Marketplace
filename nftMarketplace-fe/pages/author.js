@@ -116,6 +116,9 @@ const author = () => {
     });
   }, []);
 
+  console.log("nfts1155", nfts1155);
+  console.log("myNfts1155", myNfts1155);
+
   useEffect(() => {
     const checkTokenValidity = () => {
       const savedToken = localStorage.getItem("access_token");

@@ -348,13 +348,15 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         _itemIds1155.increment();
         uint256 newItemId = _itemIds1155.current();
 
+        uint256 _totalPrice = _newPrice * _sellAmount;
+
         idMarketItem1155[newItemId] = MarketItem1155({
             itemId: newItemId,
             nftContract: nftCollection1155,
             tokenId: _tokenId,
-            amount: userBalance,
-            amountAvailable: userBalance - _sellAmount,
-            totalPrice: _newPrice * _sellAmount,
+            amount: _sellAmount,
+            amountAvailable: _sellAmount,
+            totalPrice: _totalPrice,
             price: _newPrice,
             seller: payable(msg.sender),
             owner: payable(address(this)),
@@ -367,9 +369,9 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         emit MarketItem1155Created(
             newItemId,
             _tokenId,
-            userBalance,
-            userBalance - _sellAmount,
-            _newPrice * _sellAmount,
+            _sellAmount,
+            _sellAmount,
+            _totalPrice,
             _newPrice,
             msg.sender,
             address(this)

@@ -416,183 +416,73 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  // const reSellToken1155 = async (tokenURI, quantity, price, id) => {
-  //   console.log("quantity", quantity);
-  //   console.log("price", price);
-  //   console.log("id", id);
-  //   try {
-  //     if (!id || !quantity || !price) {
-  //       throw new Error("Missing parameters for resell");
-  //     }
-
-  //     const nftCollection1155Contract =
-  //       await connectToNftCollection1155Contract();
-  //     const contract = await connectingWithSmartContract();
-  //     const customTokenContract =
-  //       await connectingWithCustomTokenSmartContract();
-
-  //     const newPrice = ethers.utils.parseUnits(price.toString(), 18);
-
-  //     const listingPrice = await contract.getListingPrice();
-
-  //     const approvalFee = await customTokenContract.approve(
-  //       contract.address,
-  //       listingPrice
-  //     );
-  //     await approvalFee.wait();
-
-  //     const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
-  //       contract.address,
-  //       true
-  //     );
-  //     await txApproveNFT.wait();
-
-  //     const transaction = await contract.reSellToken1155(
-  //       id,
-  //       quantity,
-  //       newPrice
-  //     );
-
-  //     const receipt = await transaction.wait();
-
-  //     console.log("receipt", receipt);
-
-  //     const event = receipt.events?.find(
-  //       (e) => e.event === "MarketItem1155Created"
-  //     );
-
-  //     if (!event) {
-  //       console.warn("Event MarketItem1155Created not found", receipt.events);
-  //       return;
-  //     }
-
-  //     const newItemId = event.args.itemId.toNumber();
-  //     const resellPrice = ethers.utils.formatUnits(newPrice, 18);
-
-  //     console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
-  //     console.log(
-  //       `TokenId: ${tokenId}, Amount: ${sellAmount}, Price: ${resellPrice} WEB`
-  //     );
-
-  //     // return { transaction, newItemId };
-  //   } catch (error) {
-  //     setError("Error while creating sale1155");
-  //     setOpenError(true);
-  //   }
-  // };
-
   const reSellToken1155 = async (id, quantity, price) => {
-    console.log("🟩 Start reSellToken1155");
-    console.log("➡️ Params:", { id, quantity, price });
+    try {
+      if (!id || !quantity || !price) {
+        throw new Error("❌ Missing parameters for resell");
+      }
 
-    // try {
-    //   if (!id || !quantity || !price) {
-    //     throw new Error("❌ Missing parameters for resell");
-    //   }
+      const nftCollection1155Contract =
+        await connectToNftCollection1155Contract();
+      const contract = await connectingWithSmartContract();
+      const customTokenContract =
+        await connectingWithCustomTokenSmartContract();
 
-    //   // 1️⃣ Kết nối các contract
-    //   console.log("🔹 Connecting to contracts...");
-    //   const nftCollection1155Contract =
-    //     await connectToNftCollection1155Contract();
-    //   const contract = await connectingWithSmartContract();
-    //   const customTokenContract =
-    //     await connectingWithCustomTokenSmartContract();
+      if (!contract || !customTokenContract || !nftCollection1155Contract) {
+        throw new Error("❌ Failed to connect to contracts");
+      }
 
-    //   if (!contract || !customTokenContract || !nftCollection1155Contract) {
-    //     throw new Error("❌ Failed to connect to contracts");
-    //   }
+      const newPrice = ethers.utils.parseUnits(price.toString(), 18);
 
-    //   console.log("✅ Connected to contracts");
-    //   console.log("🪙 Marketplace contract:", contract.address);
-    //   console.log("🪙 NFT1155 contract:", nftCollection1155Contract.address);
+      const listingPrice = await contract.getListingPrice();
 
-    //   // 2️⃣ Chuyển đổi giá
-    //   const newPrice = ethers.utils.parseUnits(price.toString(), 18);
-    //   console.log("💰 New price (wei):", newPrice.toString());
+      const approvalFee = await customTokenContract.approve(
+        contract.address,
+        listingPrice
+      );
 
-    //   // 3️⃣ Lấy phí listing
-    //   const listingPrice = await contract.getListingPrice();
-    //   console.log("💸 Listing price (wei):", listingPrice.toString());
+      const approvalFeeReceipt = await approvalFee.wait();
 
-    //   // 4️⃣ Approve token WEB cho marketplace
-    //   console.log("🔹 Approving marketplace to spend WEB tokens...");
-    //   const approvalFee = await customTokenContract.approve(
-    //     contract.address,
-    //     listingPrice
-    //   );
-    //   console.log("🕒 Waiting for approvalFee tx to confirm...");
-    //   const approvalFeeReceipt = await approvalFee.wait();
-    //   console.log("✅ WEB token approved:", approvalFeeReceipt.transactionHash);
+      const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
+        contract.address,
+        true
+      );
 
-    //   // 5️⃣ Approve NFT1155 cho marketplace
-    //   console.log("🔹 Approving NFT1155 for marketplace...");
-    //   const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
-    //     contract.address,
-    //     true
-    //   );
-    //   console.log("🕒 Waiting for setApprovalForAll...");
-    //   const approveNFTReceipt = await txApproveNFT.wait();
-    //   console.log(
-    //     "✅ NFT1155 approval done:",
-    //     approveNFTReceipt.transactionHash
-    //   );
+      const approveNFTReceipt = await txApproveNFT.wait();
 
-    //   // 6️⃣ Gọi hàm reSellToken1155 trên smart contract
-    //   console.log("🚀 Calling reSellToken1155 on smart contract...");
-    //   console.log("📦 Params:", {
-    //     id,
-    //     quantity,
-    //     newPrice: newPrice.toString(),
-    //   });
+      const transaction = await contract.reSellToken1155(
+        id,
+        quantity,
+        newPrice
+      );
 
-    //   const transaction = await contract.reSellToken1155(
-    //     id,
-    //     quantity,
-    //     newPrice
-    //   );
+      const receipt = await transaction.wait();
 
-    //   console.log("🕒 Waiting for transaction confirmation...");
-    //   const receipt = await transaction.wait();
+      const event = receipt.events?.find(
+        (e) => e.event === "MarketItem1155Created"
+      );
 
-    //   console.log("✅ Transaction confirmed:", receipt.transactionHash);
-    //   console.log("🧾 Full receipt:", receipt);
+      if (!event) {
+        console.warn(
+          "⚠️ Event MarketItem1155Created not found",
+          receipt.events
+        );
+        return;
+      }
 
-    //   // 7️⃣ Kiểm tra event phát ra
-    //   const event = receipt.events?.find(
-    //     (e) => e.event === "MarketItem1155Created"
-    //   );
+      const newItemId = event.args.itemId.toNumber();
+      const resellPrice = ethers.utils.formatUnits(newPrice, 18);
 
-    //   if (!event) {
-    //     console.warn(
-    //       "⚠️ Event MarketItem1155Created not found",
-    //       receipt.events
-    //     );
-    //     return;
-    //   }
+      console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
+      console.log(
+        `TokenId: ${id}, Amount: ${quantity}, Price: ${resellPrice} WEB`
+      );
 
-    //   const newItemId = event.args.itemId.toNumber();
-    //   const resellPrice = ethers.utils.formatUnits(newPrice, 18);
-
-    //   console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
-    //   console.log(
-    //     `TokenId: ${id}, Amount: ${quantity}, Price: ${resellPrice} WEB`
-    //   );
-
-    //   // return { transaction, newItemId };
-    // } catch (error) {
-    //   console.error("❌ Error in reSellToken1155:", error);
-
-    //   // Nếu là lỗi RPC từ MetaMask hoặc Hardhat
-    //   if (error.data) {
-    //     console.error("🔍 Revert reason:", error.data.message || error.data);
-    //   }
-    //   if (error.reason) {
-    //     console.error("🔍 Error reason:", error.reason);
-    //   }
-
-    //   setError(`Error while creating sale1155: ${error.message}`);
-    //   setOpenError(true);
-    // }
+      // return { transaction, newItemId };
+    } catch (error) {
+      setError(`Error while creating sale1155: ${error.message}`);
+      setOpenError(true);
+    }
   };
 
   const fetchNFTs = async () => {
@@ -813,6 +703,108 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  // const fetchMyNFTsOrListedNFTs1155 = async (type) => {
+  //   try {
+  //     const provider = new ethers.providers.JsonRpcProvider();
+  //     const contract = fetchContract(provider);
+  //     const nft1155 = new ethers.Contract(
+  //       NFTCollection1155Address,
+  //       NFTCollection1155ABI,
+  //       provider
+  //     );
+
+  //     const marketItems = await contract.fetchMarketItems1155();
+  //     const items = [];
+  //     const listedByUser = new Set();
+
+  //     if (type === "fetchItemsListed") {
+  //       for (const item of marketItems) {
+  //         if (
+  //           item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
+  //           item.amountAvailable > 0
+  //         ) {
+  //           const tokenURI = await nft1155.uri(item.tokenId.toNumber());
+  //           const { data } = await axios.get(tokenURI);
+
+  //           const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+  //           const {
+  //             pinataData,
+  //             name,
+  //             description,
+  //             category,
+  //             fileExtension,
+  //             fileSize,
+  //             createdAt,
+  //           } = metadata;
+
+  //           items.push({
+  //             itemId: item.itemId.toNumber(),
+  //             tokenId: item.tokenId.toNumber(),
+  //             amountAvailable: item.amountAvailable.toNumber(),
+  //             price: ethers.utils.formatUnits(item.totalPrice.toString(), 18),
+  //             pinataData,
+  //             name,
+  //             description,
+  //             tokenURI,
+  //             category,
+  //             fileExtension,
+  //             fileSize,
+  //             createdAt,
+  //             isOwned: false,
+  //             isListing: true,
+  //           });
+  //           listedByUser.add(item.tokenId.toNumber());
+  //         }
+  //       }
+  //     } else {
+  //       for (const item of marketItems) {
+  //         const tokenId = item.tokenId.toNumber();
+
+  //         if (listedByUser.has(tokenId)) continue;
+
+  //         const balance = await nft1155.balanceOf(currentAccount, tokenId);
+  //         if (balance > 0) {
+  //           const tokenURI = await nft1155.uri(tokenId);
+  //           const { data } = await axios.get(tokenURI);
+
+  //           const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+  //           const {
+  //             pinataData,
+  //             name,
+  //             description,
+  //             category,
+  //             fileExtension,
+  //             fileSize,
+  //             createdAt,
+  //           } = metadata;
+
+  //           items.push({
+  //             tokenId: tokenId,
+  //             balance: balance.toNumber(),
+  //             pinataData,
+  //             name,
+  //             description,
+  //             tokenURI,
+  //             category,
+  //             fileExtension,
+  //             fileSize,
+  //             createdAt,
+  //             isOwned: true,
+  //             isListing: false,
+  //           });
+  //         }
+  //       }
+  //     }
+
+  //     return items;
+  //   } catch (error) {
+  //     setError("Error while fetching listed NFTs");
+  //     setOpenError(true);
+  //   }
+  // };
+
   const fetchMyNFTsOrListedNFTs1155 = async (type) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider();
@@ -823,17 +815,18 @@ export const NFTMarketplaceProvider = ({ children }) => {
         provider
       );
 
-      const marketItems = await contract.fetchMarketItems1155();
       const items = [];
-      const listedByUser = new Set();
 
       if (type === "fetchItemsListed") {
+        const marketItems = await contract.fetchMarketItems1155();
+
         for (const item of marketItems) {
           if (
             item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
-            item.amountAvailable > 0
+            item.amountAvailable > 0 &&
+            !item.sold
           ) {
-            const tokenURI = await nft1155.uri(item.tokenId.toNumber());
+            const tokenURI = await nft1155.uri(item.tokenId);
             const { data } = await axios.get(tokenURI);
 
             const metadata = typeof data === "string" ? JSON.parse(data) : data;
@@ -852,7 +845,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
               itemId: item.itemId.toNumber(),
               tokenId: item.tokenId.toNumber(),
               amountAvailable: item.amountAvailable.toNumber(),
-              price: ethers.utils.formatUnits(item.totalPrice.toString(), 18),
+              totalAmount: item.amount.toNumber(),
+              price: ethers.utils.formatUnits(item.price.toString(), 18),
+              totalPrice: ethers.utils.formatUnits(
+                item.totalPrice.toString(),
+                18
+              ),
               pinataData,
               name,
               description,
@@ -864,17 +862,30 @@ export const NFTMarketplaceProvider = ({ children }) => {
               isOwned: false,
               isListing: true,
             });
-            listedByUser.add(item.tokenId.toNumber());
           }
         }
       } else {
+        const marketItems = await contract.fetchMarketItems1155();
+        const listedTokenIds = new Set();
+
         for (const item of marketItems) {
-          const tokenId = item.tokenId.toNumber();
+          if (
+            item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
+            item.amountAvailable > 0
+          ) {
+            listedTokenIds.add(item.tokenId.toNumber());
+          }
+        }
 
-          if (listedByUser.has(tokenId)) continue;
+        const allMarketItems = await contract.fetchMarketItems1155();
+        const uniqueTokenIds = [
+          ...new Set(allMarketItems.map((item) => item.tokenId.toNumber())),
+        ];
 
-          const balance = await nft1155.balanceOf(currentAccount, tokenId);
-          if (balance > 0) {
+        for (const tokenId of uniqueTokenIds) {
+          const userBalance = await nft1155.balanceOf(currentAccount, tokenId);
+
+          if (userBalance > 0) {
             const tokenURI = await nft1155.uri(tokenId);
             const { data } = await axios.get(tokenURI);
 
@@ -890,9 +901,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
               createdAt,
             } = metadata;
 
+            const userListings = marketItems.filter(
+              (item) =>
+                item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
+                item.tokenId.toNumber() === tokenId &&
+                item.amountAvailable > 0
+            );
+
+            const totalListed = userListings.reduce(
+              (sum, item) => sum + item.amountAvailable.toNumber(),
+              0
+            );
+
             items.push({
               tokenId: tokenId,
-              balance: balance.toNumber(),
+              totalBalance: userBalance.toNumber(),
+              availableBalance: userBalance.toNumber() - totalListed,
+              listedAmount: totalListed,
               pinataData,
               name,
               description,
@@ -903,6 +928,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
               createdAt,
               isOwned: true,
               isListing: false,
+              hasActiveListings: totalListed > 0,
             });
           }
         }
@@ -912,6 +938,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     } catch (error) {
       setError("Error while fetching listed NFTs");
       setOpenError(true);
+
+      return [];
     }
   };
 

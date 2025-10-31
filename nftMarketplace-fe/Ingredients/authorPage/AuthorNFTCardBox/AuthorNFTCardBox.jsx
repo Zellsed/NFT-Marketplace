@@ -24,9 +24,12 @@ const AuthorNFTCardBox = ({
       return {
         erc721: Array.isArray(nfts) ? nfts.filter((item) => item !== null) : [],
         erc1155: Array.isArray(nfts1155)
-          ? nfts1155.filter((item) => item !== null)
+          ? nfts1155.filter((item) => item !== null && item.isListing)
           : [],
         title: "Listed NFTs",
+        icon: "🛒",
+        description: "Your NFTs currently on marketplace",
+        gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
       };
     } else if (created) {
       return {
@@ -34,19 +37,34 @@ const AuthorNFTCardBox = ({
           ? myNfts.filter((item) => item !== null)
           : [],
         erc1155: Array.isArray(myNfts1155)
-          ? myNfts1155.filter((item) => item !== null)
+          ? myNfts1155.filter((item) => item !== null && item.isOwned)
           : [],
-        title: "Own NFT",
+        title: "Owned NFTs",
+        icon: "🎨",
+        description: "NFTs in your collection",
+        gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
       };
     }
-    return { erc721: [], erc1155: [], title: "" };
+    return {
+      erc721: [],
+      erc1155: [],
+      title: "",
+      icon: "",
+      description: "",
+      gradient: "",
+    };
   };
 
-  const { erc721, erc1155, title } = getDisplayData();
+  const { erc721, erc1155, title, icon, description, gradient } =
+    getDisplayData();
 
   const hasERC721 = erc721.length > 0;
   const hasERC1155 = erc1155.length > 0;
   const hasAnyNFT = hasERC721 || hasERC1155;
+
+  console.log("nfts1155", nfts1155);
+  console.log("myNfts1155", myNfts1155);
+  console.log("erc1155", erc1155);
 
   return (
     <div className={Style.AuthorNFTCardBox}>
