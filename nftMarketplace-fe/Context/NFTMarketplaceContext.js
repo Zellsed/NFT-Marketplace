@@ -109,9 +109,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const network = await provider.getNetwork();
 
-      // console.log("Connected chainId:", network.chainId);
-      // console.log("Network name:", network.name);
-
       let coinSymbol = "Unknown";
 
       switch (network.chainId) {
@@ -121,8 +118,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
         case 31337:
           coinSymbol = "ETH";
           break;
+        case 560048:
+          coinSymbol = "ETH";
+          break;
         case 80002:
-          coinSymbol = "POLY";
+          coinSymbol = "POL";
           break;
         default:
           coinSymbol = `Unknown Chain (${network.chainId})`;

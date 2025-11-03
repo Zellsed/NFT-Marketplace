@@ -15,7 +15,7 @@ contract TranferToken {
 
     address public owner;
 
-    string[] public tokens = ["ETH", "BNB", "SOL"];
+    string[] public tokens = ["ETH", "BNB", "SOL", "POL"];
 
     mapping(string => uint256) public baseCoinRate;
     
@@ -43,6 +43,7 @@ contract TranferToken {
         baseCoinRate["ETH"] = 3846;
         baseCoinRate["BNB"] = 1164;
         baseCoinRate["SOL"] = 184;
+        baseCoinRate["POL"] = 100; //1.23
 
         contractTokenBalance = 0;
     }

@@ -277,55 +277,57 @@ const NavBar = () => {
             {notification && <Notification />}
           </div> */}
 
-          <div
-            className={Style.tokenBalance}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              backgroundColor: "#1a1a1a",
-              padding: "6px 12px",
-              borderRadius: "12px",
-              fontWeight: "700",
-              color: "#FFD700",
-              lineHeight: 1,
-              boxShadow: "0 0 8px rgba(255, 215, 0, 0.2)",
-            }}
-          >
-            <FaCoins
-              style={{
-                fontSize: "18px",
-                verticalAlign: "middle",
-                marginBottom: "2px",
-              }}
-            />
+          <Link href={{ pathname: "/transferToken" }}>
             <div
+              className={Style.tokenBalance}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                lineHeight: "1.1",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                backgroundColor: "#1a1a1a",
+                padding: "6px 12px",
+                borderRadius: "12px",
+                fontWeight: "700",
+                color: "#FFD700",
+                lineHeight: 1,
+                boxShadow: "0 0 8px rgba(255, 215, 0, 0.2)",
               }}
             >
-              <span style={{ fontSize: "15px" }}>
-                {tokenWebBalance?.toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
-              <span
+              <FaCoins
                 style={{
-                  fontSize: "11px",
-                  color: "#FFD700",
-                  opacity: 0.9,
-                  marginTop: "-2px",
+                  fontSize: "18px",
+                  verticalAlign: "middle",
+                  marginBottom: "2px",
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  lineHeight: "1.1",
                 }}
               >
-                {tokenSymbol}
-              </span>
+                <span style={{ fontSize: "15px" }}>
+                  {tokenWebBalance?.toLocaleString(undefined, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    color: "#FFD700",
+                    opacity: 0.9,
+                    marginTop: "-2px",
+                  }}
+                >
+                  {tokenSymbol}
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
 
           <div className={Style.navbar_container_right_button}>
             {!currentAccount ? (

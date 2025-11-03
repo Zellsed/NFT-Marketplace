@@ -1,6 +1,8 @@
 const hre = require("hardhat");
 
 async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+
   const CustomToken = await hre.ethers.getContractFactory("CustomToken");
   const customToken = await CustomToken.deploy("Zell Token", "ZELL");
   await customToken.deployed();
@@ -10,8 +12,22 @@ async function main() {
   await tranferToken.deployed();
 
   const price = ethers.utils.parseUnits("10000000", 18);
-  await customToken.approve(tranferToken.address, price);
-  await tranferToken.depositToken(price);
+
+  console.log("Deployer:", deployer.address);
+  console.log("Approving token...");
+
+  await (
+    await customToken.connect(deployer).approve(tranferToken.address, price)
+  ).wait();
+
+  const allowance = await customToken.allowance(
+    deployer.address,
+    tranferToken.address
+  );
+  console.log("Allowance:", allowance.toString());
+
+  console.log("Depositing...");
+  await (await tranferToken.connect(deployer).depositToken(price)).wait();
 
   const NFTCollection1155 = await hre.ethers.getContractFactory(
     "NFTCollection1155"

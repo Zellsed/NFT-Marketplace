@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
-import { FaEthereum, FaUserAlt } from "react-icons/fa";
+import {
+  FaEthereum,
+  FaUserAlt,
+  FaBitcoin,
+  FaViacoin,
+  FaCoins,
+} from "react-icons/fa";
 
 import Style from "../styles/transferFunds.module.css";
 import fromStyle from "../Ingredients/AccountPage/Form/Form.module.css";
@@ -19,6 +25,7 @@ const transferFunds = () => {
     accountBalance,
     transactions,
     getAllTransactions,
+    baseCoinNetwork,
   } = useContext(NFTMarketplaceContext);
   const [tranferAmount, setTranferAmount] = useState("");
   const [tranferAccount, setTranferAccount] = useState("");
@@ -33,7 +40,7 @@ const transferFunds = () => {
   return (
     <div className={Style.transfer}>
       <div className={Style.transfer_box}>
-        <h1>Transfer Ether</h1>
+        <h1>Transfer Token - {baseCoinNetwork}</h1>
         <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere
           perferendis, praesentium obcaecati nostrum architecto nisi! Eum
@@ -49,7 +56,7 @@ const transferFunds = () => {
             />
           </div>
           <div className={Style.transfer_box_box_right}>
-            <h2>Now you can transfer ether</h2>
+            <h2>Now you can transfer {baseCoinNetwork}</h2>
             <div className={Style.transfer_box_box_right_info}>
               <p className={Style.transfer_box_box_right_info_deskTop}>
                 Account: {currentAccount}
@@ -60,7 +67,7 @@ const transferFunds = () => {
               <p>
                 Balance:{" "}
                 <span style={{ whiteSpace: "nowrap" }}>
-                  {accountBalance.slice(0, 15)}... ETH
+                  {accountBalance.slice(0, 15)}... {baseCoinNetwork}
                 </span>
               </p>
             </div>
@@ -82,12 +89,12 @@ const transferFunds = () => {
               <div className={StyleFrom.Form_box_input}>
                 <div className={StyleFrom.Form_box_input_box}>
                   <div className={StyleFrom.Form_box_input_box_icon}>
-                    <FaEthereum />
+                    <FaBitcoin />
                   </div>
                   <input
                     type="number"
                     min={1}
-                    placeholder="ETH"
+                    placeholder={baseCoinNetwork}
                     onChange={(e) => setTranferAmount(e.target.value)}
                   />
                 </div>
@@ -157,9 +164,7 @@ const transferFunds = () => {
 
                 <Button
                   btnName="Message"
-                  onClick={() => (
-                    setReadMessage(el.message), setOpenBox(true)
-                  )}
+                  onClick={() => (setReadMessage(el.message), setOpenBox(true))}
                   classStyle={Style.readButton}
                 />
               </div>
