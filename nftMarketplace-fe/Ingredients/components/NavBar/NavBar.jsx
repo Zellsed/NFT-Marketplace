@@ -36,11 +36,8 @@ const NavBar = () => {
   const createMenuRef = useRef(null);
 
   const [account, setAccount] = useState(false);
-
   const [token, setToken] = useState(null);
-
   const [information, setInformation] = useState({});
-
   const [tokenWebBalance, setTokenWebBalance] = useState(0);
 
   useEffect(() => {
@@ -75,6 +72,12 @@ const NavBar = () => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setProfile(false);
       }
+      if (
+        createMenuRef.current &&
+        !createMenuRef.current.contains(event.target)
+      ) {
+        setCreateMenu(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -91,7 +94,6 @@ const NavBar = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       setInformation(userProfile.data.userInfo);
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -111,11 +113,13 @@ const NavBar = () => {
       setHelp(false);
       setNotification(false);
       setProfile(false);
+      setCreateMenu(false);
     } else if (btnText == "Help Center") {
       setDiscover(false);
       setHelp((prev) => !prev);
       setNotification(false);
       setProfile(false);
+      setCreateMenu(false);
     } else {
       closeAllDropdowns();
     }
@@ -126,6 +130,7 @@ const NavBar = () => {
     setDiscover(false);
     setHelp(false);
     setProfile(false);
+    setCreateMenu(false);
   };
 
   const openProfile = () => {
@@ -133,6 +138,7 @@ const NavBar = () => {
     setHelp(false);
     setDiscover(false);
     setNotification(false);
+    setCreateMenu(false);
   };
 
   const openCreateMenu = () => {
@@ -153,6 +159,8 @@ const NavBar = () => {
     openError,
     tokenBalance,
     tokenSymbol,
+    baseCoinNetwork,
+    setShowNetworkModal,
   } = useContext(NFTMarketplaceContext);
 
   const checkAccount = async () => {
@@ -161,7 +169,6 @@ const NavBar = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/check-account`,
         { account: currentAccount }
       );
-
       setAccount(reponse.data.exists);
     } catch (error) {
       console.error("Error checking account:", error);
@@ -172,12 +179,10 @@ const NavBar = () => {
     const fetchBalance = async () => {
       if (currentAccount) {
         await checkAccount();
-
         const balance = await tokenBalance(currentAccount);
         setTokenWebBalance(balance);
       }
     };
-
     fetchBalance();
   }, [currentAccount]);
 
@@ -198,9 +203,7 @@ const NavBar = () => {
     };
 
     checkTokenValidity();
-
     const interval = setInterval(checkTokenValidity, 10000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -233,114 +236,101 @@ const NavBar = () => {
         <div className={Style.navbar_container_left}>
           <div className={Style.logo}>
             <a href="/">
-              <DiJqueryLogo className={Style} />
+              <DiJqueryLogo className={Style.logo_icon} />
             </a>
           </div>
           <div className={Style.navbar_container_left_box_input}>
             <div className={Style.navbar_container_left_box_input_box}>
-              <input type="text" placeholder="Search NFT" />
-              <BsSearch onClick={() => {}} className={Style.search_icon} />
+              <input
+                type="text"
+                placeholder="Search NFT, collections, accounts..."
+              />
+              <BsSearch className={Style.search_icon} />
             </div>
           </div>
         </div>
 
         <div className={Style.navbar_container_right}>
-          <div
-            className={Style.navbar_container_right_discover}
-            ref={discoverRef}
-          >
-            <p onClick={(e) => openMenu(e)}>Discover</p>
-            {discover && (
-              <div className={Style.navbar_container_right_discover_box}>
-                <Discover token={token} information={information} />
-              </div>
-            )}
-          </div>
+          <div className={Style.navbar_nav_items}>
+            <div
+              className={Style.navbar_container_right_discover}
+              ref={discoverRef}
+            >
+              <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
+                Discover
+                <BsChevronDown
+                  className={`${Style.chevron} ${
+                    discover ? Style.chevron_rotated : ""
+                  }`}
+                />
+              </p>
+              {discover && (
+                <div className={Style.navbar_container_right_discover_box}>
+                  <Discover token={token} information={information} />
+                </div>
+              )}
+            </div>
 
-          <div className={Style.navbar_container_right_help} ref={helpRef}>
-            <p onClick={(e) => openMenu(e)}>Help Center</p>
-            {help && (
-              <div className={Style.navbar_container_right_help_box}>
-                <HelpCenter />
-              </div>
-            )}
+            <div className={Style.navbar_container_right_help} ref={helpRef}>
+              <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
+                Help Center
+                <BsChevronDown
+                  className={`${Style.chevron} ${
+                    help ? Style.chevron_rotated : ""
+                  }`}
+                />
+              </p>
+              {help && (
+                <div className={Style.navbar_container_right_help_box}>
+                  <HelpCenter />
+                </div>
+              )}
+            </div>
           </div>
-
-          {/* <div
-            className={Style.navbar_container_right_notify}
-            ref={notificationRef}
-          >
-            <MdNotifications
-              className={Style.notify}
-              onClick={() => openNotification()}
-            />
-            {notification && <Notification />}
-          </div> */}
 
           <Link href={{ pathname: "/transferToken" }}>
-            <div
-              className={Style.tokenBalance}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                backgroundColor: "#1a1a1a",
-                padding: "6px 12px",
-                borderRadius: "12px",
-                fontWeight: "700",
-                color: "#FFD700",
-                lineHeight: 1,
-                boxShadow: "0 0 8px rgba(255, 215, 0, 0.2)",
-              }}
-            >
-              <FaCoins
-                style={{
-                  fontSize: "18px",
-                  verticalAlign: "middle",
-                  marginBottom: "2px",
-                }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  lineHeight: "1.1",
-                }}
-              >
-                <span style={{ fontSize: "15px" }}>
+            <div className={Style.tokenBalance}>
+              <FaCoins className={Style.coin_icon} />
+              <div className={Style.token_balance_info}>
+                <span className={Style.token_amount}>
                   {tokenWebBalance?.toLocaleString(undefined, {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 2,
                   })}
                 </span>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    color: "#FFD700",
-                    opacity: 0.9,
-                    marginTop: "-2px",
-                  }}
-                >
-                  {tokenSymbol}
-                </span>
+                <span className={Style.token_symbol}>{tokenSymbol}</span>
               </div>
             </div>
           </Link>
 
-          <div className={Style.navbar_container_right_button}>
+          <div className={Style.network_switcher}>
+            <button
+              onClick={() => setShowNetworkModal(true)}
+              className={Style.network_button}
+              title="Switch Network"
+            >
+              {baseCoinNetwork || "Select Network"}
+            </button>
+          </div>
+
+          <div className={Style.navbar_actions}>
             {!currentAccount ? (
-              <Button btnName="Connect" onClick={() => connectWallet()} />
+              <Button
+                btnName="Connect"
+                onClick={() => connectWallet()}
+                className={Style.connect_btn}
+              />
             ) : !account ? (
               <Button
                 btnName="Create Account"
                 onClick={() => router.push("signUp")}
+                className={Style.create_account_btn}
               />
             ) : !token ? (
               <Button
-                btnName="Login Account"
+                btnName="Login"
                 onClick={() => router.push("login")}
+                className={Style.login_btn}
               />
             ) : (
               <div
@@ -349,26 +339,17 @@ const NavBar = () => {
               >
                 <Button
                   btnName={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
+                    <div className={Style.create_btn_content}>
                       Create
                       <BsChevronDown
-                        style={{
-                          fontSize: "12px",
-                          transition: "transform 0.2s",
-                          transform: createMenu
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                        }}
+                        className={`${Style.chevron} ${
+                          createMenu ? Style.chevron_rotated : ""
+                        }`}
                       />
                     </div>
                   }
                   onClick={openCreateMenu}
+                  className={Style.create_btn}
                 />
                 {createMenu && <CreateMenu />}
               </div>
@@ -383,12 +364,11 @@ const NavBar = () => {
               <Image
                 src={information?.photo ? information.photo : images.avatar}
                 alt="Profile"
-                width={40}
-                height={40}
+                width={44}
+                height={44}
                 onClick={() => openProfile()}
-                className={Style.navbar_container_right_profile}
+                className={Style.profile_image}
               />
-
               {profile && <Profile currentAccount={currentAccount} />}
             </div>
           </div>

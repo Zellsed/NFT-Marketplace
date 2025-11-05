@@ -22,6 +22,8 @@ import {
 
 dotenv.config();
 
+import NetworkModal from "../Ingredients/NetworkModal/NetworkModal";
+
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GETWAY,
@@ -82,13 +84,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const [tokenSymbol, setTokenSymbol] = useState("");
 
+  const [showNetworkModal, setShowNetworkModal] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState(null);
+
   const router = useRouter();
 
   const checkIfWalletIsConnected = async () => {
     try {
-      if (!window.ethereum) {
-        return setOpenError(true), error("Install Metamask");
-      }
+      if (!window.ethereum) return;
 
       const accounts = await window.ethereum.request({
         method: "eth_accounts",
@@ -96,54 +99,121 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const network = await provider.getNetwork();
+        const balance = await provider.getBalance(accounts[0]);
+        setAccountBalance(ethers.utils.formatEther(balance));
+
+        const coinSymbol = getCoinSymbol(network.chainId);
+        setBaseCoinNetwork(coinSymbol);
+
+        try {
+          const customTokenContract =
+            await connectingWithCustomTokenSmartContract();
+
+          if (customTokenContract) {
+            setTokenSymbol(await customTokenContract.symbol());
+          }
+        } catch (e) {
+          console.log("Token contract not available on this network");
+        }
+      }
+    } catch (error) {
+      console.error("Error while connecting to wallet:", error);
+    }
+  };
+
+  const getCoinSymbol = (chainId) => {
+    const map = {
+      1: "ETH",
+      31337: "ETH",
+      560048: "ETH",
+      56: "BNB",
+      97: "BNB",
+      137: "POL",
+      80002: "POL",
+    };
+
+    return map[chainId] || `Unknown (${chainId})`;
+  };
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
+
+  const switchNetwork = async (network) => {
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${network.chainId.toString(16)}` }],
+      });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: `0x${network.chainId.toString(16)}`,
+                chainName: network.name,
+                rpcUrls: [network.rpcUrl],
+                nativeCurrency: {
+                  name: network.symbol,
+                  symbol: network.symbol,
+                  decimals: 18,
+                },
+                blockExplorerUrls: network.blockExplorer
+                  ? [network.blockExplorer]
+                  : null,
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error("Failed to add network:", addError);
+          setError("Failed to add network");
+          setOpenError(true);
+        }
       } else {
-        setError("No accounts found");
+        console.error("Failed to switch network:", switchError);
+        setError("Failed to switch network");
         setOpenError(true);
       }
+    }
+  };
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const handleSelectNetwork = async (network) => {
+    try {
+      setSelectedNetwork(network);
+      setShowNetworkModal(false);
 
-      const getBalance = await provider.getBalance(accounts[0]);
+      await switchNetwork(network);
 
-      const bal = ethers.utils.formatEther(getBalance);
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setCurrentAccount(accounts[0]);
 
-      const network = await provider.getNetwork();
-
-      let coinSymbol = "Unknown";
-
-      switch (network.chainId) {
-        case 17000:
-          coinSymbol = "ETH";
-          break;
-        case 31337:
-          coinSymbol = "ETH";
-          break;
-        case 560048:
-          coinSymbol = "ETH";
-          break;
-        case 80002:
-          coinSymbol = "POL";
-          break;
-        default:
-          coinSymbol = `Unknown Chain (${network.chainId})`;
-          break;
-      }
-
-      setAccountBalance(bal);
-      setBaseCoinNetwork(coinSymbol);
-
-      const customTokenContract =
-        await connectingWithCustomTokenSmartContract();
-
-      setTokenSymbol(await customTokenContract.symbol());
+      await checkIfWalletIsConnected();
     } catch (error) {
-      setError("Something Wrong while connecting to wallet");
+      console.error("Failed to connect after network switch:", error);
+      setError("Failed to connect wallet after switching network");
       setOpenError(true);
     }
   };
 
   useEffect(() => {
-    checkIfWalletIsConnected();
+    if (window.ethereum) {
+      const handleChainchanged = (chainId) => {
+        window.location.reload();
+      };
+
+      window.ethereum.on("chainChanged", handleChainchanged);
+
+      return () => {
+        window.ethereum.removeListener("chainChanged", handleChainchanged);
+      };
+    }
   }, []);
 
   const connectWallet = async () => {
@@ -152,12 +222,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return setOpenError(true), setError("Install Metamask");
       }
 
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
 
-      setCurrentAccount(accounts[0]);
-      // window.location.reload();
+      const isValidNetwork = [31337, 560048, 80002].includes(network.chainId);
+      if (!forceNetworkSelect && isValidNetwork) {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        setCurrentAccount(accounts[0]);
+        return;
+      }
+
+      setShowNetworkModal(false);
     } catch (error) {
       setError("Error while connecting to wallet");
       setOpenError(true);
@@ -703,108 +780,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  // const fetchMyNFTsOrListedNFTs1155 = async (type) => {
-  //   try {
-  //     const provider = new ethers.providers.JsonRpcProvider();
-  //     const contract = fetchContract(provider);
-  //     const nft1155 = new ethers.Contract(
-  //       NFTCollection1155Address,
-  //       NFTCollection1155ABI,
-  //       provider
-  //     );
-
-  //     const marketItems = await contract.fetchMarketItems1155();
-  //     const items = [];
-  //     const listedByUser = new Set();
-
-  //     if (type === "fetchItemsListed") {
-  //       for (const item of marketItems) {
-  //         if (
-  //           item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
-  //           item.amountAvailable > 0
-  //         ) {
-  //           const tokenURI = await nft1155.uri(item.tokenId.toNumber());
-  //           const { data } = await axios.get(tokenURI);
-
-  //           const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-  //           const {
-  //             pinataData,
-  //             name,
-  //             description,
-  //             category,
-  //             fileExtension,
-  //             fileSize,
-  //             createdAt,
-  //           } = metadata;
-
-  //           items.push({
-  //             itemId: item.itemId.toNumber(),
-  //             tokenId: item.tokenId.toNumber(),
-  //             amountAvailable: item.amountAvailable.toNumber(),
-  //             price: ethers.utils.formatUnits(item.totalPrice.toString(), 18),
-  //             pinataData,
-  //             name,
-  //             description,
-  //             tokenURI,
-  //             category,
-  //             fileExtension,
-  //             fileSize,
-  //             createdAt,
-  //             isOwned: false,
-  //             isListing: true,
-  //           });
-  //           listedByUser.add(item.tokenId.toNumber());
-  //         }
-  //       }
-  //     } else {
-  //       for (const item of marketItems) {
-  //         const tokenId = item.tokenId.toNumber();
-
-  //         if (listedByUser.has(tokenId)) continue;
-
-  //         const balance = await nft1155.balanceOf(currentAccount, tokenId);
-  //         if (balance > 0) {
-  //           const tokenURI = await nft1155.uri(tokenId);
-  //           const { data } = await axios.get(tokenURI);
-
-  //           const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-  //           const {
-  //             pinataData,
-  //             name,
-  //             description,
-  //             category,
-  //             fileExtension,
-  //             fileSize,
-  //             createdAt,
-  //           } = metadata;
-
-  //           items.push({
-  //             tokenId: tokenId,
-  //             balance: balance.toNumber(),
-  //             pinataData,
-  //             name,
-  //             description,
-  //             tokenURI,
-  //             category,
-  //             fileExtension,
-  //             fileSize,
-  //             createdAt,
-  //             isOwned: true,
-  //             isListing: false,
-  //           });
-  //         }
-  //       }
-  //     }
-
-  //     return items;
-  //   } catch (error) {
-  //     setError("Error while fetching listed NFTs");
-  //     setOpenError(true);
-  //   }
-  // };
-
   const fetchMyNFTsOrListedNFTs1155 = async (type) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider();
@@ -1242,8 +1217,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         transactionCount,
         transactions,
         baseCoinNetwork,
+        setShowNetworkModal,
         tranferToken,
-        // depositToken,
         tokenBalance,
         tokenSymbol,
         createNFT1155,
@@ -1251,6 +1226,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }}
     >
       {children}
+
+      <NetworkModal
+        show={showNetworkModal}
+        onClose={() => setShowNetworkModal(false)}
+        onSelectNetwork={handleSelectNetwork}
+        selectedNetwork={selectedNetwork}
+      />
     </NFTMarketplaceContext.Provider>
   );
 };

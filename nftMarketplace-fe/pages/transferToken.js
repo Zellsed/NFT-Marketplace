@@ -4,7 +4,7 @@ import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 import Style from "../styles/transferFunds.module.css";
 import StyleFrom from "../Ingredients/AccountPage/Form/Form.module.css";
 import images from "../img";
-import { FaEthereum, FaUserAlt } from "react-icons/fa";
+import { FaEthereum, FaUserAlt, FaBitcoin } from "react-icons/fa";
 import { Button, Loader } from "../Ingredients/components/componentsindex";
 
 const TransferToken = () => {
@@ -55,7 +55,7 @@ const TransferToken = () => {
               <div className={StyleFrom.Form_box_input}>
                 <div className={StyleFrom.Form_box_input_box}>
                   <div className={StyleFrom.Form_box_input_box_icon}>
-                    <FaEthereum />
+                    <FaBitcoin />
                   </div>
                   <input
                     type="number"
