@@ -98,6 +98,11 @@
   position: relative;
 }
 
+.staking_icon {
+  margin-right: 6px;
+  font-size: 14px;
+}
+
 .nav_item {
   display: flex;
   align-items: center;
@@ -109,6 +114,11 @@
   transition: color 0.3s ease;
   margin: 0;
   font-size: 0.95rem;
+}
+
+.nav_item.active {
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 .nav_item:hover {

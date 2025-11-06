@@ -42,6 +42,14 @@ async function main() {
   );
   await nftMarketplace.deployed();
 
+  const NFTStaking = await hre.ethers.getContractFactory("NFTStaking");
+  const nftStakinge = await NFTStaking.deploy(
+    customToken.address,
+    nftMarketplace.address,
+    nftCollection1155.address
+  );
+  await nftStakinge.deployed();
+
   const TransferFunds = await hre.ethers.getContractFactory("TransferFunds");
   const transferFunds = await TransferFunds.deploy();
   await transferFunds.deployed();
@@ -50,6 +58,7 @@ async function main() {
   console.log(`TranferToken deployed to ${tranferToken.address}`);
   console.log("NFTCollection1155 deployed to:", nftCollection1155.address);
   console.log(`NFTMarketplace deployed to ${nftMarketplace.address}`);
+  console.log(`NFTStaking deployed to ${nftStakinge.address}`);
   console.log(`TransferFunds deployed to ${transferFunds.address}`);
 }
 

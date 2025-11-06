@@ -203,13 +203,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (window.ethereum) {
+    if (typeof window !== "undefined" && window.ethereum) {
+      let lastChainId = null;
       const handleChainchanged = (chainId) => {
-        window.location.reload();
+        if (lastChainId !== chainId) {
+          lastChainId = chainId;
+          console.log("Chain changed", chainId);
+          window.location.reload();
+        }
       };
 
       window.ethereum.on("chainChanged", handleChainchanged);
-
       return () => {
         window.ethereum.removeListener("chainChanged", handleChainchanged);
       };

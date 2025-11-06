@@ -12,7 +12,7 @@ import { Discover, HelpCenter, Notification, Profile, SideBar } from "./index";
 import { Button } from "../componentsindex";
 import images from "../../../img";
 import { DiJqueryLogo } from "react-icons/di";
-import { FaCoins } from "react-icons/fa";
+import { FaCoins, FaLock } from "react-icons/fa"; // Thêm icon Staking
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
@@ -165,11 +165,11 @@ const NavBar = () => {
 
   const checkAccount = async () => {
     try {
-      const reponse = await axios.post(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/check-account`,
         { account: currentAccount }
       );
-      setAccount(reponse.data.exists);
+      setAccount(response.data.exists);
     } catch (error) {
       console.error("Error checking account:", error);
     }
@@ -230,6 +230,9 @@ const NavBar = () => {
     </div>
   );
 
+  // Kiểm tra active link
+  const isActive = (path) => router.pathname === path;
+
   return (
     <div className={Style.navbar}>
       <div className={Style.navbar_container}>
@@ -270,6 +273,17 @@ const NavBar = () => {
                 </div>
               )}
             </div>
+
+            <Link href="/staking">
+              <p
+                className={`${Style.nav_item} ${
+                  isActive("/staking") ? Style.active : ""
+                }`}
+              >
+                <FaLock className={Style.staking_icon} />
+                Staking
+              </p>
+            </Link>
 
             <div className={Style.navbar_container_right_help} ref={helpRef}>
               <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
