@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Web3Modal from "web3modal";
 import { BigNumber, ethers } from "ethers";
-import Router from "next/router";
 import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/router";
@@ -18,6 +17,8 @@ import {
   CustomTokenABI,
   NFTCollection1155Address,
   NFTCollection1155ABI,
+  NFTStakingAddress,
+  NFTStakingABI,
 } from "./constant";
 
 dotenv.config();
@@ -28,6 +29,61 @@ const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
   pinataGateway: process.env.NEXT_PUBLIC_PINATA_GETWAY,
 });
+
+const fetchCustomTokenContract = (signerOrProvider) =>
+  new ethers.Contract(CustomTokenAddress, CustomTokenABI, signerOrProvider);
+
+const connectingWithCustomTokenSmartContract = async () => {
+  try {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchCustomTokenContract(signer);
+
+    return contract;
+  } catch (error) {
+    console.log("Something went wrong while connecting with smart contract");
+  }
+};
+
+const fetchTransferTokenContract = (signerOrProvider) =>
+  new ethers.Contract(TranferTokenAddress, TranferTokenABI, signerOrProvider);
+
+const connectToTransferTokenContract = async () => {
+  try {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchTransferTokenContract(signer);
+
+    return contract;
+  } catch (error) {
+    console.log("Something went wrong while connecting with smart contract");
+  }
+};
+
+const fetchNftCollection1155Contract = (signerOrProvider) =>
+  new ethers.Contract(
+    NFTCollection1155Address,
+    NFTCollection1155ABI,
+    signerOrProvider
+  );
+
+const connectToNftCollection1155Contract = async () => {
+  try {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchNftCollection1155Contract(signer);
+
+    return contract;
+  } catch (error) {
+    console.log("Something went wrong while connecting with smart contract");
+  }
+};
 
 const fetchContract = (signerOrProvider) =>
   new ethers.Contract(
@@ -50,16 +106,33 @@ const connectingWithSmartContract = async () => {
   }
 };
 
-const fetchCustomTokenContract = (signerOrProvider) =>
-  new ethers.Contract(CustomTokenAddress, CustomTokenABI, signerOrProvider);
+const fetchNftStakingContract = (signerOrProvider) =>
+  new ethers.Contract(NFTStakingAddress, NFTStakingABI, signerOrProvider);
 
-const connectingWithCustomTokenSmartContract = async () => {
+const connectingWithNftStakingSmartContract = async () => {
   try {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-    const contract = fetchCustomTokenContract(signer);
+    const contract = fetchNftStakingContract(signer);
+
+    return contract;
+  } catch (error) {
+    console.log("Something went wrong while connecting with smart contract");
+  }
+};
+
+const fetchTransferFundsContract = (signerOrProvider) =>
+  new ethers.Contract(TransferFundsAddress, TransferFundsABI, signerOrProvider);
+
+const connectToTransferFundsContract = async () => {
+  try {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchTransferFundsContract(signer);
 
     return contract;
   } catch (error) {
@@ -1015,65 +1088,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchTransferFundsContract = (signerOrProvider) =>
-    new ethers.Contract(
-      TransferFundsAddress,
-      TransferFundsABI,
-      signerOrProvider
-    );
-
-  const connectToTransferFundsContract = async () => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const contract = fetchTransferFundsContract(signer);
-
-      return contract;
-    } catch (error) {
-      console.log("Something went wrong while connecting with smart contract");
-    }
-  };
-
-  const fetchTransferTokenContract = (signerOrProvider) =>
-    new ethers.Contract(TranferTokenAddress, TranferTokenABI, signerOrProvider);
-
-  const connectToTransferTokenContract = async () => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const contract = fetchTransferTokenContract(signer);
-
-      return contract;
-    } catch (error) {
-      console.log("Something went wrong while connecting with smart contract");
-    }
-  };
-
-  const fetchNftCollection1155Contract = (signerOrProvider) =>
-    new ethers.Contract(
-      NFTCollection1155Address,
-      NFTCollection1155ABI,
-      signerOrProvider
-    );
-
-  const connectToNftCollection1155Contract = async () => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const contract = fetchNftCollection1155Contract(signer);
-
-      return contract;
-    } catch (error) {
-      console.log("Something went wrong while connecting with smart contract");
-    }
-  };
-
   const transferEther = async (isAddress, price, message) => {
     try {
       if (currentAccount) {
@@ -1194,6 +1208,124 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const checkRewardPool = async () => {
+    try {
+      const stakingContract = await connectingWithNftStakingSmartContract();
+
+      const rewardPool = await stakingContract.rewardPool();
+
+      return rewardPool.toString();
+    } catch (error) {
+      console.error("Error while checking reward pool:", error);
+      setOpenError(true);
+    }
+  };
+
+  const checkIfNFTIsStaked = async (account, tokenId) => {
+    const stakingContract = await connectingWithNftStakingSmartContract();
+    const userStakes = await stakingContract.getUserStakes(account);
+
+    for (let stake of userStakes) {
+      const id = stake.tokenId.toString();
+      const isActive = stake.active;
+
+      if (id === tokenId && isActive) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const approveNFT721 = async (tokenId, address) => {
+    try {
+      const contract = await connectingWithSmartContract();
+
+      const approvalTx = await contract.approve(address, tokenId);
+
+      await approvalTx.wait();
+    } catch (error) {
+      console.error("Error while approving NFT:", error);
+
+      setOpenError(true);
+    }
+  };
+
+  const stakeNFT721 = async (tokenId, durationIndex) => {
+    try {
+      const stakingContract = await connectingWithNftStakingSmartContract();
+
+      await approveNFT721(tokenId, stakingContract.address);
+
+      const transaction = await stakingContract.stakeERC721(
+        tokenId,
+        durationIndex
+      );
+
+      setLoading(true);
+
+      transaction.wait();
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error while staking NFT:", error);
+
+      setOpenError(true);
+    }
+  };
+
+  const fetchMyStakedNFTs = async (address) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      const stakingContract = await connectingWithNftStakingSmartContract();
+      const userStakes = await stakingContract.getUserStakes(address);
+
+      const items = await Promise.all(
+        userStakes.map(async (stake) => {
+          const { staker, startTime, endTime, amount, tokenId } = stake;
+
+          const tokenURI = await contract.tokenURI(tokenId);
+          const { data } = await axios.get(tokenURI);
+
+          const metadata = typeof data === "string" ? JSON.parse(data) : data;
+
+          const {
+            pinataData,
+            name,
+            description,
+            category,
+            fileExtension,
+            fileSize,
+            createdAt,
+          } = metadata;
+
+          return {
+            staker,
+            tokenId: tokenId.toNumber(),
+            startTime,
+            endTime,
+            amount,
+            pinataData,
+            name,
+            description,
+            tokenURI,
+            category,
+            fileExtension,
+            fileSize,
+            createdAt,
+          };
+        })
+      );
+
+      console.log("Staked NFTs:", items);
+
+      return items;
+    } catch (error) {
+      console.error("Error while fetching staked NFTs:", error);
+      setOpenError(true);
+    }
+  };
+
   return (
     <NFTMarketplaceContext.Provider
       value={{
@@ -1227,6 +1359,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
         tokenSymbol,
         createNFT1155,
         reSellToken1155,
+        checkRewardPool,
+        checkIfNFTIsStaked,
+        stakeNFT721,
+        fetchMyStakedNFTs,
       }}
     >
       {children}

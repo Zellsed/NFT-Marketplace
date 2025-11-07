@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract NFTStaking {
+contract NFTStaking is IERC721Receiver {
   IERC20 public webToken;
   address public nft721Contract;
   address public nft1155Contract;
@@ -131,4 +132,13 @@ contract NFTStaking {
   function getUserStakes(address _user) external view returns (StakeInfo[] memory) {
     return userStakes[_user];
   }
+
+  function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external pure override returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
 }

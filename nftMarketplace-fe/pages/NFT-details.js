@@ -9,11 +9,7 @@ import {
 } from "../Ingredients/components/componentsindex";
 import NFTDetailsPage from "../Ingredients/NFTDetailsPage/NFTDetailsPage";
 
-import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
-
 const NFTdetails = () => {
-  const { curentAccount } = useContext(NFTMarketplaceContext);
-
   const [nft, setNft] = useState({
     price: "",
     tokenId: "",

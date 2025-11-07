@@ -8,9 +8,10 @@ import {
   MdTimer,
   MdReportProblem,
   MdOutlineDeleteSweep,
+  MdClose,
 } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import { FaWallet, FaPercentage } from "react-icons/fa";
+import { FaWallet, FaPercentage, FaLock } from "react-icons/fa";
 import {
   TiSocialFacebook,
   TiSocialLinkedin,
@@ -40,12 +41,17 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const [provanance, setProvanance] = useState(false);
   const [owner, setOwner] = useState(false);
   const [usdPrice, setUsdPrice] = useState(null);
+  const [isStaked, setIsStaked] = useState(false);
 
   const [bidHtr, setBidHtr] = useState([]);
   const [provance, setProvance] = useState([]);
   const [ownerNft, setOwnerNft] = useState([]);
 
   const [userAccount, setUserAccount] = useState("");
+
+  const [showStakePopup, setShowStakePopup] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState(0);
+  const [isStaking, setIsStaking] = useState(false);
 
   const router = useRouter();
 
@@ -83,7 +89,8 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
     }
   };
 
-  const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext);
+  const { buyNFT, currentAccount, checkIfNFTIsStaked, stakeNFT721 } =
+    useContext(NFTMarketplaceContext);
 
   const bidHistory = async () => {
     try {
@@ -121,6 +128,53 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
     }
   };
 
+  const checkStakingStatus = async () => {
+    try {
+      if (currentAccount && nft.tokenId) {
+        const staked = await checkIfNFTIsStaked(nft.owner, nft.tokenId);
+        setIsStaked(staked);
+      }
+    } catch (error) {
+      console.error("Error checking staking status:", error);
+    }
+  };
+
+  const handleStakeNFT = async () => {
+    try {
+      setIsStaking(true);
+      await stakeNFT721(nft.tokenId, selectedDuration);
+      setIsStaked(true);
+      setShowStakePopup(false);
+      alert("NFT staked successfully!");
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error staking NFT:", error);
+      alert("Failed to stake NFT");
+    } finally {
+      setIsStaking(false);
+    }
+  };
+
+  const handleOpenStakePopup = () => {
+    setShowStakePopup(true);
+  };
+
+  const handleCloseStakePopup = () => {
+    setShowStakePopup(false);
+    setSelectedDuration(0);
+  };
+
+  const handleViewStaking = () => {
+    router.push("/staking");
+  };
+
+  const durationOptions = [
+    { index: 0, days: 30, label: "30 Days" },
+    { index: 1, days: 60, label: "60 Days" },
+    { index: 2, days: 90, label: "90 Days" },
+  ];
+
   useEffect(() => {
     const fetchEthPrice = async () => {
       try {
@@ -140,9 +194,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   useEffect(() => {
     if (nft.tokenId) {
       bidHistory();
-
       provenanceNft();
-
       accountOwnerNft();
     }
   }, [nft.tokenId]);
@@ -154,6 +206,131 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
       setUserAccount(nft.seller);
     }
   }, [nft]);
+
+  useEffect(() => {
+    if (currentAccount) {
+      checkStakingStatus();
+    }
+  }, [currentAccount, nft.tokenId]);
+
+  const renderOwnerButtons = () => {
+    if (isStaked) {
+      return (
+        <div className={Style.button_group}>
+          <Button
+            icon=<FaLock />
+            btnName="List on Marketplace"
+            onClick={null}
+            classStyle={`${Style.button} ${Style.disabled_button}`}
+            disabled={true}
+          />
+
+          <Button
+            icon=<FaLock />
+            btnName="NFT is Staked"
+            onClick={handleViewStaking}
+            classStyle={`${Style.button} ${Style.staked_button}`}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className={Style.button_group}>
+          <Button
+            icon=<FaWallet />
+            btnName="List on Marketplace"
+            onClick={() =>
+              router.push(
+                `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`
+              )
+            }
+            classStyle={Style.button}
+          />
+          <Button
+            icon=<FaPercentage />
+            btnName="Stake NFT"
+            onClick={handleOpenStakePopup}
+            classStyle={`${Style.button} ${Style.stake_button}`}
+          />
+        </div>
+      );
+    }
+  };
+
+  const StakePopup = () => {
+    if (!showStakePopup) return null;
+
+    return (
+      <div className={Style.popup_overlay}>
+        <div className={Style.popup_content}>
+          <div className={Style.popup_header}>
+            <h2>Stake NFT</h2>
+            <button
+              className={Style.popup_close}
+              onClick={handleCloseStakePopup}
+            >
+              <MdClose />
+            </button>
+          </div>
+
+          <div className={Style.popup_body}>
+            <p>Select staking duration for your NFT:</p>
+
+            <div className={Style.duration_options}>
+              {durationOptions.map((option) => (
+                <div
+                  key={option.index}
+                  className={`${Style.duration_option} ${
+                    selectedDuration === option.index
+                      ? Style.duration_option_selected
+                      : ""
+                  }`}
+                  onClick={() => setSelectedDuration(option.index)}
+                >
+                  <div className={Style.duration_radio}>
+                    {selectedDuration === option.index && (
+                      <div className={Style.duration_radio_selected} />
+                    )}
+                  </div>
+                  <div className={Style.duration_info}>
+                    <span className={Style.duration_label}>{option.label}</span>
+                    <span className={Style.duration_days}>
+                      {option.days} days
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className={Style.stake_info}>
+              <p>
+                <strong>NFT:</strong> {nft.name} #{nft.tokenId}
+              </p>
+              <p>
+                <strong>Selected Duration:</strong>{" "}
+                {durationOptions[selectedDuration]?.label}
+              </p>
+            </div>
+          </div>
+
+          <div className={Style.popup_footer}>
+            <Button
+              btnName="Cancel"
+              onClick={handleCloseStakePopup}
+              classStyle={`${Style.button} ${Style.cancel_button}`}
+            />
+            <Button
+              icon=<FaLock />
+              btnName={isStaking ? "Staking..." : "Confirm Stake"}
+              onClick={handleStakeNFT}
+              disabled={isStaking}
+              classStyle={`${Style.button} ${Style.confirm_button}`}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={Style.NFTDescription}>
@@ -242,10 +419,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
                 }
               >
                 <small>Current Bid</small>
-                <p>
-                  {nft.price} ZELL{" "}
-                  {/* <span>( ≈ ${Number(nft.price * usdPrice).toFixed(2)})</span> */}
-                </p>
+                <p>{nft.price} ZELL </p>
               </div>
             </div>
 
@@ -253,16 +427,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
               {currentAccount == nft.seller?.toLowerCase() ? (
                 <p>You cannoy buy your own NFT</p>
               ) : currentAccount == nft.owner?.toLowerCase() ? (
-                <Button
-                  icon=<FaWallet />
-                  btnName="List on Marketplace"
-                  onClick={() =>
-                    router.push(
-                      `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`
-                    )
-                  }
-                  classStyle={Style.button}
-                />
+                renderOwnerButtons()
               ) : (
                 <Button
                   icon=<FaWallet />
@@ -298,6 +463,8 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
           </div>
         </div>
       </div>
+
+      <StakePopup />
     </div>
   );
 };

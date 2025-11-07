@@ -12,7 +12,7 @@ import { Discover, HelpCenter, Notification, Profile, SideBar } from "./index";
 import { Button } from "../componentsindex";
 import images from "../../../img";
 import { DiJqueryLogo } from "react-icons/di";
-import { FaCoins, FaLock } from "react-icons/fa"; // Thêm icon Staking
+import { FaCoins, FaLock } from "react-icons/fa";
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
@@ -142,6 +142,23 @@ const NavBar = () => {
   };
 
   const openCreateMenu = () => {
+    if (!currentAccount) {
+      alart("Please connect wallet");
+      return;
+    }
+
+    if (!account) {
+      alert("Please create an account");
+      router.push("/signUp");
+      return;
+    }
+
+    if (!token) {
+      alert("Please login");
+      router.push("/login");
+      return;
+    }
+
     setCreateMenu((prev) => !prev);
     setHelp(false);
     setDiscover(false);
@@ -230,8 +247,28 @@ const NavBar = () => {
     </div>
   );
 
-  // Kiểm tra active link
   const isActive = (path) => router.pathname === path;
+
+  const handlePretectedRoute = (path) => {
+    if (!currentAccount) {
+      alart("Please connect wallet");
+      return;
+    }
+
+    if (!account) {
+      alert("Please create an account");
+      router.push("/signUp");
+      return;
+    }
+
+    if (!token) {
+      alert("Please login");
+      router.push("/login");
+      return;
+    }
+
+    router.push(path);
+  };
 
   return (
     <div className={Style.navbar}>
@@ -274,16 +311,15 @@ const NavBar = () => {
               )}
             </div>
 
-            <Link href="/staking">
-              <p
-                className={`${Style.nav_item} ${
-                  isActive("/staking") ? Style.active : ""
-                }`}
-              >
-                <FaLock className={Style.staking_icon} />
-                Staking
-              </p>
-            </Link>
+            <p
+              className={`${Style.nav_item} ${
+                isActive("/staking") ? Style.active : ""
+              }`}
+              onClick={() => handlePretectedRoute("/staking")}
+            >
+              <FaLock className={Style.staking_icon} />
+              Staking
+            </p>
 
             <div className={Style.navbar_container_right_help} ref={helpRef}>
               <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
@@ -302,20 +338,22 @@ const NavBar = () => {
             </div>
           </div>
 
-          <Link href={{ pathname: "/transferToken" }}>
-            <div className={Style.tokenBalance}>
-              <FaCoins className={Style.coin_icon} />
-              <div className={Style.token_balance_info}>
-                <span className={Style.token_amount}>
-                  {tokenWebBalance?.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-                <span className={Style.token_symbol}>{tokenSymbol}</span>
-              </div>
+          <div
+            className={Style.tokenBalance}
+            onClick={() => handlePretectedRoute("/transferToken")}
+            style={{ cursor: "pointer" }}
+          >
+            <FaCoins className={Style.coin_icon} />
+            <div className={Style.token_balance_info}>
+              <span className={Style.token_amount}>
+                {tokenWebBalance?.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+              <span className={Style.token_symbol}>{tokenSymbol}</span>
             </div>
-          </Link>
+          </div>
 
           <div className={Style.network_switcher}>
             <button

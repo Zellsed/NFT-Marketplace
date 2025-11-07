@@ -3,6 +3,7 @@ const hre = require("hardhat");
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
 
+  // Mint 10M tokens
   const CustomToken = await hre.ethers.getContractFactory("CustomToken");
   const customToken = await CustomToken.deploy("Zell Token", "ZELL");
   await customToken.deployed();
@@ -11,10 +12,11 @@ async function main() {
   const tranferToken = await TranferToken.deploy(customToken.address);
   await tranferToken.deployed();
 
-  const price = ethers.utils.parseUnits("10000000", 18);
+  // 8M tokens
+  const price = ethers.utils.parseUnits("8000000", 18);
 
   console.log("Deployer:", deployer.address);
-  console.log("Approving token...");
+  console.log("Approving token for TranferToken...");
 
   await (
     await customToken.connect(deployer).approve(tranferToken.address, price)
@@ -24,9 +26,11 @@ async function main() {
     deployer.address,
     tranferToken.address
   );
-  console.log("Allowance:", allowance.toString());
+  console.log(
+    `Allowance for TranferToken: ${allowance.toString() / 1e18} ZELL`
+  );
+  console.log("Depositing 8M tokens into TranferToken...");
 
-  console.log("Depositing...");
   await (await tranferToken.connect(deployer).depositToken(price)).wait();
 
   const NFTCollection1155 = await hre.ethers.getContractFactory(
@@ -60,6 +64,26 @@ async function main() {
   console.log(`NFTMarketplace deployed to ${nftMarketplace.address}`);
   console.log(`NFTStaking deployed to ${nftStakinge.address}`);
   console.log(`TransferFunds deployed to ${transferFunds.address}`);
+
+  console.log(
+    "Approving NFTMarketplace to spend WEB tokens (for listing fees)..."
+  );
+
+  // 2M tokens
+  const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
+  await customToken
+    .connect(deployer)
+    .approve(nftStakinge.address, rewardPoolAmount);
+  console.log(
+    `Approved ${rewardPoolAmount / 1e18} ZELL for NFTStaking reward pool`
+  );
+  console.log("Depositing initial reward pool into NFTStaking...");
+
+  await nftStakinge.connect(deployer).depositReward(rewardPoolAmount);
+  console.log(
+    `Deposited ${rewardPoolAmount / 1e18} ZELL into staking reward pool`
+  );
+  console.log("Deployment + Approvals + Reward Pool Setup COMPLETED!");
 }
 
 main().catch((error) => {
