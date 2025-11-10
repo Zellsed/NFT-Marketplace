@@ -1282,7 +1282,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const items = await Promise.all(
         userStakes.map(async (stake) => {
-          const { staker, startTime, endTime, amount, tokenId } = stake;
+          const { staker, startTime, endTime, amount, tokenId, isERC721 } =
+            stake;
 
           const tokenURI = await contract.tokenURI(tokenId);
           const { data } = await axios.get(tokenURI);
@@ -1299,12 +1300,30 @@ export const NFTMarketplaceProvider = ({ children }) => {
             createdAt,
           } = metadata;
 
+          const calculateReward = () => {
+            const currentTime = Date.now() / 1000;
+            const timeStaked = currentTime - startTime.toNumber();
+            // const dayStaked = timeStaked / 86400;
+            const dayStaked = timeStaked / 60;
+
+            let reward = 0;
+
+            if (isERC721) {
+              reward = dayStaked * 10;
+            } else {
+              reward = dayStaked * 1 * amount.toNumber();
+            }
+
+            return reward;
+          };
+
           return {
             staker,
             tokenId: tokenId.toNumber(),
-            startTime,
-            endTime,
-            amount,
+            startTime: startTime.toNumber(),
+            endTime: endTime.toNumber(),
+            amount: amount.toNumber(),
+            isERC721: isERC721,
             pinataData,
             name,
             description,
@@ -1313,11 +1332,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
             fileExtension,
             fileSize,
             createdAt,
+            estimatedReward: calculateReward(),
           };
         })
       );
-
-      console.log("Staked NFTs:", items);
 
       return items;
     } catch (error) {
@@ -1325,6 +1343,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
       setOpenError(true);
     }
   };
+
+  const unStakeNFT = () => {};
 
   return (
     <NFTMarketplaceContext.Provider
@@ -1363,6 +1383,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         checkIfNFTIsStaked,
         stakeNFT721,
         fetchMyStakedNFTs,
+        unStakeNFT,
       }}
     >
       {children}

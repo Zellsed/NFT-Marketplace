@@ -3,7 +3,6 @@ import Style from "../../../styles/Staking.module.css";
 import axios from "axios";
 
 export default function StakingCard({ stake, onUnstake }) {
-  console.log("StakingCard stake:", stake);
   const isLocked = Date.now() / 1000 < stake.endTime;
   const timeLeft = isLocked
     ? formatDistanceToNow(new Date(stake.endTime * 1000), { addSuffix: true })
@@ -24,8 +23,8 @@ export default function StakingCard({ stake, onUnstake }) {
 
       <div className={Style.nft_info}>
         <h3>{stake.name || `NFT #${stake.tokenId}`}</h3>
-        <p className={Style.token_id}>ID: {stake.tokenId.toString()}</p>
-        <p className={Style.amount}>Amount: {stake.amount.toNumber()}</p>
+        <p className={Style.token_id}>ID: {stake.tokenId}</p>
+        <p className={Style.amount}>Amount: {stake.amount}</p>
       </div>
 
       <div className={Style.stake_details}>

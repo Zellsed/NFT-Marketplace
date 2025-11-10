@@ -344,6 +344,50 @@
   cursor: not-allowed;
 }
 
+.unstake_btn_early {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24) !important;
+  color: white !important;
+}
+
+.unstake_btn_early:hover {
+  background: linear-gradient(45deg, #ee5a24, #ff6b6b) !important;
+}
+
+.warning_message {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.warning_message p {
+  color: #ff6b6b;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.final_reward {
+  color: #ffd700 !important;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn_confirm_warning {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24) !important;
+}
+
+.btn_confirm_warning:hover:not(:disabled) {
+  background: linear-gradient(45deg, #ee5a24, #ff6b6b) !important;
+}
+
+.penalty {
+  color: #ff6b6b !important;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .header h1 {
     font-size: 2.2rem;

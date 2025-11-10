@@ -6,7 +6,7 @@ import UnstakeModal from "../Ingredients/components/StakingNFT/UnstakeModal";
 import Style from "../styles/Staking.module.css";
 
 export default function StakingPage() {
-  const { currentAccount, checkRewardPool, fetchMyStakedNFTs, unstakeNFT } =
+  const { currentAccount, checkRewardPool, fetchMyStakedNFTs, unStakeNFT } =
     useContext(NFTMarketplaceContext);
   const [stakedNFTs, setStakedNFTs] = useState([]);
   const [selectedStake, setSelectedStake] = useState(null);
@@ -66,7 +66,7 @@ export default function StakingPage() {
         <div className={Style.stats}>
           <div className={Style.stat_item}>
             <span>Total Staked</span>
-            <strong>{stakedNFTs.length} NFTs</strong>
+            <strong>{stakedNFTs?.length} NFTs</strong>
           </div>
           <div className={Style.stat_item}>
             <span>Reward Pool</span>
@@ -77,7 +77,7 @@ export default function StakingPage() {
 
       <div className={Style.staking_content}>
         <div className={Style.staking_grid}>
-          {stakedNFTs.length === 0 ? (
+          {stakedNFTs?.length === 0 ? (
             <div className={Style.empty_state}>
               <p>No NFTs staked yet.</p>
               <Link href="/author">
@@ -85,7 +85,7 @@ export default function StakingPage() {
               </Link>
             </div>
           ) : (
-            stakedNFTs.map((stake, i) => (
+            stakedNFTs?.map((stake, i) => (
               <StakingCard
                 key={i}
                 stake={stake}
@@ -100,7 +100,7 @@ export default function StakingPage() {
         isOpen={isModalOpen}
         stake={selectedStake}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={unstakeNFT}
+        onConfirm={unStakeNFT}
       />
     </div>
   );

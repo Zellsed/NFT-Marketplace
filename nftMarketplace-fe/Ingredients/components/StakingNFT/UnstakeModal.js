@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Style from "../../../styles/Staking.module.css";
 
 export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,13 +30,12 @@ export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
   const finalReward = calculatePenaltyReward();
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* <h2>Confirm Unstake</h2> */}
+    <div className={Style.modal_overlay} onClick={onClose}>
+      <div className={Style.modal_content} onClick={(e) => e.stopPropagation()}>
         <h2>{isEarly ? "Early Unstake" : "Confirm Unstake"}</h2>
 
-        <div className="modal-nft">
-          <img src={stake.image || "/placeholder-nft.png"} alt="NFT" />
+        <div className={Style.modal_nft}>
+          <img src={stake.pinataData || "/placeholder-nft.png"} alt="NFT" />
           <div>
             <p>
               <strong>{stake.name || `NFT #${stake.tokenId}`}</strong>
@@ -43,8 +43,8 @@ export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
             <p>Original Reward: ~{stake.estimatedReward?.toFixed(2)} WEB</p>
             {isEarly && (
               <>
-                <p className="penalty">Penalty: -50%</p>
-                <p className="final-reward">
+                <p className={Style.penalty}>Penalty: -50%</p>
+                <p className={Style.final_reward}>
                   Final Reward: ~{finalReward.toFixed(2)} WEB
                 </p>
               </>
@@ -53,7 +53,7 @@ export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
         </div>
 
         {isEarly && (
-          <div className="warning-message">
+          <div className={Style.warning_message}>
             <p>
               ⚠️ You are unstaking early! You will receive only 50% of your
               rewards.
@@ -61,14 +61,16 @@ export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
           </div>
         )}
 
-        <div className="modal-actions">
-          <button onClick={onClose} className="btn-cancel">
+        <div className={Style.modal_actions}>
+          <button onClick={onClose} className={Style.btn_cancel}>
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className={`btn-confirm ${isEarly ? "btn-confirm-warning" : ""}`}
+            className={`${Style.btn_confirm} ${
+              isEarly ? Style.btn_confirm_warning : ""
+            }`}
           >
             {isLoading
               ? "Processing..."

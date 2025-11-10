@@ -14,7 +14,10 @@ contract NFTStaking is IERC721Receiver {
   address public nft1155Contract;
   address private owner;
 
-  uint256 public constant DAY_IN_SECONDS = 86400;
+  // uint256 public constant DAY_IN_SECONDS = 86400;
+  // uint256[3] public durations = [30 * DAY_IN_SECONDS, 60 * DAY_IN_SECONDS, 90 * DAY_IN_SECONDS];
+
+  uint256 public constant DAY_IN_SECONDS = 60;
   uint256[3] public durations = [30 * DAY_IN_SECONDS, 60 * DAY_IN_SECONDS, 90 * DAY_IN_SECONDS];
 
   struct StakeInfo {
