@@ -45,7 +45,7 @@ export default function StakingCard({ stake, onUnstake }) {
       </div>
 
       <button
-        onClick={onUnstake}
+        onClick={() => onUnstake(stake)}
         className={`${Style.unstake_btn} ${
           isLocked ? Style.unstake_btn_early : ""
         }`}

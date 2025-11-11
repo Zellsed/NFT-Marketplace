@@ -1,7 +1,14 @@
 import { useState } from "react";
 import Style from "../../../styles/Staking.module.css";
 
-export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
+export default function UnstakeModal({
+  account,
+  isOpen,
+  stake,
+  onClose,
+  onConfirm,
+  onSuccess = () => {},
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen || !stake) return null;
@@ -9,7 +16,10 @@ export default function UnstakeModal({ isOpen, stake, onClose, onConfirm }) {
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
-      await onConfirm(stake.stakeIndex);
+      const success = await onConfirm(stake.stakeIndex, account);
+      if (success) {
+        onSuccess();
+      }
       onClose();
     } catch (err) {
       console.error("Unstake failed:", err);

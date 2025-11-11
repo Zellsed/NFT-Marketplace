@@ -52,6 +52,13 @@ export default function StakingPage() {
     setIsModalOpen(true);
   };
 
+  const refreshStakedNFTs = async () => {
+    if (currentAccount) {
+      await loadStakedNFTs();
+      await fetchRewardPool();
+    }
+  };
+
   return (
     <div className={Style.staking_page}>
       <div className={Style.header}>
@@ -89,7 +96,7 @@ export default function StakingPage() {
               <StakingCard
                 key={i}
                 stake={stake}
-                onUnstake={() => handleUnstake({ ...stake, stakeIndex: i })}
+                onUnstake={() => handleUnstake({ ...stake })}
               />
             ))
           )}
@@ -97,10 +104,12 @@ export default function StakingPage() {
       </div>
 
       <UnstakeModal
+        account={currentAccount}
         isOpen={isModalOpen}
         stake={selectedStake}
         onClose={() => setIsModalOpen(false)}
         onConfirm={unStakeNFT}
+        onSuccess={refreshStakedNFTs}
       />
     </div>
   );

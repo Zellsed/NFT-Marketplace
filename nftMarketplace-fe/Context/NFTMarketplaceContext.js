@@ -1276,62 +1276,42 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const fetchMyStakedNFTs = async (address) => {
     try {
-      const contract = await connectingWithSmartContract();
       const stakingContract = await connectingWithNftStakingSmartContract();
       const userStakes = await stakingContract.getUserStakes(address);
 
+      const activeStakes = userStakes.filter((stake) => stake.active);
+
+      if (activeStakes.length === 0) return [];
+
+      const contract = await connectingWithSmartContract();
+
       const items = await Promise.all(
-        userStakes.map(async (stake) => {
-          const { staker, startTime, endTime, amount, tokenId, isERC721 } =
-            stake;
-
-          const tokenURI = await contract.tokenURI(tokenId);
+        activeStakes.map(async (stake) => {
+          console.log("stake", stake);
+          const tokenURI = await contract.tokenURI(stake.tokenId);
           const { data } = await axios.get(tokenURI);
-
           const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-          const {
-            pinataData,
-            name,
-            description,
-            category,
-            fileExtension,
-            fileSize,
-            createdAt,
-          } = metadata;
 
           const calculateReward = () => {
             const currentTime = Date.now() / 1000;
-            const timeStaked = currentTime - startTime.toNumber();
+            const timeStaked = currentTime - stake.startTime.toNumber();
             // const dayStaked = timeStaked / 86400;
             const dayStaked = timeStaked / 60;
 
-            let reward = 0;
-
-            if (isERC721) {
-              reward = dayStaked * 10;
-            } else {
-              reward = dayStaked * 1 * amount.toNumber();
-            }
-
-            return reward;
+            return stake.isERC721
+              ? dayStaked * 10
+              : dayStaked * stake.amount.toNumber();
           };
 
           return {
-            staker,
-            tokenId: tokenId.toNumber(),
-            startTime: startTime.toNumber(),
-            endTime: endTime.toNumber(),
-            amount: amount.toNumber(),
-            isERC721: isERC721,
-            pinataData,
-            name,
-            description,
-            tokenURI,
-            category,
-            fileExtension,
-            fileSize,
-            createdAt,
+            stakeIndex: stake.stakeId.toNumber(),
+            tokenId: stake.tokenId.toNumber(),
+            amount: stake.amount.toNumber(),
+            startTime: stake.startTime.toNumber(),
+            endTime: stake.endTime.toNumber(),
+            isERC721: stake.isERC721,
+            name: metadata.name || `NFT #${stake.tokenId.toNumber()}`,
+            pinataData: metadata.pinataData,
             estimatedReward: calculateReward(),
           };
         })
@@ -1340,11 +1320,58 @@ export const NFTMarketplaceProvider = ({ children }) => {
       return items;
     } catch (error) {
       console.error("Error while fetching staked NFTs:", error);
-      setOpenError(true);
+      return [];
     }
   };
 
-  const unStakeNFT = () => {};
+  const unStakeNFT = async (stakeIndex, account, onSuccess) => {
+    try {
+      const stakingContract = await connectingWithNftStakingSmartContract();
+
+      const count = await stakingContract.getUserStakesCount(account);
+
+      if (stakeIndex >= count.toNumber() || stakeIndex < 0) {
+        throw new Error(
+          `Invalid stake ID: ${stakeIndex} (max: ${count.toNumber() - 1})`
+        );
+      }
+
+      const tx = await stakingContract.unstake(stakeIndex);
+
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+
+      if (onSuccess) {
+        onSuccess();
+      }
+
+      return true;
+    } catch (error) {
+      let message = "Unstake failed";
+      if (error.code === "CALL_EXCEPTION" || error.code === -32603) {
+        const reason =
+          error.error?.data?.message ||
+          error.reason ||
+          error.data?.message ||
+          error.message;
+        if (reason.includes("Not active"))
+          message = "Stake already unstaked or inactive";
+        else if (reason.includes("Insufficient reward pool"))
+          message = "Reward pool insufficient";
+        else if (reason.includes("Not staker"))
+          message = "You are not the staker";
+        else message = reason;
+      } else if (error.message.includes("user rejected")) {
+        message = "Transaction cancelled";
+      }
+
+      console.error("Error while unstaking NFT:", error);
+      setError(message);
+      setOpenError(true);
+      return false;
+    }
+  };
 
   return (
     <NFTMarketplaceContext.Provider
