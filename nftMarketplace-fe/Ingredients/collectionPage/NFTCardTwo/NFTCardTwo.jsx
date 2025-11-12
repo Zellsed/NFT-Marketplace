@@ -65,8 +65,9 @@ const NFTCardTwo = ({ NFTData }) => {
             <div className={Style.NFTCardTwo_box_info}>
               <div className={Style.NFTCardTwo_box_info_left}>
                 <LikeProfile />
-                <p>
-                  {el.name.slice(0, 15)}...{el.name.slice(-5)}
+                <p title={el.name}>
+                  {" "}
+                  {el.name.length > 20 ? `${el.name.slice(0, 20)}...` : el.name}
                 </p>
               </div>
 
@@ -83,7 +84,11 @@ const NFTCardTwo = ({ NFTData }) => {
               <p className={Style.NFTCardTwo_box_price_stock}>
                 <MdTimer />
 
-                <span>{format(Number(el.createdAt), "vi")}</span>
+                <span>
+                  {new Date(el.createdAt).toLocaleString("vi-VN", {
+                    hour12: false,
+                  })}
+                </span>
               </p>
             </div>
           </div>

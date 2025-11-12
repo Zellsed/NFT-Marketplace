@@ -100,26 +100,32 @@
 }
 
 .NFTCardTwo_box_info {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
   padding: 1rem;
 }
 
 .NFTCardTwo_box_info_left {
-  line-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .NFTCardTwo_box_info small {
   font-size: 1rem;
+  white-space: nowrap;
 }
 
 .NFTCardTwo_box_info_left p {
   font-size: 1.5rem;
   font-weight: 900;
-  max-width: 100%;
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
 }
 
 .NFTCardTwo_box_price {

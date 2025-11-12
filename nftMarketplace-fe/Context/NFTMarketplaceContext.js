@@ -381,29 +381,30 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
 
-      const { transaction, tokenId } = await createSale(url, price);
+      // const { transaction, tokenId } = await createSale(url, price);
+      await createSale(url, price);
 
-      if (transaction) {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
-          {
-            name: name,
-            description: description,
-            price: price,
-            pinataData: pinataData,
-            category: category,
-            fileExtension: fileExtension,
-            fileSize: fileSize,
-            createdAt: createdAt,
-            owner: transaction.to,
-            seller: transaction.from,
-            tokenId: tokenId,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
+      // if (transaction) {
+      //   await axios.post(
+      //     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
+      //     {
+      //       name: name,
+      //       description: description,
+      //       price: price,
+      //       pinataData: pinataData,
+      //       category: category,
+      //       fileExtension: fileExtension,
+      //       fileSize: fileSize,
+      //       createdAt: createdAt,
+      //       owner: transaction.to,
+      //       seller: transaction.from,
+      //       tokenId: tokenId,
+      //     },
+      //     {
+      //       headers: { Authorization: `Bearer ${token}` },
+      //     }
+      //   );
+      // }
 
       router.push("/searchPage");
     } catch (error) {
@@ -627,12 +628,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const newItemId = event.args.itemId.toNumber();
       const resellPrice = ethers.utils.formatUnits(newPrice, 18);
 
-      console.log(`✅ NFT1155 đã đăng bán lại với itemId: ${newItemId}`);
-      console.log(
-        `TokenId: ${id}, Amount: ${quantity}, Price: ${resellPrice} WEB`
-      );
-
-      // return { transaction, newItemId };
+      return { transaction, newItemId };
     } catch (error) {
       setError(`Error while creating sale1155: ${error.message}`);
       setOpenError(true);
@@ -641,62 +637,27 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const fetchNFTs = async () => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider();
-      // const provider = new ethers.providers.JsonRpcProvider(
-      //   "https://eth-holesky.g.alchemy.com/v2/XbTCI1sk-nWg_2lJu90LU9FjQS6I94qj"
-      // );
-
-      const contract = fetchContract(provider);
-
-      const data = await contract.fetchMarketItems();
+      const nftData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace`
+      );
 
       const items = await Promise.all(
-        data.map(
-          async ({ tokenId, seller, owner, price: unformattedPrice }) => {
-            const tokenURI = await contract.tokenURI(tokenId);
-
-            const { data } = await axios.get(tokenURI);
-
-            const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-            const {
-              pinataData,
-              name,
-              description,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            } = metadata;
-
-            const price = ethers.utils.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-
-            const countTokenLike = await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/nft-likes?id=${tokenId}`
-            );
-
-            const likes = countTokenLike.data.likeCount;
-
-            return {
-              price,
-              tokenId: tokenId.toString(),
-              seller,
-              owner,
-              pinataData,
-              name,
-              description,
-              tokenURI,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-              likes,
-            };
-          }
-        )
+        nftData.data.data.map(async (e) => {
+          return {
+            price: e.nft_price,
+            tokenId: e.token_id,
+            seller: e.nft_seller,
+            owner: e.nft_owner,
+            pinataData: e.pinata_data,
+            name: e.metadata_name,
+            description: e.metadata_description,
+            tokenURI: e.token_uri,
+            category: e.metadata_category,
+            fileExtension: e.file_extension,
+            fileSize: e.file_size,
+            createdAt: e.created_at,
+          };
+        })
       );
 
       return items;

@@ -27,7 +27,7 @@ https://dashboard.alchemy.com/
 ```shell
 Localhost 8545
 
-http://127.0.0.1:8545/
+http://127.0.0.1:8545
 
 http://localhost:8545
 

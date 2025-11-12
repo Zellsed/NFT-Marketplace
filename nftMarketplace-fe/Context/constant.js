@@ -3,7 +3,7 @@ import tranferToken from "../artifacts/contracts/TranferToken.sol/TranferToken.j
 import nftCollection1155 from "../artifacts/contracts/NFTCollection1155.sol/NFTCollection1155.json";
 import nftMarketplace from "../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json";
 import nftStaking from "../artifacts/contracts/NFTStaking.sol/NFTStaking.json";
-import transferFunds from "../artifacts//contracts/TransferFunds.sol/TransferFunds.json";
+import transferFunds from "../artifacts/contracts/TransferFunds.sol/TransferFunds.json";
 
 export const CustomTokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const CustomTokenABI = customToken.abi;

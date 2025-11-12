@@ -36,6 +36,13 @@ contract TranferToken {
     uint256 public _historyIndex;
     mapping(uint256 => History) private histories;
 
+    event buyTokenWeb(
+        address userAddress,
+        string baseCoin,
+        uint256 baseCoinAmount,
+        uint256 webTokenAmount
+    );
+
     constructor(address _webTokenAddress) {
         webToken = IERC20(_webTokenAddress);
         owner = msg.sender;
@@ -84,6 +91,8 @@ contract TranferToken {
         userPurchasedBalance[msg.sender] += webAmount;
 
         _recordHistory("BUY", _baseCoin, msg.value, webAmount);
+
+        emit buyTokenWeb(msg.sender, _baseCoin, msg.value, webAmount);
     }
 
     function _recordHistory(
