@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { NftEntity } from './nft.entity';
+import { Nft721Entity } from './nft721.entity';
 import { History } from 'src/common/enum';
 
-@Entity('nft-history')
+@Entity('nf_721_history')
 export class NftHistoryEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
@@ -29,17 +29,17 @@ export class NftHistoryEntity {
 
   @Column({
     type: 'text',
-    name: 'owner',
-    nullable: true,
-  })
-  owner: string;
-
-  @Column({
-    type: 'text',
     name: 'seller',
     nullable: true,
   })
   seller: string;
+
+  @Column({
+    type: 'text',
+    name: 'owner',
+    nullable: true,
+  })
+  owner: string;
 
   @Column({
     type: 'float',
@@ -54,10 +54,6 @@ export class NftHistoryEntity {
     nullable: true,
   })
   tokenId: number;
-
-  @ManyToOne(() => NftEntity, (nft) => nft.history)
-  @JoinColumn({ name: 'nft_id' })
-  nft: NftEntity;
 
   @Column({
     name: 'created_at',
@@ -77,4 +73,8 @@ export class NftHistoryEntity {
   updateDates() {
     this.updatedAt = new Date();
   }
+
+  @ManyToOne(() => Nft721Entity, (nft) => nft.history)
+  @JoinColumn({ name: 'nft_id' })
+  nft: Nft721Entity;
 }

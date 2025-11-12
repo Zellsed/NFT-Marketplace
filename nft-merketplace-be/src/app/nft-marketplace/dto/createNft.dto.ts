@@ -14,16 +14,42 @@ import {
 } from 'class-validator';
 import { CryptoLegend, Difficulty } from 'src/common/enum';
 
-export class createNFTDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
+export class createNFTDTo {
+  @IsOptional()
+  @IsNumber()
+  tokenId: number;
 
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
   @Type(() => Number)
   price: number;
+
+  @IsOptional()
+  @IsString()
+  seller: string;
+
+  @IsOptional()
+  @IsString()
+  owner: string;
+
+  @IsOptional()
+  @IsString()
+  sold: boolean;
+}
+
+export class metadataNFTDto {
+  @IsOptional()
+  @IsNumber()
+  tokenId: number;
+
+  @IsOptional()
+  @IsString()
+  tokenURI: string;
+
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
   @IsOptional()
   @IsString()
@@ -44,28 +70,4 @@ export class createNFTDto {
   @IsOptional()
   @IsString()
   fileSize: string;
-
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  @Transform(({ value }) =>
-    typeof value === 'number' ? new Date(value) : value,
-  )
-  createdAt: Date;
-
-  @IsOptional()
-  @IsString()
-  owner: string;
-
-  @IsOptional()
-  @IsString()
-  seller: string;
-
-  @IsOptional()
-  @IsString()
-  secretNfts: boolean;
-
-  @IsOptional()
-  @IsNumber()
-  tokenId: number;
 }

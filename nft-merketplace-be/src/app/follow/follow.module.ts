@@ -4,7 +4,7 @@ import { FollowService } from './follow.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   FollowEntity,
-  NftEntity,
+  Nft721Entity,
   UserEntity,
   UserInformationEntity,
 } from 'src/core/lib/database/entities';
@@ -15,10 +15,10 @@ import {
       FollowEntity,
       UserEntity,
       UserInformationEntity,
-      NftEntity,
+      Nft721Entity,
     ]),
   ],
   controllers: [FollowController],
   providers: [FollowService],
 })
-export class FollowModule {}
+export class FollowModule { }

@@ -1,34 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import {
+  NFT721MetadataRepository,
   NftHistoryRepository,
   NFTRepository,
   UserRepository,
 } from 'src/core/lib/database/repositories';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  NftEntity,
+  Nft721Entity,
+  Nft721MetadataEntity,
   NftHistoryEntity,
   UserEntity,
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
-import { createNFTDto } from './dto/createNft.dto';
-import { updateNFTDto } from './dto/updateNft.dto';
+
 import { DefaultPaging, History } from 'src/common/enum';
 import slugify from 'slugify';
-import { buyNFTDto, resellNFTDto } from './dto/buyNft.dto';
+import { createNFTDTo, metadataNFTDto } from './dto/createNft.dto';
 
 @Injectable()
 export class NftMarketplaceService {
   constructor(
-    @InjectRepository(NftEntity)
+    @InjectRepository(Nft721Entity)
     private readonly nftRepo: NFTRepository,
+
+    @InjectRepository(Nft721MetadataEntity)
+    private readonly nft721MetadataRepo: NFT721MetadataRepository,
 
     @InjectRepository(UserEntity)
     private readonly userRepo: UserRepository,
 
     @InjectRepository(NftHistoryEntity)
     private readonly nftHistoryRepo: NftHistoryRepository,
-  ) {}
+  ) { }
+
+  async createNft721FromChain(createNft: createNFTDTo, nftData: metadataNFTDto) {
+    const tokenId = Number(createNft.tokenId);
+    const price = Number(createNft.price) / 1e18;
+
+    const existMetadata = await this.nft721MetadataRepo.findOne({
+      where: {
+        tokenId: tokenId
+      }
+    })
+
+    if (existMetadata) {
+      return
+    }
+
+    const metadata = await this.nft721MetadataRepo.save({
+      tokenId: tokenId,
+      tokenURI: nftData.tokenURI,
+      name: nftData.name,
+      description: nftData.description,
+      pinataData: nftData.pinataData,
+      category: nftData.category,
+      fileExtension: nftData.fileExtension,
+      fileSize: nftData.fileSize,
+    });
+
+    const nft = await this.nftRepo.save({
+      ...createNft,
+      tokenId: tokenId,
+      price: price,
+      metadata: metadata,
+    });
+
+    await this.nftHistoryRepo.save({
+      historyType: History.SELL,
+      seller: createNft.seller,
+      owner: createNft.owner,
+      price: price,
+      tokenId: tokenId,
+      nft: nft
+    })
+  }
 
   async getAllNfts(requestTime: string, body: getNFTDto) {
     const {
@@ -49,79 +95,24 @@ export class NftMarketplaceService {
       .createQueryBuilder('nft')
       .select([
         'nft.id' as 'id',
-        'nft.name' as 'name',
-        'nft.slug' as 'slug',
-        'nft.duration' as 'duration',
-        'nft.max_group_size' as 'max_group_size',
-        'nft.difficulty' as 'difficulty',
-        'nft.rating_average' as 'rating_average',
-        'nft.rating_quantity' as 'rating_quantity',
+        'nft.token_id' as 'tokenId',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
         'nft.price' as 'price',
-        'nft.price_discount' as 'price_discount',
-        'nft.summary' as 'summary',
-        'nft.description' as 'description',
-        'nft.image_cover' as 'image_cover',
-        'nft.images' as 'images',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
         'nft.created_at' as 'created_at',
-        'nft.start_dates' as 'start_dates',
-        'nft.secret_nfts' as 'secret_nfts',
+        'nft.updated_at' as 'updated_at',
       ])
-      .andWhere('nft.secret_nfts = :secret_nfts', { secret_nfts: false });
-
-    if (fields) {
-      const selectedFields = fields
-        .split(',')
-        .map((field) => `nft.${field.trim()}`);
-      qb.select(selectedFields);
-    }
-
-    // if (fields) {
-    //   const excludedFields = fields
-    //     .split(',')
-    //     .map((field) => `nft.${field.trim()}`);
-
-    //   const selectedFields = qb.expressionMap.selects
-    //     .map((select) => select.selection)
-    //     .filter((field) => !excludedFields.includes(field));
-    //   qb.select(selectedFields);
-    // }
-
-    if (name) {
-      qb.andWhere('nft.name = :name', { name });
-    }
-    if (duration) {
-      qb.andWhere('nft.duration = :duration', { duration });
-    }
-    if (difficulty) {
-      qb.andWhere('nft.difficulty = :difficulty', { difficulty });
-    }
-    if (ratingsAverage) {
-      qb.andWhere('nft.rating_average = :ratingsAverage', { ratingsAverage });
-    }
-    if (ratingsQuantity) {
-      qb.andWhere('nft.rating_quantity = :ratingsQuantity', {
-        ratingsQuantity,
-      });
-    }
-    if (price) {
-      qb.andWhere('nft.price = :price', { price });
-    }
-    // if (priceDiscount) {
-    //   qb.andWhere('nft.price_discount = :priceDiscount', { priceDiscount });
-    // }
-
-    if (sort) {
-      const sortFields = sort.split(',');
-
-      sortFields.forEach((fields) => {
-        const orderDirection = fields.startsWith('-') ? 'DESC' : 'ASC';
-        const sortField = fields.replace('-', '');
-
-        qb.addOrderBy(`nft.${sortField}`, orderDirection);
-      });
-    } else {
-      qb.orderBy('nft.created_at', 'DESC');
-    }
+      .leftJoin('nft.metadata', 'metadata')
+      .andWhere('nft.sold = :sold', { sold: false })
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -201,108 +192,11 @@ export class NftMarketplaceService {
     return stats;
   }
 
-  async createNft(userId: number, body: createNFTDto) {
-    const existUser = await this.userRepo.findOne({ where: { id: userId } });
-
-    if (!existUser) {
-      throw new Error('User not found');
-    }
-
-    const newNft = await this.nftRepo.save({
-      name: body.name,
-      price: body.price,
-      description: body.description,
-      pinataData: body.pinataData,
-      category: body.category,
-      fileExtension: body.fileExtension,
-      fileSize: body.fileSize,
-      createdAt: body.createdAt,
-      seller: body.seller.toLowerCase(),
-      owner: body.owner.toLowerCase(),
-      user: existUser,
-      tokenId: body.tokenId,
-    });
-
-    await this.nftHistoryRepo.save({
-      seller: body.seller.toLowerCase(),
-      owner: body.owner.toLowerCase(),
-      nft: newNft,
-      tokenId: body.tokenId,
-      historyType: History.SELL,
-      price: body.price,
-    });
-
-    return newNft;
-  }
-
-  async buyNft(userId: number, body: buyNFTDto) {
-    const existUser = await this.userRepo.findOne({ where: { id: userId } });
-
-    if (!existUser) {
-      throw new Error('User not found');
-    }
-
-    const existNft = await this.nftRepo.findOne({
-      where: { tokenId: Number(body.nftId) },
-    });
-
-    if (!existNft) {
-      throw new Error('Nft not found');
-    }
-
-    await this.nftRepo.update(existNft.id, {
-      user: existUser,
-      owner: body.owner.toLowerCase(),
-      seller: body.seller.toLowerCase(),
-    });
-
-    await this.nftHistoryRepo.save({
-      seller: body.seller.toLowerCase(),
-      owner: body.owner.toLowerCase(),
-      nft: existNft,
-      tokenId: existNft.tokenId,
-      historyType: History.BUY,
-      price: existNft.price,
-    });
-  }
-
-  async resellNft(userId: number, body: resellNFTDto) {
-    const existUser = await this.userRepo.findOne({ where: { id: userId } });
-
-    if (!existUser) {
-      throw new Error('User not found');
-    }
-
-    const existNft = await this.nftRepo.findOne({
-      where: { tokenId: body.tokenId },
-    });
-
-    if (!existNft) {
-      throw new Error('Nft not found');
-    }
-
-    await this.nftRepo.update(existNft.id, {
-      user: existUser,
-      owner: body.owner.toLowerCase(),
-      seller: body.seller.toLowerCase(),
-      price: Number(body.price),
-    });
-
-    await this.nftHistoryRepo.save({
-      seller: body.seller.toLowerCase(),
-      owner: body.owner.toLowerCase(),
-      nft: existNft,
-      tokenId: existNft.tokenId,
-      historyType: History.RESELL,
-      price: Number(body.price),
-    });
-  }
-
   async getSingleNFT(id: number) {
     const idNumber = Number(id);
 
     const existNft = await this.nftRepo.findOne({
-      where: { id: idNumber, secretNfts: false },
+      where: { id: idNumber, sold: false },
     });
 
     if (!existNft) {
@@ -310,26 +204,6 @@ export class NftMarketplaceService {
     }
 
     return existNft;
-  }
-
-  async updateNFT(id: number, body: updateNFTDto) {
-    const existNft = await this.nftRepo.findOne({ where: { id: id } });
-
-    if (!existNft) {
-      throw new Error('Nft not found');
-    }
-
-    await this.nftRepo.update(id, body);
-
-    const existNftUpdate = await this.nftRepo.findOne({ where: { id: id } });
-
-    return existNftUpdate;
-  }
-
-  async deleteNFT(id: number) {
-    await this.nftRepo.delete(id);
-
-    return { status: 'success', message: 'Delete successfully' };
   }
 
   async getMonthlyPlan(year: number) {
@@ -380,18 +254,18 @@ export class NftMarketplaceService {
   }
 
   async getUserNft(id: number) {
-    const existNft = await this.nftRepo.findOne({ where: { tokenId: id } });
+    // const existNft = await this.nftRepo.findOne({ where: { tokenId: id } });
 
-    if (!existNft) {
-      throw new Error('Nft not found');
-    }
+    // if (!existNft) {
+    //   throw new Error('Nft not found');
+    // }
 
-    const nftOwnerUser = await this.userRepo.findOne({
-      where: { id: existNft.user },
-    });
+    // const nftOwnerUser = await this.userRepo.findOne({
+    //   where: { id: existNft.user },
+    // });
 
-    if (!nftOwnerUser) {
-      throw new Error('User not found');
-    }
+    // if (!nftOwnerUser) {
+    //   throw new Error('User not found');
+    // }
   }
 }

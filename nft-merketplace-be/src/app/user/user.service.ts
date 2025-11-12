@@ -19,7 +19,7 @@ export class UserService {
 
     @InjectRepository(UserInformationEntity)
     private readonly userInformationRepo: UserInformationRepository,
-  ) {}
+  ) { }
 
   async getAllUsers() {
     const allUser = await this.userRepo.find({ where: { active: true } });
@@ -52,7 +52,7 @@ export class UserService {
     }
 
     const userInfo = await this.userInformationRepo.findOne({
-      where: { user: user.id },
+      where: { user: { id: user.id } },
     });
 
     if (!userInfo) {
@@ -76,7 +76,7 @@ export class UserService {
     }
 
     const userInformation = await this.userInformationRepo.findOne({
-      where: { user: user.id },
+      where: { user: { id: user.id } },
     });
 
     if (!userInformation) {
@@ -101,7 +101,7 @@ export class UserService {
     });
 
     const existUserInformation = await this.userInformationRepo.findOne({
-      where: { user: existUser.id },
+      where: { user: { id: existUser.id } },
     });
 
     if (!existUserInformation) {

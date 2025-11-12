@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FollowEntity,
-  NftEntity,
+  Nft721Entity,
   UserEntity,
   UserInformationEntity,
 } from 'src/core/lib/database/entities';
@@ -27,9 +27,9 @@ export class FollowService {
     @InjectRepository(UserInformationEntity)
     private readonly userInformationRepo: UserInformationRepository,
 
-    @InjectRepository(NftEntity)
+    @InjectRepository(Nft721Entity)
     private readonly nftRepo: NFTRepository,
-  ) {}
+  ) { }
 
   async followUser(userId: number, accountFollowing: FollowDto) {
     const existUser = await this.userRepo.findOne({ where: { id: userId } });
@@ -47,7 +47,7 @@ export class FollowService {
     }
 
     const existFollow = await this.followRepo.findOne({
-      where: { follower: existUser.id, following: existFollowing.id },
+      where: { follower: { id: existUser.id }, following: { id: existFollowing.id } },
     });
 
     if (existFollow) {
@@ -88,7 +88,7 @@ export class FollowService {
     }
 
     const existFollow = await this.followRepo.findOne({
-      where: { follower: existUser.id, following: existFollowing.id },
+      where: { follower: { id: existUser.id }, following: { id: existFollowing.id } },
     });
 
     return {
@@ -106,30 +106,30 @@ export class FollowService {
     }
 
     const listFollow = await this.followRepo.find({
-      where: { follower: existUser.id },
+      where: { follower: { id: existUser.id } },
       relations: ['following'],
     });
 
     const data = await Promise.all(
       listFollow.map(async (user) => {
         const userInformation = await this.userInformationRepo.findOne({
-          where: { user: user.following.id },
+          where: { user: { id: user.following.id } },
         });
 
         if (!userInformation) {
           throw new Error('User Info not found');
         }
 
-        const nftList = await this.nftRepo.find({
-          where: { user: user.following.id },
-        });
+        // const nftList = await this.nftRepo.find({
+        //   where: { user: { id: user.following.id } },
+        // });
 
-        const price = nftList.reduce((sum, nft) => sum + nft.price, 0);
+        // const price = nftList.reduce((sum, nft) => sum + nft.price, 0);
 
-        return {
-          seller: user.following.account,
-          total: price,
-        };
+        // return {
+        //   seller: user.following.account,
+        //   total: price,
+        // };
       }),
     );
 
@@ -144,30 +144,30 @@ export class FollowService {
     }
 
     const listFollower = await this.followRepo.find({
-      where: { following: existUser.id },
+      where: { following: { id: existUser.id } },
       relations: ['follower'],
     });
 
     const data = await Promise.all(
       listFollower.map(async (user) => {
         const userInformation = await this.userInformationRepo.findOne({
-          where: { user: user.follower.id },
+          where: { user: { id: user.follower.id } },
         });
 
         if (!userInformation) {
           throw new Error('User Info not found');
         }
 
-        const nftList = await this.nftRepo.find({
-          where: { user: user.follower.id },
-        });
+        // const nftList = await this.nftRepo.find({
+        //   where: { user: { id: user.follower.id } },
+        // });
 
-        const price = nftList.reduce((sum, nft) => sum + nft.price, 0);
+        // const price = nftList.reduce((sum, nft) => sum + nft.price, 0);
 
-        return {
-          seller: user.follower.account,
-          total: price,
-        };
+        // return {
+        //   seller: user.follower.account,
+        //   total: price,
+        // };
       }),
     );
 

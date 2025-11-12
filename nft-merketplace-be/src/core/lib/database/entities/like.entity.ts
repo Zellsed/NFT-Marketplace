@@ -6,7 +6,7 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { NftEntity } from './nft.entity';
+import { Nft721Entity } from './nft721.entity';
 
 @Entity('like')
 export class LikeEntity {
@@ -26,8 +26,8 @@ export class LikeEntity {
   @ManyToOne(() => UserEntity, (user) => user.likes)
   user: UserEntity;
 
-  @ManyToOne(() => NftEntity, (nft) => nft.likes)
-  nft: NftEntity;
+  @ManyToOne(() => Nft721Entity, (nft) => nft.likes)
+  nft: Nft721Entity;
 
   @Column({
     name: 'created_at',

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { History } from 'src/common/enum';
 import {
   LikeEntity,
-  NftEntity,
+  Nft721Entity,
   NftHistoryEntity,
   UserEntity,
 } from 'src/core/lib/database/entities';
@@ -24,12 +24,12 @@ export class LikeService {
     @InjectRepository(UserEntity)
     private readonly userRepo: UserRepository,
 
-    @InjectRepository(NftEntity)
+    @InjectRepository(Nft721Entity)
     private readonly nftRepo: NFTRepository,
 
     @InjectRepository(NftHistoryEntity)
     private readonly nftHistoryRepo: NftHistoryRepository,
-  ) {}
+  ) { }
 
   async likeNft(userId: number, nftId: number) {
     const existUser = await this.userRepo.findOne({ where: { id: userId } });
@@ -45,7 +45,7 @@ export class LikeService {
     }
 
     const existingLike = await this.likeRepo.findOne({
-      where: { user: userId, nft: nftId },
+      where: { user: { id: userId }, nft: { id: existNft.id } },
     });
 
     if (existingLike) {
@@ -85,7 +85,7 @@ export class LikeService {
     }
 
     const existingLike = await this.likeRepo.findOne({
-      where: { user: userId, tokenId: nftId },
+      where: { user: { id: userId }, tokenId: nftId },
     });
 
     return { exists: !!existingLike };
@@ -110,7 +110,7 @@ export class LikeService {
     }
 
     const existLike = await this.likeRepo.find({
-      where: { user: existUser.id },
+      where: { user: { id: existUser.id } },
       relations: ['nft'],
     });
 
@@ -134,20 +134,20 @@ export class LikeService {
 
         const likeCount = await this.getNftLikes(latestTransaction.nft.tokenId);
 
-        return {
-          category: latestTransaction.nft.category,
-          createdAt: new Date(latestTransaction.nft.createdAt).getTime(),
-          description: latestTransaction.nft.description,
-          fileExtension: latestTransaction.nft.fileExtension,
-          fileSize: latestTransaction.nft.fileSize,
-          likes: likeCount.likeCount,
-          name: latestTransaction.nft.name,
-          owner: latestTransaction.nft.owner,
-          pinataData: latestTransaction.nft.pinataData,
-          price: latestTransaction.nft.price,
-          seller: latestTransaction.nft.seller,
-          tokenId: latestTransaction.nft.tokenId,
-        };
+        // return {
+        //   category: latestTransaction.nft.category,
+        //   createdAt: new Date(latestTransaction.nft.createdAt).getTime(),
+        //   description: latestTransaction.nft.description,
+        //   fileExtension: latestTransaction.nft.fileExtension,
+        //   fileSize: latestTransaction.nft.fileSize,
+        //   likes: likeCount.likeCount,
+        //   name: latestTransaction.nft.name,
+        //   owner: latestTransaction.nft.owner,
+        //   pinataData: latestTransaction.nft.pinataData,
+        //   price: latestTransaction.nft.price,
+        //   seller: latestTransaction.nft.seller,
+        //   tokenId: latestTransaction.nft.tokenId,
+        // };
       }),
     );
 

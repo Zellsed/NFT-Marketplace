@@ -31,7 +31,7 @@ export class AuthService {
 
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   async singup(body: createAuthDto) {
     const existEmail = await this.userRepo.findOne({
@@ -155,8 +155,10 @@ export class AuthService {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const user = await this.userRepo.findOne({
-      passwordResetToken: hashedToken,
-      passwordResetExpires: MoreThan(new Date()),
+      where: {
+        passwordResetToken: hashedToken,
+        passwordResetExpires: MoreThan(new Date()),
+      }
     });
 
     if (!user) {

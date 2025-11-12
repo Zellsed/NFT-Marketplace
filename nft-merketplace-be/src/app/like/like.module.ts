@@ -4,7 +4,7 @@ import { LikeService } from './like.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   LikeEntity,
-  NftEntity,
+  Nft721Entity,
   NftHistoryEntity,
   UserEntity,
 } from 'src/core/lib/database/entities';
@@ -16,7 +16,7 @@ import { LikeRepository } from 'src/core/lib/database/repositories';
     TypeOrmModule.forFeature([
       LikeEntity,
       UserEntity,
-      NftEntity,
+      Nft721Entity,
       NftHistoryEntity,
     ]),
   ],
@@ -24,4 +24,4 @@ import { LikeRepository } from 'src/core/lib/database/repositories';
   providers: [LikeService, LikeRepository],
   exports: [LikeService, LikeRepository, TypeOrmModule],
 })
-export class LikeModule {}
+export class LikeModule { }

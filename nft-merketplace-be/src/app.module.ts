@@ -7,7 +7,8 @@ import { UserModule } from './app/user/user.module';
 import {
   FollowEntity,
   LikeEntity,
-  NftEntity,
+  Nft721Entity,
+  Nft721MetadataEntity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
@@ -15,6 +16,7 @@ import {
 import {
   FollowRepository,
   LikeRepository,
+  NFT721MetadataRepository,
   NftHistoryRepository,
   NFTRepository,
   UserInformationRepository,
@@ -26,9 +28,11 @@ import { LikeModule } from './app/like/like.module';
 import { FollowModule } from './app/follow/follow.module';
 import { UserProfileModule } from './app/user-profile/user-profile.module';
 import { NftDetailsModule } from './app/nft-details/nft-details.module';
+import { TranferTokenWebModule } from './app/tranfer-token-web/tranfer-token-web.module';
 
 const entities = [
-  NftEntity,
+  Nft721Entity,
+  Nft721MetadataEntity,
   UserEntity,
   UserInformationEntity,
   NftHistoryEntity,
@@ -38,6 +42,7 @@ const entities = [
 
 const repositories = [
   NFTRepository,
+  NFT721MetadataRepository,
   UserRepository,
   UserInformationRepository,
   NftHistoryRepository,
@@ -59,7 +64,8 @@ const repositories = [
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: [
-          NftEntity,
+          Nft721Entity,
+          Nft721MetadataEntity,
           UserEntity,
           UserInformationEntity,
           NftHistoryEntity,
@@ -79,8 +85,9 @@ const repositories = [
     FollowModule,
     UserProfileModule,
     NftDetailsModule,
+    TranferTokenWebModule,
   ],
   controllers: [],
   providers: [...repositories],
 })
-export class AppModule {}
+export class AppModule { }

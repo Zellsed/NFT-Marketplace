@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { NftEntity } from '../entities/nft.entity';
+import { Nft721Entity } from '../entities/nft721.entity';
 
-@EntityRepository(NftEntity)
-export class NFTRepository extends Repository<NftEntity> {}
+@EntityRepository(Nft721Entity)
+export class NFTRepository extends Repository<Nft721Entity> { }

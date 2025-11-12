@@ -14,20 +14,18 @@ import {
 import { NftMarketplaceService } from './nft-marketplace.service';
 import { Request } from 'express';
 import { getNFTDto } from './dto/getNft.dto';
-import { createNFTDto } from './dto/createNft.dto';
-import { updateNFTDto } from './dto/updateNft.dto';
-// import { RolesGuardAdmin } from 'src/core/guard/rolesAdmin.guard';
 import { Role } from 'src/core/decorators/roles.decorator';
 import { Roles } from 'src/common/enum';
 import { AdminJwtAuthGuard } from 'src/core/strategy/admin-jwt.strategy';
 import { AuthGuard } from 'src/core/guard/auth.guard';
-import { buyNFTDto, resellNFTDto } from './dto/buyNft.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('nft-marketplace')
 export class NftMarketplaceController {
-  constructor(private readonly nftMarketplaceService: NftMarketplaceService) {}
+  constructor(private readonly nftMarketplaceService: NftMarketplaceService) { }
 
-  @Get('all-nfts')
+  @ApiBearerAuth()
+  @Get('all-nft-marketplace')
   async getAllNfts(@Req() req: Request, @Query() body: getNFTDto) {
     return await this.nftMarketplaceService.getAllNfts(req.requestTime, body);
   }
@@ -52,39 +50,9 @@ export class NftMarketplaceController {
     return await this.nftMarketplaceService.getNftStats();
   }
 
-  @Post('create-nft')
-  @UseGuards(AuthGuard)
-  async createNft(@Req() req: Request, @Body() body: createNFTDto) {
-    return await this.nftMarketplaceService.createNft(req.user.id, body);
-  }
-
-  @Post('buy-nft')
-  @UseGuards(AuthGuard)
-  async buyNft(@Req() req: Request, @Body() body: buyNFTDto) {
-    return await this.nftMarketplaceService.buyNft(req.user.id, body);
-  }
-
-  @Post('resell-nft')
-  @UseGuards(AuthGuard)
-  async resellNft(@Req() req: Request, @Body() body: resellNFTDto) {
-    return await this.nftMarketplaceService.resellNft(req.user.id, body);
-  }
-
   @Get('nft/:id')
   async getSingleNFT(@Param('id') id: number) {
     return await this.nftMarketplaceService.getSingleNFT(id);
-  }
-
-  @Patch('update-nft/:id')
-  async updateNFT(@Param('id') id: number, @Body() body: updateNFTDto) {
-    return await this.nftMarketplaceService.updateNFT(id, body);
-  }
-
-  @Delete('delete-nft/:id')
-  @UseGuards(AdminJwtAuthGuard)
-  @Role(Roles.ADMIN, Roles.GUIDE)
-  async deleteNFT(@Param('id') id: number) {
-    return await this.nftMarketplaceService.deleteNFT(id);
   }
 
   @Get('monthly-plan/:year')

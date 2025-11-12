@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserInformationEntity } from './userInformation.entity';
-import { NftEntity } from './nft.entity';
+import { Nft721Entity } from './nft721.entity';
 import { FollowEntity } from './follow.entity';
 import { LikeEntity } from './like.entity';
 
@@ -76,13 +76,6 @@ export class UserEntity {
   })
   active: boolean;
 
-  // @Column({
-  //   name: 'password_changed_at',
-  //   type: 'timestamp',
-  //   nullable: true,
-  // })
-  // passwordChangedAt: Date;
-
   @Column({
     name: 'password_reset_token',
     type: 'varchar',
@@ -100,9 +93,6 @@ export class UserEntity {
 
   @OneToOne(() => UserInformationEntity)
   information: UserInformationEntity;
-
-  @OneToMany(() => NftEntity, (nft) => nft.user)
-  nfts: NftEntity[];
 
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers: FollowEntity[];

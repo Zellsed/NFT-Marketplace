@@ -9,17 +9,29 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from './user.entity';
-import { NftHistoryEntity } from './nftHistory.entity';
-import { LikeEntity } from './like.entity';
+import { Nft721Entity } from './nft721.entity';
 
-@Entity('nft')
-export class NftEntity {
+@Entity('nft_721_metadata')
+export class Nft721MetadataEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
     name: 'id',
   })
   id: number;
+
+  @Column({
+    type: 'int',
+    name: 'token_id',
+    nullable: false,
+  })
+  tokenId: number;
+
+  @Column({
+    type: 'text',
+    name: 'token_uri',
+    nullable: true,
+  })
+  tokenURI: string;
 
   @Column({
     type: 'varchar',
@@ -28,13 +40,6 @@ export class NftEntity {
     nullable: false,
   })
   name: string;
-
-  @Column({
-    type: 'float',
-    name: 'price',
-    nullable: false,
-  })
-  price: number;
 
   @Column({
     type: 'text',
@@ -75,44 +80,6 @@ export class NftEntity {
   fileSize: string;
 
   @Column({
-    type: 'text',
-    name: 'owner',
-    nullable: true,
-  })
-  owner: string;
-
-  @Column({
-    type: 'text',
-    name: 'seller',
-    nullable: true,
-  })
-  seller: string;
-
-  @Column({
-    type: 'int',
-    name: 'token_id',
-    nullable: false,
-  })
-  tokenId: number;
-
-  @Column({
-    name: 'secret_nfts',
-    type: 'boolean',
-    default: false,
-  })
-  secretNfts: boolean;
-
-  @ManyToOne(() => UserEntity, (user) => user.nfts)
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
-
-  @OneToMany(() => NftHistoryEntity, (history) => history.nft)
-  history: NftHistoryEntity[];
-
-  @OneToMany(() => LikeEntity, (like) => like.nft)
-  likes: LikeEntity[];
-
-  @Column({
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
@@ -130,4 +97,7 @@ export class NftEntity {
   updateDates() {
     this.updatedAt = new Date();
   }
+
+  @OneToOne(() => Nft721Entity, (nft) => nft.metadata)
+  nft: Nft721Entity;
 }

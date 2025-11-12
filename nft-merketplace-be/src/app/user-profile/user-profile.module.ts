@@ -3,7 +3,7 @@ import { UserProfileService } from './user-profile.service';
 import { UserProfileController } from './user-profile.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  NftEntity,
+  Nft721Entity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
@@ -17,7 +17,7 @@ import { LikeModule } from '../like/like.module';
     TypeOrmModule.forFeature([
       UserEntity,
       UserInformationEntity,
-      NftEntity,
+      Nft721Entity,
       NftHistoryEntity,
     ]),
     LikeModule,
@@ -25,4 +25,4 @@ import { LikeModule } from '../like/like.module';
   providers: [UserProfileService, LikeService],
   controllers: [UserProfileController],
 })
-export class UserProfileModule {}
+export class UserProfileModule { }

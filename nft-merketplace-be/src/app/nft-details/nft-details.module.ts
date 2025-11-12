@@ -3,7 +3,7 @@ import { NftDetailsController } from './nft-details.controller';
 import { NftDetailsService } from './nft-details.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  NftEntity,
+  Nft721Entity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
@@ -12,7 +12,7 @@ import {
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      NftEntity,
+      Nft721Entity,
       NftHistoryEntity,
       UserEntity,
       UserInformationEntity,
@@ -21,4 +21,4 @@ import {
   controllers: [NftDetailsController],
   providers: [NftDetailsService],
 })
-export class NftDetailsModule {}
+export class NftDetailsModule { }

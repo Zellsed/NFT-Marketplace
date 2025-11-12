@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { History } from 'src/common/enum';
 import {
-  NftEntity,
+  Nft721Entity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
@@ -19,7 +19,7 @@ import 'dotenv/config';
 @Injectable()
 export class NftDetailsService {
   constructor(
-    @InjectRepository(NftEntity)
+    @InjectRepository(Nft721Entity)
     private readonly nftRepo: NFTRepository,
 
     @InjectRepository(NftHistoryEntity)
@@ -30,7 +30,7 @@ export class NftDetailsService {
 
     @InjectRepository(UserInformationEntity)
     private readonly userInformationRepo: UserInformationRepository,
-  ) {}
+  ) { }
 
   async getBidHistory(id: number) {
     const existNft = await this.nftRepo.findOne({ where: { tokenId: id } });
@@ -54,7 +54,7 @@ export class NftDetailsService {
         }
 
         const existUserInformation = await this.userInformationRepo.findOne({
-          where: { user: existUser.id },
+          where: { user: { id: existUser.id } },
         });
 
         if (!existUserInformation) {
