@@ -677,7 +677,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const items = await Promise.all(
         sliderData.data.data.map(async (e) => {
-          console.log("e", e);
           return {
             price: e.nft_price,
             tokenId: e.token_id,
@@ -694,9 +693,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
             likes: e.like,
             account: e.user.account,
             email: e.user.email,
-            name: e.user.name,
+            userName: e.user.name,
             photo: e.userInformation.photo,
             background: e.userInformation.background,
+            description: e.userInformation.description,
           };
         })
       );
