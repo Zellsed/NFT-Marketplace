@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import Image from "next/image";
 import { AiFillFire, AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { MdVerified, MdTimer } from "react-icons/md";
@@ -8,8 +8,13 @@ import Style from "./BigNFTSilder.module.css";
 import images from "../../../img";
 import Button from "../Button/Button";
 
+import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
+
 const BigNFTSilder = () => {
+  const { getSliderData } = useContext(NFTMarketplaceContext);
+
   const [idNumber, setIdNumber] = useState(0);
+  // const [sliderData, setSliderData] = useState([]);
 
   const sliderData = [
     {
@@ -89,6 +94,11 @@ const BigNFTSilder = () => {
       setIdNumber(idNumber - 1);
     }
   }, [idNumber]);
+
+  useEffect(() => {
+    const data = getSliderData();
+    // console.log("data", data);
+  }, []);
 
   return (
     <div className={Style.bigNFTSlider}>

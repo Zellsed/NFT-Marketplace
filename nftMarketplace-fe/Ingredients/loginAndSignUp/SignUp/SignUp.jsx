@@ -7,6 +7,8 @@ import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/router";
 
+import { DeployerAddress } from "../../../Context/constant.js";
+
 dotenv.config();
 
 const LoginAndSignUp = () => {
@@ -33,13 +35,18 @@ const LoginAndSignUp = () => {
       return;
     }
 
-    const data = {
+    let data = {
       account: currentAccount,
       name: name,
       email: email,
       password: password,
       passwordConfirm: passwordConfirm,
+      role: "user",
     };
+
+    if (currentAccount.toLowerCase() === DeployerAddress.toLowerCase()) {
+      data.role = "admin";
+    }
 
     await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`,

@@ -98,21 +98,21 @@ const author = () => {
 
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchItemsListed").then((item) => {
-      setNfts(item?.reverse());
+      setNfts(item);
     });
 
     fetchMyNFTsOrListedNFTs1155("fetchItemsListed").then((item) => {
-      setNfts1155(item?.reverse());
+      setNfts1155(item);
     });
   }, []);
 
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((item) => {
-      setMyNfts(item?.reverse());
+      setMyNfts(item);
     });
 
     fetchMyNFTsOrListedNFTs1155("fetchMyNFTs").then((item) => {
-      setMyNfts1155(item?.reverse());
+      setMyNfts1155(item);
     });
   }, []);
 

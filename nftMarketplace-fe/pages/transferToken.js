@@ -14,10 +14,15 @@ const TransferToken = () => {
     accountBalance,
     baseCoinNetwork,
     tranferToken,
-    // depositToken,
+    getAllWebTokenPurchaseHistory,
+    tranferTokenWeb,
   } = useContext(NFTMarketplaceContext);
 
   const [tranferAmount, setTranferAmount] = useState("");
+
+  useEffect(() => {
+    getAllWebTokenPurchaseHistory();
+  }, []);
 
   return (
     <div className={Style.transfer}>
@@ -77,6 +82,99 @@ const TransferToken = () => {
               )}
             </div>
           </div>
+        </div>
+
+        <h1 className={Style.transfer_box_h1}>Web Token Purchase History</h1>
+        <p>
+          The Web Token purchase history provides a detailed record of all token
+          transactions made by users on the platform. Each entry includes
+          essential information such as the transaction ID, token amount,
+          purchase date, payment method, and transaction status. This history
+          helps users easily track their spending, verify completed purchases,
+          and maintain transparency in their digital asset management. It also
+          serves as an important reference for auditing and customer support,
+          ensuring users have full control and visibility over their
+          token-related activities.
+        </p>
+
+        {/* <div className={Style.transfer_box_history}>
+          {tranferTokenWeb.map((el, i) => (
+            <div className={Style.transfer_box_history_item} key={i + 1}>
+              <Image
+                src={images.ethereTransfer}
+                width={200}
+                height={200}
+                alt="image"
+              />
+
+              <div className={Style.transfer_box_history_item_info}>
+                <p>
+                  {" "}
+                  <span>Transfer ID:</span> #{el.id}
+                </p>
+                <p>
+                  <span>User Address:</span>{" "}
+                  {`${el.userAddress.slice(0, 16)}...${el.userAddress.slice(
+                    -5
+                  )}`}
+                </p>
+                <p>
+                  <span>Base Coin Amount:</span> {el.baseCoinAmount}{" "}
+                  {el.baseCoin}
+                </p>
+                <p>
+                  <span>Web Token Amount:</span> {el.webTokenAmount} WEB
+                </p>
+                <span>
+                  {new Date(el.createdAt).toLocaleString("vi-VN", {
+                    hour12: false,
+                  })}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div> */}
+        <div className={Style.transfer_box_history}>
+          {tranferTokenWeb.map((el, i) => (
+            <div className={Style.transfer_box_history_item} key={i + 1}>
+              <Image
+                src={images.ethereTransfer}
+                width={120}
+                height={120}
+                alt="transaction"
+                className={Style.transfer_history_image}
+              />
+
+              <div className={Style.transfer_box_history_item_info}>
+                <p>
+                  <span>Transfer ID:</span>
+                  <span>#{el.id}</span>
+                </p>
+                <p>
+                  <span>User Address:</span>
+                  <span>{`${el.userAddress.slice(
+                    0,
+                    8
+                  )}...${el.userAddress.slice(-6)}`}</span>
+                </p>
+                <p>
+                  <span>Base Coin Amount:</span>
+                  <span>
+                    {el.baseCoinAmount} {el.baseCoin}
+                  </span>
+                </p>
+                <p>
+                  <span>Web Token Amount:</span>
+                  <span>{el.webTokenAmount} WEB</span>
+                </p>
+                <span>
+                  {new Date(el.createdAt).toLocaleString("vi-VN", {
+                    hour12: false,
+                  })}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

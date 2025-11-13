@@ -24,6 +24,7 @@ import {
 dotenv.config();
 
 import NetworkModal from "../Ingredients/NetworkModal/NetworkModal";
+import { set } from "date-fns";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
@@ -656,6 +657,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             fileExtension: e.file_extension,
             fileSize: e.file_size,
             createdAt: e.created_at,
+            likes: e.like,
           };
         })
       );
@@ -663,6 +665,45 @@ export const NFTMarketplaceProvider = ({ children }) => {
       return items;
     } catch (error) {
       setError("Error while fetching NFTs");
+      setOpenError(true);
+    }
+  };
+
+  const getSliderData = async () => {
+    try {
+      const sliderData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/slider-data`
+      );
+
+      const items = await Promise.all(
+        sliderData.data.data.map(async (e) => {
+          console.log("e", e);
+          return {
+            price: e.nft_price,
+            tokenId: e.token_id,
+            seller: e.nft_seller,
+            owner: e.nft_owner,
+            pinataData: e.pinata_data,
+            name: e.metadata_name,
+            description: e.metadata_description,
+            tokenURI: e.token_uri,
+            category: e.metadata_category,
+            fileExtension: e.file_extension,
+            fileSize: e.file_size,
+            createdAt: e.created_at,
+            likes: e.like,
+            account: e.user.account,
+            email: e.user.email,
+            name: e.user.name,
+            photo: e.userInformation.photo,
+            background: e.userInformation.background,
+          };
+        })
+      );
+
+      return items;
+    } catch (error) {
+      setError("Error while fetching slider data");
       setOpenError(true);
     }
   };
@@ -1047,6 +1088,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const [transactionCount, setTransactionCount] = useState("");
   const [transactions, setTransactions] = useState([]);
+  const [tranferTokenWeb, setTranferTokenWeb] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const transferEther = async (isAddress, price, message) => {
@@ -1112,6 +1154,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getAllWebTokenPurchaseHistory = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/tranfer-token-web/history`
+      );
+
+      setTranferTokenWeb(response.data);
+    } catch (error) {
+      setError("Error while fetching purchase history");
+      setOpenError(true);
     }
   };
 
@@ -1342,6 +1397,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         uploadToIPFS,
         createNFT,
         fetchNFTs,
+        getSliderData,
         fetchNFTs1155,
         fetchMyNFTsOrListedNFTs,
         fetchMyNFTsOrListedNFTs1155,
@@ -1372,6 +1428,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         stakeNFT721,
         fetchMyStakedNFTs,
         unStakeNFT,
+        getAllWebTokenPurchaseHistory,
+        tranferTokenWeb,
       }}
     >
       {children}

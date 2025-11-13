@@ -82,8 +82,12 @@ const NFTCard = ({ NFTData }) => {
 
               <div className={Style.NFTCard_box_update_right}>
                 <div className={Style.NFTCard_box_update_right_info}>
-                  <MdTimer />
-                  <span>{format(Number(el.createdAt), "vi")}</span>
+                  <MdTimer />{" "}
+                  <span>
+                    {new Date(el.createdAt).toLocaleString("vi-VN", {
+                      hour12: false,
+                    })}
+                  </span>
                 </div>
               </div>
             </div>

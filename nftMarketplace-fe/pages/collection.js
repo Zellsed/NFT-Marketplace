@@ -19,7 +19,7 @@ const collection = () => {
   useEffect(() => {
     try {
       fetchNFTs().then((item) => {
-        setNfts(item?.reverse());
+        setNfts(item);
       });
     } catch (error) {
       setError("Please reload the browser");

@@ -33,9 +33,9 @@ const SearchPage = () => {
         const items721 = await fetchNFTs();
         const items1155 = await fetchNFTs1155();
 
-        setNfts721(items721?.reverse() || []);
+        setNfts721(items721 || []);
         setNfts721Copy(items721 || []);
-        setNfts1155(items1155?.reverse() || []);
+        setNfts1155(items1155 || []);
         setNfts1155Copy(items1155 || []);
       } catch (error) {
         console.error(error);

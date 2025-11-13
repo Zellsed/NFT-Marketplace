@@ -5,6 +5,8 @@ import nftMarketplace from "../artifacts/contracts/NFTMarketplace.sol/NFTMarketp
 import nftStaking from "../artifacts/contracts/NFTStaking.sol/NFTStaking.json";
 import transferFunds from "../artifacts/contracts/TransferFunds.sol/TransferFunds.json";
 
+export const DeployerAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+
 export const CustomTokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const CustomTokenABI = customToken.abi;
 

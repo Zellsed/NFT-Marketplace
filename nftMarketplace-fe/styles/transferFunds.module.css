@@ -60,28 +60,75 @@
 .transfer_box_history {
   margin-block: 5rem;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
 }
 
 .transfer_box_history_item {
   border: 1px solid var(--icons-color);
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-shadow: var(--box-shadow);
-  line-height: 1;
-  padding: 1rem;
+  padding: 1.5rem;
   overflow: hidden;
+  transition: all 0.3s ease;
+  background: var(--main-bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
-.transfer_box_history_item_info p {
+
+.transfer_box_history_item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-color: var(--shadow-color);
+}
+
+.transfer_box_history_item img {
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+.transfer_box_history_item_info {
   width: 100%;
 }
 
-.transfer_box_history_item_info p span {
-  color: var(--icons-color);
-  margin-block: 0.2rem;
-  margin-right: 1rem;
+.transfer_box_history_item_info p {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.transfer_box_history_item_info p span:first-child {
+  color: var(--icons-color);
+  font-weight: 600;
+  margin-right: 0.5rem;
+  min-width: 120px;
+  text-align: left;
+}
+
+.transfer_box_history_item_info p span:last-child {
+  color: var(--main-color);
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+}
+
+.transfer_box_history_item_info > span {
+  display: block;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--shadow-color);
+  color: var(--icons-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
 .transfer_box_box_right_info_mobile {
   display: none;
 }
@@ -147,6 +194,24 @@
   }
   .transfer_box_history {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .transfer_box_history_item {
+    padding: 1rem;
+  }
+
+  .transfer_box_history_item_info p {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 0.3rem;
+  }
+
+  .transfer_box_history_item_info p span:first-child,
+  .transfer_box_history_item_info p span:last-child {
+    min-width: auto;
+    text-align: left;
   }
 
   .transfer_box_box_right_box {
@@ -170,5 +235,11 @@
     line-height: 1.2;
     word-break: break-word;
     text-align: center;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .transfer_box_history {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
