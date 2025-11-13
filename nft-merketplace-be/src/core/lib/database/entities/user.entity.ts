@@ -44,14 +44,6 @@ export class UserEntity {
   })
   email: string;
 
-  // @Column({
-  //   type: 'varchar',
-  //   name: 'photo',
-  //   length: 255,
-  //   nullable: true,
-  // })
-  // photo: string;
-
   @Column({
     type: 'varchar',
     name: 'password',

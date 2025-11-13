@@ -13,6 +13,10 @@ export class createAuthDto {
   @IsString()
   email: string;
 
+  @IsNotEmpty()
+  @IsString()
+  role: string;
+
   @IsOptional()
   @IsString()
   photo?: string;

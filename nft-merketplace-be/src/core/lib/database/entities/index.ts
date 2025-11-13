@@ -5,3 +5,4 @@ export * from './nft721History.entity';
 export * from './like.entity';
 export * from './follow.entity';
 export * from './nft721Metadata.entity';
+export * from './tranferTokenWeb.entity';

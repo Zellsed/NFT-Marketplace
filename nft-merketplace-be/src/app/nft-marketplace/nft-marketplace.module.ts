@@ -5,19 +5,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerMiddleware } from 'src/core/middlewares/logging.middlewares';
 
 import {
+  LikeEntity,
   Nft721Entity,
   Nft721MetadataEntity,
   NftHistoryEntity,
   UserEntity,
+  UserInformationEntity,
 } from 'src/core/lib/database/entities';
-import { BlockchainListenerService } from './nft-marketplace-listener.service';
+import { NftMarketplaceListenerService } from './nft-marketplace-listener.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Nft721Entity, Nft721MetadataEntity, UserEntity, NftHistoryEntity]),
+    TypeOrmModule.forFeature([Nft721Entity, Nft721MetadataEntity, UserEntity, NftHistoryEntity, LikeEntity, UserInformationEntity]),
   ],
   controllers: [NftMarketplaceController],
-  providers: [NftMarketplaceService, BlockchainListenerService],
+  providers: [NftMarketplaceService, NftMarketplaceListenerService],
 })
 export class NftMarketplaceModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

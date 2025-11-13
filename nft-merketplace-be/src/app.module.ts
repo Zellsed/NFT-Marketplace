@@ -10,6 +10,7 @@ import {
   Nft721Entity,
   Nft721MetadataEntity,
   NftHistoryEntity,
+  TranferTokenWebEntity,
   UserEntity,
   UserInformationEntity,
 } from './core/lib/database/entities';
@@ -19,6 +20,7 @@ import {
   NFT721MetadataRepository,
   NftHistoryRepository,
   NFTRepository,
+  tranferTokenWebRepository,
   UserInformationRepository,
   UserRepository,
 } from './core/lib/database/repositories';
@@ -38,6 +40,7 @@ const entities = [
   NftHistoryEntity,
   LikeEntity,
   FollowEntity,
+  TranferTokenWebEntity
 ];
 
 const repositories = [
@@ -48,6 +51,7 @@ const repositories = [
   NftHistoryRepository,
   LikeRepository,
   FollowRepository,
+  tranferTokenWebRepository
 ];
 
 @Module({
@@ -71,6 +75,7 @@ const repositories = [
           NftHistoryEntity,
           LikeEntity,
           FollowEntity,
+          TranferTokenWebEntity
         ],
         synchronize: true,
         autoLoadEntities: true,

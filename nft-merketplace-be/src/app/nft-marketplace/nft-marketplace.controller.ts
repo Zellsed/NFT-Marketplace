@@ -30,6 +30,12 @@ export class NftMarketplaceController {
     return await this.nftMarketplaceService.getAllNfts(req.requestTime, body);
   }
 
+  @ApiBearerAuth()
+  @Get('slider-data')
+  async getSliderData(@Req() req: Request) {
+    return await this.nftMarketplaceService.getSliderData(req.requestTime);
+  }
+
   @Get('nfts')
   async getListNfts(@Req() req: Request, @Query() body: getNFTDto) {
     return await this.nftMarketplaceService.getListNfts(req.requestTime, body);

@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import {
+  LikeRepository,
   NFT721MetadataRepository,
   NftHistoryRepository,
   NFTRepository,
+  UserInformationRepository,
   UserRepository,
 } from 'src/core/lib/database/repositories';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  LikeEntity,
   Nft721Entity,
   Nft721MetadataEntity,
   NftHistoryEntity,
   UserEntity,
+  UserInformationEntity,
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 
@@ -30,8 +34,14 @@ export class NftMarketplaceService {
     @InjectRepository(UserEntity)
     private readonly userRepo: UserRepository,
 
+    @InjectRepository(UserInformationEntity)
+    private readonly userInformationRepo: UserInformationRepository,
+
     @InjectRepository(NftHistoryEntity)
     private readonly nftHistoryRepo: NftHistoryRepository,
+
+    @InjectRepository(LikeEntity)
+    private readonly likeRepo: LikeRepository
   ) { }
 
   async createNft721FromChain(createNft: createNFTDTo, nftData: metadataNFTDto) {
@@ -113,6 +123,7 @@ export class NftMarketplaceService {
       ])
       .leftJoin('nft.metadata', 'metadata')
       .andWhere('nft.sold = :sold', { sold: false })
+      .orderBy('nft.created_at', 'DESC');
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -123,11 +134,68 @@ export class NftMarketplaceService {
       qb.getCount(),
     ]);
 
+    const convertedData = await Promise.all(data.map(async (item) => {
+      const existingNft = await this.nftRepo.findOne({ where: { id: item.nft_id } })
+
+      if (!existingNft) {
+        throw new Error('Nft not found');
+      }
+
+      const existingLinkNft = await this.likeRepo.find({ where: { nft: { id: existingNft.id } } })
+
+      return {
+        ...item,
+        like: existingLinkNft.length
+      }
+    }))
+
     return {
       status: 'success',
       requestTime: requestTime,
       totalRows: totalRows,
-      data: data,
+      data: convertedData,
+    };
+  }
+
+  async getSliderData(requestTime: string) {
+    const data = this.getAllNfts(requestTime, { page: 1, limit: 5 });
+
+    if (!data) {
+      return
+    }
+
+    const convertedData = await Promise.all((await data).data.map(async (item) => {
+      const existingNft = await this.nftRepo.findOne({ where: { id: item.id } })
+
+      if (!existingNft) {
+        throw new Error('Nft not found');
+      }
+
+      const existingUser = await this.userRepo.findOne({
+        where: { account: existingNft.seller.toLowerCase() }
+      });
+
+      if (!existingUser) {
+        throw new Error('User not found');
+      }
+
+      const existingUserInformation = await this.userInformationRepo.findOne({ where: { id: existingUser.id } })
+
+      if (!existingUserInformation) {
+        throw new Error('User Information not found');
+      }
+
+      return {
+        ...item,
+        user: existingUser,
+        userInformation: existingUserInformation
+      }
+    }))
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      data: convertedData,
     };
   }
 

@@ -5,7 +5,7 @@ import { NFTMarketplaceAddress, NFTMarketplaceABI } from "../../../blockchain_co
 import axios from "axios";
 
 @Injectable()
-export class BlockchainListenerService implements OnModuleInit {
+export class NftMarketplaceListenerService implements OnModuleInit {
   private provider: ethers.Provider;
   private contract: ethers.Contract;
 
@@ -24,7 +24,6 @@ export class BlockchainListenerService implements OnModuleInit {
     this.contract.on(
       'idMarketItemCreated',
       async (tokenId, seller, owner, price, sold, event) => {
-        console.log('idMarketItemCreated event:', tokenId);
         try {
           const tx = await event.getTransaction();
           const block = await event.getBlock();

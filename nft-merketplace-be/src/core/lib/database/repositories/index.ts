@@ -5,3 +5,4 @@ export * from './nftHistory.repository';
 export * from './like.repository';
 export * from './follow.repository';
 export * from './nft721Metadata.repository'
+export * from './tranferTokenWeb.repository'
