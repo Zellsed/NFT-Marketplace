@@ -5,11 +5,11 @@ export enum DefaultPaging {
 }
 
 export enum CryptoLegend {
-  SPORTS = 'Sports',
   ARTS = 'Arts',
   MUSIC = 'Music',
   VIDEO = 'Video',
   PHOTOGRAPHY = 'Photography',
+  GAMES = 'Games',
   VITUALWORLDS = 'VirtualWorlds',
 }
 
