@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import Image from "next/image";
-import { AiFillHeart } from "react-icons/ai";
+import { AiFillHeart, AiFillAppstore, AiOutlineAppstore } from "react-icons/ai";
 import { MdVerified } from "react-icons/md";
 import { TbArrowBigLeftLines, TbArrowBigRightLine } from "react-icons/tb";
 
@@ -61,7 +61,7 @@ const BigNFTSilder = () => {
     return (
       <div className={Style.bigNFTSlider_empty}>
         <p>No NFTs available</p>
-        <Button btnName="Explore" onClick={() => {}} />
+        <Button btnName="Explore" onClick={() => {}} />{" "}
       </div>
     );
   }
@@ -114,7 +114,7 @@ const BigNFTSilder = () => {
                     Style.bigNFTSlider_box_left_creator_collection_icon
                   }
                 >
-                  <AiFillHeart />
+                  <AiOutlineAppstore />
                 </div>
                 <div
                   className={
@@ -171,25 +171,86 @@ const BigNFTSilder = () => {
         </div>
 
         <div className={Style.bigNFTSlider_box_right}>
+          {" "}
           <div className={Style.bigNFTSlider_box_right_image}>
-            <Image
-              src={el.pinataData}
-              alt={el.name}
-              width={600}
-              height={500}
-              className={Style.bigNFTSlider_box_right_img}
-              priority={idNumber === 0}
-            />
-
+            {" "}
+            {el.fileExtension === "mp4" || el.fileExtension === "webm" ? (
+              <video
+                controls
+                autoPlay
+                muted
+                loop
+                className={Style.bigNFTSlider_box_right_media}
+              >
+                {" "}
+                <source
+                  src={el.pinataData}
+                  type={`video/${el.fileExtension}`}
+                />
+                Your browser does not support the video tag.{" "}
+              </video>
+            ) : el.fileExtension === "mp3" ||
+              el.fileExtension === "wav" ||
+              el.fileExtension === "ogg" ? (
+              <div className={Style.bigNFTSlider_box_right_audio_container}>
+                {/* * ĐIỂM CHỈNH SỬA CHÍNH:
+                 * Đặt player vào TRONG artwork để dùng position: absolute
+                 */}
+                               {" "}
+                <div className={Style.bigNFTSlider_box_right_audio_artwork}>
+                                   {" "}
+                  <Image
+                    src={el.photo || images.creatorbackground10}
+                    alt="Audio artwork"
+                    width={600} // Tăng kích thước Image để nó phủ hết container
+                    height={500} // Tăng kích thước Image để nó phủ hết container
+                    className={Style.bigNFTSlider_box_right_audio_img}
+                  />
+                                 {/* BLOCK PLAYER ĐÃ ĐƯỢC CHUYỂN VÀO TRONG */} 
+                                 {" "}
+                  <div className={Style.bigNFTSlider_box_right_audio_player}>
+                                        <h3>{el.name}</h3>                   {" "}
+                    <audio
+                      controls
+                      className={Style.bigNFTSlider_box_right_audio_element}
+                    >
+                                           {" "}
+                      <source
+                        src={el.pinataData}
+                        type={`audio/${el.fileExtension}`}
+                      />
+                                            Your browser does not support the
+                      audio element.                    {" "}
+                    </audio>
+                                     {" "}
+                  </div>
+                                 {" "}
+                </div>
+                             {" "}
+              </div>
+            ) : (
+              <Image
+                src={el.pinataData}
+                alt={el.name}
+                width={600}
+                height={500}
+                className={Style.bigNFTSlider_box_right_img}
+                priority={idNumber === 0}
+              />
+            )}
+                       {" "}
             <div className={Style.bigNFTSlider_box_right_like}>
+                           {" "}
               <AiFillHeart className={Style.bigNFTSlider_box_right_like_icon} />
-              <span>{el.likes || 0}</span>
+                            <span>{el.likes || 0}</span>           {" "}
             </div>
-
+                       {" "}
             <div className={Style.bigNFTSlider_box_right_badge}>
-              <span>#{el.tokenId}</span>
+                            <span>#{el.tokenId}</span>           {" "}
             </div>
+                     {" "}
           </div>
+                 {" "}
         </div>
       </div>
     </div>
