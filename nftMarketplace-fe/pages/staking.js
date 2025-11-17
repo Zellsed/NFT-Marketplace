@@ -4,6 +4,7 @@ import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 import StakingCard from "../Ingredients/components/StakingNFT/StakingCard";
 import UnstakeModal from "../Ingredients/components/StakingNFT/UnstakeModal";
 import Style from "../styles/Staking.module.css";
+import TokenAmount from "../Ingredients/components/formatTokenAmount/TokenAmount";
 
 export default function StakingPage() {
   const { currentAccount, checkRewardPool, fetchMyStakedNFTs, unStakeNFT } =
@@ -77,7 +78,9 @@ export default function StakingPage() {
           </div>
           <div className={Style.stat_item}>
             <span>Reward Pool</span>
-            <strong>{formatNumber(rewardPool)} WEB</strong>
+            <strong>
+              <TokenAmount amount={rewardPool} /> ZELL
+            </strong>
           </div>
         </div>
       </div>

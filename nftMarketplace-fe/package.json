@@ -23,7 +23,9 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.3.5",
     "react-icons": "^4.4.0",
+    "react-tabs": "^6.1.0",
     "timeago.js": "^4.0.2",
+    "tslib": "^2.8.1",
     "web3modal": "^1.9.12"
   },
   "devDependencies": {

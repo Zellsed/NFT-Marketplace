@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { MdNotifications } from "react-icons/md";
+import { MdNotifications, MdAdminPanelSettings } from "react-icons/md";
 import { BsChevronDown, BsSearch } from "react-icons/bs";
 import { CgMenuLeft, CgMenuRight } from "react-icons/cg";
 
@@ -15,6 +15,11 @@ import { DiJqueryLogo } from "react-icons/di";
 import { FaCoins, FaLock } from "react-icons/fa";
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
+import { DeployerAddress } from "../../../Context/constant";
+
+import TokenAmount, {
+  formatRawValue,
+} from "../../../Ingredients/components/formatTokenAmount/TokenAmount";
 
 import Error from "../Error/Error";
 import axios from "axios";
@@ -26,6 +31,7 @@ const NavBar = () => {
   const [profile, setProfile] = useState(false);
   const [openSideMenu, setOpenSideMenu] = useState(false);
   const [createMenu, setCreateMenu] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const router = useRouter();
 
@@ -39,6 +45,27 @@ const NavBar = () => {
   const [token, setToken] = useState(null);
   const [information, setInformation] = useState({});
   const [tokenWebBalance, setTokenWebBalance] = useState(0);
+
+  const {
+    currentAccount,
+    connectWallet,
+    openError,
+    tokenBalance,
+    tokenSymbol,
+    baseCoinNetwork,
+    setShowNetworkModal,
+  } = useContext(NFTMarketplaceContext);
+
+  // Kiểm tra quyền admin
+  useEffect(() => {
+    if (currentAccount && DeployerAddress) {
+      const isAdminUser =
+        currentAccount.toLowerCase() === DeployerAddress.toLowerCase();
+      setIsAdmin(isAdminUser);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [currentAccount]);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("access_token");
@@ -143,7 +170,7 @@ const NavBar = () => {
 
   const openCreateMenu = () => {
     if (!currentAccount) {
-      alart("Please connect wallet");
+      alert("Please connect wallet");
       return;
     }
 
@@ -169,16 +196,6 @@ const NavBar = () => {
   const openSideBar = () => {
     setOpenSideMenu((prev) => !prev);
   };
-
-  const {
-    currentAccount,
-    connectWallet,
-    openError,
-    tokenBalance,
-    tokenSymbol,
-    baseCoinNetwork,
-    setShowNetworkModal,
-  } = useContext(NFTMarketplaceContext);
 
   const checkAccount = async () => {
     try {
@@ -249,9 +266,9 @@ const NavBar = () => {
 
   const isActive = (path) => router.pathname === path;
 
-  const handlePretectedRoute = (path) => {
+  const handleProtectedRoute = (path) => {
     if (!currentAccount) {
-      alart("Please connect wallet");
+      alert("Please connect wallet");
       return;
     }
 
@@ -268,6 +285,20 @@ const NavBar = () => {
     }
 
     router.push(path);
+  };
+
+  const handleAdminRoute = () => {
+    if (!currentAccount) {
+      alert("Please connect wallet");
+      return;
+    }
+
+    if (!isAdmin) {
+      alert("Access denied. Admin only.");
+      return;
+    }
+
+    router.push("/admin");
   };
 
   return (
@@ -311,11 +342,24 @@ const NavBar = () => {
               )}
             </div>
 
+            {/* Admin Link - chỉ hiển thị cho owner */}
+            {isAdmin && (
+              <p
+                className={`${Style.nav_item} ${Style.admin_nav_item} ${
+                  isActive("/admin") ? Style.active : ""
+                }`}
+                onClick={handleAdminRoute}
+              >
+                <MdAdminPanelSettings className={Style.admin_icon} />
+                Admin
+              </p>
+            )}
+
             <p
               className={`${Style.nav_item} ${
                 isActive("/staking") ? Style.active : ""
               }`}
-              onClick={() => handlePretectedRoute("/staking")}
+              onClick={() => handleProtectedRoute("/staking")}
             >
               <FaLock className={Style.staking_icon} />
               Staking
@@ -340,16 +384,13 @@ const NavBar = () => {
 
           <div
             className={Style.tokenBalance}
-            onClick={() => handlePretectedRoute("/transferToken")}
+            onClick={() => handleProtectedRoute("/transferToken")}
             style={{ cursor: "pointer" }}
           >
             <FaCoins className={Style.coin_icon} />
             <div className={Style.token_balance_info}>
               <span className={Style.token_amount}>
-                {tokenWebBalance?.toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}
+                <TokenAmount amount={tokenWebBalance} />
               </span>
               <span className={Style.token_symbol}>{tokenSymbol}</span>
             </div>
@@ -440,6 +481,8 @@ const NavBar = () => {
             setOpenSideMenu={setOpenSideMenu}
             currentAccount={currentAccount}
             connectWallet={connectWallet}
+            isAdmin={isAdmin}
+            handleAdminRoute={handleAdminRoute}
           />
         </div>
       )}

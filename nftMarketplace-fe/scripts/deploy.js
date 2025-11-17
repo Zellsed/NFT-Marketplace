@@ -13,7 +13,8 @@ async function main() {
   await tranferToken.deployed();
 
   // 8M tokens
-  const price = ethers.utils.parseUnits("8000000", 18);
+  // const price = ethers.utils.parseUnits("8000000", 18);
+  const price = ethers.utils.parseUnits("1000000", 18);
 
   console.log("Deployer:", deployer.address);
   console.log("Approving token for TranferToken...");
@@ -70,7 +71,8 @@ async function main() {
   );
 
   // 2M tokens
-  const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
+  // const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
+  const rewardPoolAmount = ethers.utils.parseUnits("500000", 18);
   await customToken
     .connect(deployer)
     .approve(nftStakinge.address, rewardPoolAmount);

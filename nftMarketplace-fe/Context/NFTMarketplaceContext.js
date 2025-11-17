@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { PinataSDK } from "pinata";
 
 import {
+  DeployerAddress,
   NFTMarketplaceAddress,
   NFTMarketplaceABI,
   TransferFundsAddress,
@@ -1389,6 +1390,63 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const getListingPrice = async () => {
+    try {
+      const contract = await connectingWithSmartContract();
+      const price = await contract.getListingPrice();
+      return price.toString();
+    } catch (error) {
+      console.error("Error fetching listing price:", error);
+      return "0";
+    }
+  };
+
+  const getOwnerTokenBalance = async () => {
+    try {
+      const customContract = await connectingWithCustomTokenSmartContract();
+      const balance = await customContract.balanceOf(DeployerAddress);
+      return ethers.utils.formatEther(balance);
+    } catch (error) {
+      console.error("Error fetching owner balance:", error);
+      return "0";
+    }
+  };
+
+  const getTransferContractBalance = async () => {
+    try {
+      const transferContract = await connectToTransferTokenContract();
+      const balance = await transferContract.getContractTokenBalance();
+      return ethers.utils.formatEther(balance);
+    } catch (error) {
+      console.error("Error fetching transfer contract balance:", error);
+      return "0";
+    }
+  };
+
+  const getBaseCoinRates = async () => {
+    try {
+      const transferContract = await connectToTransferTokenContract();
+      const rates = {};
+      const coins = ["ETH", "BNB", "SOL", "POL"];
+      for (let coin of coins) {
+        const rate = await transferContract.baseCoinRate(coin);
+        rates[coin] = rate.toString();
+      }
+      return rates;
+    } catch (error) {
+      console.error("Error fetching base coin rates:", error);
+      return {};
+    }
+  };
+
+  const updateListingPrice = async (newPrice) => {};
+
+  const depositReward = async (amount) => {};
+
+  const depositTokenToTransfer = async (amount) => {};
+
+  const updateBaseCoinRate = async (coin, rate) => {};
+
   return (
     <NFTMarketplaceContext.Provider
       value={{
@@ -1430,6 +1488,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         unStakeNFT,
         getAllWebTokenPurchaseHistory,
         tranferTokenWeb,
+        getListingPrice,
+        getOwnerTokenBalance,
+        getTransferContractBalance,
+        getBaseCoinRates,
+        updateListingPrice,
+        depositReward,
+        depositTokenToTransfer,
+        updateBaseCoinRate,
       }}
     >
       {children}

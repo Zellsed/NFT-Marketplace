@@ -19,18 +19,18 @@ const BigNFTSilder = () => {
 
   const inc = useCallback(() => {
     setIdNumber((prev) => (prev + 1 < sliderData.length ? prev + 1 : 0));
-  }, [sliderData.length]);
+  }, [sliderData?.length]);
 
   const dec = useCallback(() => {
     setIdNumber((prev) => (prev > 0 ? prev - 1 : sliderData.length - 1));
-  }, [sliderData.length]);
+  }, [sliderData?.length]);
 
   useEffect(() => {
-    if (sliderData.length > 1) {
+    if (sliderData?.length > 1) {
       const interval = setInterval(inc, 5000);
       return () => clearInterval(interval);
     }
-  }, [sliderData.length, inc]);
+  }, [sliderData?.length, inc]);
 
   useEffect(() => {
     const fetchSliderData = async () => {
@@ -57,7 +57,7 @@ const BigNFTSilder = () => {
     );
   }
 
-  if (!sliderData.length) {
+  if (!sliderData?.length) {
     return (
       <div className={Style.bigNFTSlider_empty}>
         <p>No NFTs available</p>

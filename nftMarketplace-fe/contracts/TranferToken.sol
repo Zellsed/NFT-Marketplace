@@ -112,4 +112,9 @@ contract TranferToken {
                 timestamp: block.timestamp
             });
     }
+
+    function updateBaseCoinRate(string memory _coin, uint256 _rate) external {
+    require(msg.sender == owner, "Only owner");
+    baseCoinRate[_coin] = _rate;
+}
 }
