@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   UserEntity,
   UserInformationEntity,
+  UserSpentEntity,
 } from 'src/core/lib/database/entities';
 import {
   UserInformationRepository,
@@ -10,6 +11,7 @@ import {
 } from 'src/core/lib/database/repositories';
 import { updateUserdDto } from './dto/updateUser.dto';
 import { accountDto } from './dto/account.dto';
+import { UserSpentRepository } from 'src/core/lib/database/repositories/userSpent.repository';
 
 @Injectable()
 export class UserService {
@@ -19,10 +21,16 @@ export class UserService {
 
     @InjectRepository(UserInformationEntity)
     private readonly userInformationRepo: UserInformationRepository,
+
+    @InjectRepository(UserSpentEntity)
+    private readonly userSpentRepo: UserSpentRepository,
   ) { }
 
   async getAllUsers() {
-    const allUser = await this.userRepo.find({ where: { active: true } });
+    const allUser = await this.userRepo.find({
+      where: { active: true },
+      order: { createdAt: 'DESC' },
+    });
 
     allUser.map((user) => {
       delete user.password,
@@ -30,10 +38,41 @@ export class UserService {
         delete user.passwordResetExpires;
     });
 
+    const covertAllUser = await Promise.all(
+      allUser.map(async (user) => {
+        const existUserSpent = await this.userSpentRepo
+          .createQueryBuilder('userSpent')
+          .select('SUM(userSpent.spent)', 'totalSpent')
+          .addSelect('COUNT(userSpent.id)', 'totalCount')
+          .where('userSpent.user_id = :userId', { userId: user.id })
+          .getRawOne();
+
+        return {
+          ...user,
+          totalSpent: existUserSpent.totalSpent || 0,
+          totalCount: existUserSpent.totalCount || 0,
+        };
+      }),
+    );
+
     return {
       status: 'success',
-      allUser,
+      allUser: covertAllUser,
+      count: allUser.length,
     };
+  }
+
+  async getAllTransaction(userId: number) {
+    const existUserSpent = await this.userSpentRepo.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
+
+    if (!existUserSpent) {
+      return [];
+    }
+
+    return existUserSpent;
   }
 
   async checkAccount(body: accountDto) {

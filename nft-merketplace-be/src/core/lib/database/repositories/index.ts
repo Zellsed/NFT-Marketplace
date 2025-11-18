@@ -6,3 +6,5 @@ export * from './like.repository';
 export * from './follow.repository';
 export * from './nft721Metadata.repository'
 export * from './tranferTokenWeb.repository'
+export * from './userSpent.repository'
+export * from './nft721Staking.repository'

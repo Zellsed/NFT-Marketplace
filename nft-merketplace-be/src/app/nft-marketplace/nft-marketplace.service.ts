@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   LikeRepository,
   NFT721MetadataRepository,
+  NFT721StakingRepository,
   NftHistoryRepository,
   NFTRepository,
   UserInformationRepository,
@@ -12,15 +13,19 @@ import {
   LikeEntity,
   Nft721Entity,
   Nft721MetadataEntity,
+  Nft721StakingEntity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
+  UserSpentEntity,
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 
-import { DefaultPaging, History } from 'src/common/enum';
+import { DefaultPaging, History, SpentType } from 'src/common/enum';
 import slugify from 'slugify';
 import { createNFTDTo, metadataNFTDto } from './dto/createNft.dto';
+import { UserSpentRepository } from 'src/core/lib/database/repositories/userSpent.repository';
+import { createNFTStakingDTo } from './dto/createNftStaking.dto';
 
 @Injectable()
 export class NftMarketplaceService {
@@ -41,21 +46,40 @@ export class NftMarketplaceService {
     private readonly nftHistoryRepo: NftHistoryRepository,
 
     @InjectRepository(LikeEntity)
-    private readonly likeRepo: LikeRepository
+    private readonly likeRepo: LikeRepository,
+
+    @InjectRepository(UserSpentEntity)
+    private readonly userSpentRepo: UserSpentRepository,
+
+    @InjectRepository(Nft721StakingEntity)
+    private readonly nft721StakingRepo: NFT721StakingRepository,
   ) { }
 
-  async createNft721FromChain(createNft: createNFTDTo, nftData: metadataNFTDto) {
+  async createNft721FromChain(
+    createNft: createNFTDTo,
+    nftData: metadataNFTDto,
+    fee: number,
+  ) {
     const tokenId = Number(createNft.tokenId);
     const price = Number(createNft.price) / 1e18;
+    const feePrice = Number(fee);
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: createNft.seller.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return;
+    }
 
     const existMetadata = await this.nft721MetadataRepo.findOne({
       where: {
-        tokenId: tokenId
-      }
-    })
+        tokenId: tokenId,
+      },
+    });
 
     if (existMetadata) {
-      return
+      return;
     }
 
     const metadata = await this.nft721MetadataRepo.save({
@@ -82,8 +106,101 @@ export class NftMarketplaceService {
       owner: createNft.owner,
       price: price,
       tokenId: tokenId,
-      nft: nft
-    })
+      nft: nft,
+    });
+
+    await this.userSpentRepo.save({
+      spent: feePrice,
+      spentType: SpentType.FEE,
+      user: existUser,
+    });
+  }
+
+  async createSaleNft721FromChain(nftData: createNFTDTo, fee: number) {
+    const tokenId = Number(nftData.tokenId);
+    const price = Number(nftData.price);
+    const feePrice = Number(fee);
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: nftData.owner.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return;
+    }
+
+    const existNft721 = await this.nftRepo.findOne({
+      where: {
+        tokenId: tokenId,
+        sold: false,
+      },
+    });
+
+    if (!existNft721) {
+      return;
+    }
+
+    await this.nftRepo.update(
+      { tokenId: existNft721.tokenId },
+      { owner: nftData.owner, seller: nftData.seller, sold: nftData.sold },
+    );
+
+    await this.nftHistoryRepo.save({
+      historyType: History.BUY,
+      seller: existNft721.seller,
+      owner: nftData.owner,
+      price: price,
+      tokenId: tokenId,
+      nft: existNft721,
+    });
+
+    await this.userSpentRepo.save({
+      spent: feePrice,
+      spentType: SpentType.FEE,
+      user: existUser,
+    });
+
+    await this.userSpentRepo.save({
+      spent: price,
+      spentType: SpentType.BUY,
+      user: existUser,
+    });
+  }
+
+  async createNft721StakingFromChain(nftStakingData: createNFTStakingDTo) {
+    const stakeId = Number(nftStakingData.stakeId);
+    const tokenId = Number(nftStakingData.tokenId);
+    const amount = Number(nftStakingData.amount);
+    const duration = Number(nftStakingData.duration);
+
+    const existNft721 = await this.nftRepo.findOne({
+      where: {
+        tokenId: tokenId,
+        sold: true,
+      },
+    });
+
+    if (!existNft721) {
+      return;
+    }
+
+    const existNft721Staking = await this.nft721StakingRepo.findOne({
+      where: {
+        tokenId: tokenId,
+      },
+    });
+
+    if (existNft721Staking) {
+      return;
+    }
+
+    await this.nft721StakingRepo.save({
+      staker: nftStakingData.staker,
+      stakeId: stakeId,
+      tokenId: tokenId,
+      amount: amount,
+      duration: duration,
+    });
   }
 
   async getAllNfts(requestTime: string, body: getNFTDto) {
@@ -134,20 +251,26 @@ export class NftMarketplaceService {
       qb.getCount(),
     ]);
 
-    const convertedData = await Promise.all(data.map(async (item) => {
-      const existingNft = await this.nftRepo.findOne({ where: { id: item.nft_id } })
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nftRepo.findOne({
+          where: { id: item.nft_id },
+        });
 
-      if (!existingNft) {
-        throw new Error('Nft not found');
-      }
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
 
-      const existingLinkNft = await this.likeRepo.find({ where: { nft: { id: existingNft.id } } })
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft: { id: existingNft.id } },
+        });
 
-      return {
-        ...item,
-        like: existingLinkNft.length
-      }
-    }))
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
 
     return {
       status: 'success',
@@ -161,41 +284,61 @@ export class NftMarketplaceService {
     const data = this.getAllNfts(requestTime, { page: 1, limit: 5 });
 
     if (!data) {
-      return
+      return;
     }
 
-    const convertedData = await Promise.all((await data).data.map(async (item) => {
-      const existingNft = await this.nftRepo.findOne({ where: { id: item.id } })
+    const convertedData = await Promise.all(
+      (await data).data.map(async (item) => {
+        const existingNft = await this.nftRepo.findOne({
+          where: { id: item.id },
+        });
 
-      if (!existingNft) {
-        throw new Error('Nft not found');
-      }
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
 
-      const existingUser = await this.userRepo.findOne({
-        where: { account: existingNft.seller.toLowerCase() }
-      });
+        const existingUser = await this.userRepo.findOne({
+          where: { account: existingNft.seller.toLowerCase() },
+        });
 
-      if (!existingUser) {
-        throw new Error('User not found');
-      }
+        if (!existingUser) {
+          throw new Error('User not found');
+        }
 
-      const existingUserInformation = await this.userInformationRepo.findOne({ where: { id: existingUser.id } })
+        const existingUserInformation = await this.userInformationRepo.findOne({
+          where: { id: existingUser.id },
+        });
 
-      if (!existingUserInformation) {
-        throw new Error('User Information not found');
-      }
+        if (!existingUserInformation) {
+          throw new Error('User Information not found');
+        }
 
-      return {
-        ...item,
-        user: existingUser,
-        userInformation: existingUserInformation
-      }
-    }))
+        return {
+          ...item,
+          user: existingUser,
+          userInformation: existingUserInformation,
+        };
+      }),
+    );
 
     return {
       status: 'success',
       requestTime: requestTime,
       data: convertedData,
+    };
+  }
+
+  async getTotalTransactionMarketplaceAll() {
+    const qb = this.userSpentRepo
+      .createQueryBuilder('user_spent')
+      .select('SUM(user_spent.spent)', 'totalSpent')
+      .addSelect('COUNT(user_spent.id)', 'totalCount');
+
+    const data = await qb.getRawOne();
+
+    return {
+      status: 'success',
+      data: data,
     };
   }
 
@@ -323,15 +466,12 @@ export class NftMarketplaceService {
 
   async getUserNft(id: number) {
     // const existNft = await this.nftRepo.findOne({ where: { tokenId: id } });
-
     // if (!existNft) {
     //   throw new Error('Nft not found');
     // }
-
     // const nftOwnerUser = await this.userRepo.findOne({
     //   where: { id: existNft.user },
     // });
-
     // if (!nftOwnerUser) {
     //   throw new Error('User not found');
     // }

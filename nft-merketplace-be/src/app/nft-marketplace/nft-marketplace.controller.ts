@@ -36,6 +36,11 @@ export class NftMarketplaceController {
     return await this.nftMarketplaceService.getSliderData(req.requestTime);
   }
 
+  @Get('total-transaction-marketplace-all')
+  async getTotalTransactionMarketplaceAll() {
+    return await this.nftMarketplaceService.getTotalTransactionMarketplaceAll();
+  }
+
   @Get('nfts')
   async getListNfts(@Req() req: Request, @Query() body: getNFTDto) {
     return await this.nftMarketplaceService.getListNfts(req.requestTime, body);

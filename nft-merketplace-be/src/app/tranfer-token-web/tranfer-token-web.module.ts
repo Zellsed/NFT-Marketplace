@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TranferTokenWebService } from './tranfer-token-web.service';
-import { TranferTokenWebListenerService } from './tranfer-token-web-listener.service';
+import { TranferTokenWebListenerService } from './blockchain-listener/tranfer-token-web-listener.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TranferTokenWebEntity } from 'src/core/lib/database/entities';
 import { TranferTokenWebController } from './tranfer-token-web.controller';

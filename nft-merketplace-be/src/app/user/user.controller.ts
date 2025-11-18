@@ -18,11 +18,16 @@ import { accountDto } from './dto/account.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get('all-user')
   async getAllUsers() {
     return await this.userService.getAllUsers();
+  }
+
+  @Get('all-transaction/:user_id')
+  async getAllTransaction(@Param('user_id') userId: number) {
+    return await this.userService.getAllTransaction(userId);
   }
 
   @Post('check-account')

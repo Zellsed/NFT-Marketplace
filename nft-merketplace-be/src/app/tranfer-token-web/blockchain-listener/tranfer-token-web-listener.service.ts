@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ethers } from "ethers";
-import { TranferTokenWebService } from "./tranfer-token-web.service";
-import { TranferTokenAddress, TranferTokenABI } from "../../../blockchain_connect/connect";
+import { TranferTokenWebService } from "../tranfer-token-web.service";
+import { TranferTokenAddress, TranferTokenABI } from "../../../../blockchain_connect/connect";
 import axios from "axios";
 
 @Injectable()

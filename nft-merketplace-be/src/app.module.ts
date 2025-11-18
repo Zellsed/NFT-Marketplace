@@ -9,10 +9,12 @@ import {
   LikeEntity,
   Nft721Entity,
   Nft721MetadataEntity,
+  Nft721StakingEntity,
   NftHistoryEntity,
   TranferTokenWebEntity,
   UserEntity,
   UserInformationEntity,
+  UserSpentEntity,
 } from './core/lib/database/entities';
 import {
   FollowRepository,
@@ -40,7 +42,9 @@ const entities = [
   NftHistoryEntity,
   LikeEntity,
   FollowEntity,
-  TranferTokenWebEntity
+  TranferTokenWebEntity,
+  UserSpentEntity,
+  Nft721StakingEntity
 ];
 
 const repositories = [
@@ -75,7 +79,9 @@ const repositories = [
           NftHistoryEntity,
           LikeEntity,
           FollowEntity,
-          TranferTokenWebEntity
+          TranferTokenWebEntity,
+          UserSpentEntity,
+          Nft721StakingEntity
         ],
         synchronize: true,
         autoLoadEntities: true,

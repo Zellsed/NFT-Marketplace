@@ -5,12 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   UserEntity,
   UserInformationEntity,
+  UserSpentEntity,
 } from 'src/core/lib/database/entities';
 import { AdminJwtStrategy } from 'src/core/guard/admin-jwt.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, UserInformationEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity, UserInformationEntity, UserSpentEntity])],
   controllers: [UserController],
   providers: [UserService, AdminJwtStrategy],
 })
-export class UserModule {}
+export class UserModule { }

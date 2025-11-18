@@ -31,3 +31,13 @@ export enum History {
   BUY = 'buy',
   RESELL = 'resell',
 }
+
+export enum SpentType {
+  FEE = 'fee',
+  BUY = 'buy',
+}
+
+export enum StakingType {
+  STAKED = 'staked',
+  UNSTAKED = 'unstaked',
+}

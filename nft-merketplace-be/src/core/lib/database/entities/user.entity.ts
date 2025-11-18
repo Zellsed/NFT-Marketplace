@@ -11,6 +11,7 @@ import { UserInformationEntity } from './userInformation.entity';
 import { Nft721Entity } from './nft721.entity';
 import { FollowEntity } from './follow.entity';
 import { LikeEntity } from './like.entity';
+import { UserSpentEntity } from './userSpent.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -85,6 +86,9 @@ export class UserEntity {
 
   @OneToOne(() => UserInformationEntity)
   information: UserInformationEntity;
+
+  @OneToMany(() => UserSpentEntity, (spent) => spent.user)
+  spent: UserSpentEntity[];
 
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers: FollowEntity[];

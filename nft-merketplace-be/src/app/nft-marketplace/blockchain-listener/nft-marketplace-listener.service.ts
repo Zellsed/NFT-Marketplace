@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ethers } from "ethers";
-import { NftMarketplaceService } from "./nft-marketplace.service";
-import { NFTMarketplaceAddress, NFTMarketplaceABI } from "../../../blockchain_connect/connect";
+import { NftMarketplaceService } from "../nft-marketplace.service";
+import { NFTMarketplaceAddress, NFTMarketplaceABI } from "../../../../blockchain_connect/connect";
 import axios from "axios";
 
 @Injectable()
@@ -30,6 +30,8 @@ export class NftMarketplaceListenerService implements OnModuleInit {
 
           const nftData = await this.fetchNFTData(tokenId);
 
+          const fee = await this.feeNFTMarketplace();
+
           const createNft = {
             tokenId,
             seller,
@@ -44,7 +46,52 @@ export class NftMarketplaceListenerService implements OnModuleInit {
             ...nftData.metadata
           }
 
-          await this.nftMarketplaceService.createNft721FromChain(createNft, metadata);
+          await this.nftMarketplaceService.createNft721FromChain(createNft, metadata, fee);
+
+        } catch (error) {
+          console.error('Error processing event:', error);
+        }
+      }
+    );
+
+    this.contract.on(
+      'idMarketSaleCreated',
+      async (tokenId, seller, owner, price, sold, event) => {
+        try {
+          const tx = await event.getTransaction();
+          const block = await event.getBlock();
+
+          const fee = await this.feeNFTMarketplace();
+
+          const nftData = {
+            tokenId,
+            seller,
+            owner,
+            price,
+            sold,
+          }
+
+          await this.nftMarketplaceService.createSaleNft721FromChain(nftData, fee);
+
+        } catch (error) {
+          console.error('Error processing event:', error);
+        }
+      }
+    );
+
+    this.contract.on(
+      'idMarketreSellTokenCreated',
+      async (tokenId, seller, owner, price, sold, event) => {
+        try {
+          const tx = await event.getTransaction();
+          const block = await event.getBlock();
+
+          console.log('tokenId', tokenId);
+          console.log('seller', seller);
+          console.log('owner', owner);
+          console.log('price', price);
+          console.log('sold', sold);
+
 
         } catch (error) {
           console.error('Error processing event:', error);
@@ -64,5 +111,11 @@ export class NftMarketplaceListenerService implements OnModuleInit {
       tokenURI,
       metadata
     };
+  }
+
+  private async feeNFTMarketplace() {
+    const fee = await this.contract.getListingPrice();
+
+    return fee;
   }
 }

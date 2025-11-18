@@ -6,3 +6,5 @@ export * from './like.entity';
 export * from './follow.entity';
 export * from './nft721Metadata.entity';
 export * from './tranferTokenWeb.entity';
+export * from './userSpent.entity';
+export * from './nft721Staking.entity';
