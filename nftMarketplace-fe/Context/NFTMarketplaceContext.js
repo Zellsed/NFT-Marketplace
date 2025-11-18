@@ -383,30 +383,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
 
-      // const { transaction, tokenId } = await createSale(url, price);
       await createSale(url, price);
-
-      // if (transaction) {
-      //   await axios.post(
-      //     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/create-nft`,
-      //     {
-      //       name: name,
-      //       description: description,
-      //       price: price,
-      //       pinataData: pinataData,
-      //       category: category,
-      //       fileExtension: fileExtension,
-      //       fileSize: fileSize,
-      //       createdAt: createdAt,
-      //       owner: transaction.to,
-      //       seller: transaction.from,
-      //       tokenId: tokenId,
-      //     },
-      //     {
-      //       headers: { Authorization: `Bearer ${token}` },
-      //     }
-      //   );
-      // }
 
       router.push("/searchPage");
     } catch (error) {
@@ -1019,21 +996,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const transaction = await contract.createMarketSale(nft.tokenId);
 
-      const existTransaction = await transaction.wait();
-
-      if (existTransaction) {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/buy-nft`,
-          {
-            nftId: nft.tokenId,
-            owner: existTransaction.from,
-            seller: existTransaction.to,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
+      await transaction.wait();
 
       router.push("/author");
     } catch (error) {
@@ -1439,6 +1402,37 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const getAllUsers = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/all-user`
+      );
+
+      return response.data.allUser;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Failed to fetch users");
+      setOpenError(true);
+    }
+  };
+
+  const getTotalTransactionMarketplaceAll = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/total-transaction-marketplace-all`
+      );
+
+      return {
+        totalCount: response.data.data.totalCount,
+        totalSpent: response.data.data.totalSpent,
+      };
+    } catch (error) {
+      console.error("Error fetching total transactions:", error);
+      setError("Failed to fetch total transactions");
+      setOpenError(true);
+    }
+  };
+
   const updateListingPrice = async (newPrice) => {};
 
   const depositReward = async (amount) => {};
@@ -1492,6 +1486,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         getOwnerTokenBalance,
         getTransferContractBalance,
         getBaseCoinRates,
+        getAllUsers,
+        getTotalTransactionMarketplaceAll,
         updateListingPrice,
         depositReward,
         depositTokenToTransfer,

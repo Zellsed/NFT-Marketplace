@@ -7,6 +7,7 @@ import NavBar from "../../Ingredients/components/NavBar/NavBar";
 import Footer from "../../Ingredients/components/Footer/Footer";
 import Spacer from "../../Ingredients/components/Spacer/Spacer";
 import Loader from "../../Ingredients/components/Loader/Loader";
+import Modal from "../../Ingredients/components/Modal/Modal";
 import TokenAmount, {
   formatRawValue,
 } from "../../Ingredients/components/formatTokenAmount/TokenAmount";
@@ -17,6 +18,7 @@ const AdminPage = () => {
     checkIfWalletIsConnected,
     fetchNFTs,
     fetchNFTs1155,
+    tranferTokenWeb,
     getAllTransactions,
     getAllWebTokenPurchaseHistory,
     checkRewardPool,
@@ -25,6 +27,8 @@ const AdminPage = () => {
     getOwnerTokenBalance,
     getTransferContractBalance,
     getBaseCoinRates,
+    getAllUsers,
+    getTotalTransactionMarketplaceAll,
     updateListingPrice,
     depositReward,
     depositTokenToTransfer,
@@ -32,10 +36,13 @@ const AdminPage = () => {
   } = useContext(NFTMarketplaceContext);
   const router = useRouter();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserTransactions, setSelectedUserTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [nfts721, setNfts721] = useState([]);
   const [nfts1155, setNfts1155] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [marketplaceStats, setMarketplaceStats] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [rewardPool, setRewardPool] = useState(0);
   const [stakedNFTs, setStakedNFTs] = useState([]);
@@ -52,11 +59,26 @@ const AdminPage = () => {
   const [baseRates, setBaseRates] = useState({});
 
   useEffect(() => {
+    getAllWebTokenPurchaseHistory();
+    getTotalTransactionMarketplaceAll();
+  }, []);
+
+  useEffect(() => {
     if (purchaseHistory.length > 0) {
-      const uniqueUsers = [
-        ...new Set(purchaseHistory.map((item) => item.userAddress)),
-      ];
+      const uniqueUsers = purchaseHistory.reduce((acc, item) => {
+        if (!acc.some((u) => u.address === item.account)) {
+          acc.push({
+            address: item.account,
+            totalCount: item.totalCount || 0,
+            totalSpent: item.totalSpent || 0,
+          });
+        }
+        return acc;
+      }, []);
+
       setUsers(uniqueUsers);
+    } else {
+      setUsers([]);
     }
   }, [purchaseHistory]);
 
@@ -75,6 +97,7 @@ const AdminPage = () => {
           nfts721Data,
           nfts1155Data,
           txs,
+          marketplaceStats,
           history,
           pool,
           staked,
@@ -86,7 +109,8 @@ const AdminPage = () => {
           fetchNFTs(),
           fetchNFTs1155(),
           getAllTransactions(),
-          getAllWebTokenPurchaseHistory(),
+          getTotalTransactionMarketplaceAll(),
+          getAllUsers(),
           checkRewardPool(),
           fetchMyStakedNFTs(currentAccount),
           getListingPrice(),
@@ -98,6 +122,10 @@ const AdminPage = () => {
         setNfts721(nfts721Data || []);
         setNfts1155(nfts1155Data || []);
         setTransactions(txs || []);
+        setMarketplaceStats({
+          totalCount: marketplaceStats.totalCount || 0,
+          totalSpent: marketplaceStats.totalSpent || 0,
+        });
         setPurchaseHistory(history || []);
         setRewardPool(pool || 0);
         setStakedNFTs(staked || []);
@@ -137,16 +165,23 @@ const AdminPage = () => {
                 </div>
               </div>
               <div className={Style.statCard}>
-                <div className={Style.statIcon}>💸</div>
+                <div className={Style.statIcon}>🛒</div>
                 <div className={Style.statContent}>
                   <h3>Total Transactions</h3>
-                  <p>{transactions.length}</p>
+                  <p>{marketplaceStats.totalCount}</p>
+                </div>
+              </div>
+              <div className={Style.statCard}>
+                <div className={Style.statIcon}>💸</div>
+                <div className={Style.statContent}>
+                  <h3>Total Cash Flow</h3>
+                  <p>{marketplaceStats.totalSpent} WEB</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>👥</div>
                 <div className={Style.statContent}>
-                  <h3>Unique Users</h3>
+                  <h3>Users</h3>
                   <p>{users.length}</p>
                 </div>
               </div>
@@ -155,13 +190,6 @@ const AdminPage = () => {
                 <div className={Style.statContent}>
                   <h3>Staked NFTs</h3>
                   <p>{stakedNFTs.length}</p>
-                </div>
-              </div>
-              <div className={Style.statCard}>
-                <div className={Style.statIcon}>🛒</div>
-                <div className={Style.statContent}>
-                  <h3>Total Purchases</h3>
-                  <p>? WEB</p>
                 </div>
               </div>
               <div className={Style.statCard}>
@@ -342,18 +370,18 @@ const AdminPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {purchaseHistory.map((h) => (
+                    {tranferTokenWeb.map((h) => (
                       <tr key={h.id}>
                         <td className={Style.address}>{h.userAddress}</td>
                         <td>{h.baseCoin}</td>
                         <td>{h.baseCoinAmount}</td>
                         <td>{h.webTokenAmount}</td>
-                        <td>{new Date(h.timestamp * 1000).toLocaleString()}</td>
+                        <td>{new Date(h.createdAt).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {purchaseHistory.length === 0 && (
+                {tranferTokenWeb.length === 0 && (
                   <div className={Style.noData}>No purchase history found</div>
                 )}
               </div>
@@ -618,34 +646,38 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => {
-                    const userTransactions = purchaseHistory.filter(
-                      (h) => h.userAddress === user
-                    );
-                    const totalSpent = userTransactions.reduce(
-                      (sum, transaction) =>
-                        sum + parseFloat(transaction.webTokenAmount || 0),
-                      0
-                    );
-
-                    return (
-                      <tr key={user}>
-                        <td className={Style.address}>{user}</td>
-                        <td>{userTransactions.length}</td>
-                        <td>{totalSpent.toFixed(2)} WEB</td>
+                  {users.length > 0 ? (
+                    users.map((user) => (
+                      <tr key={user.address}>
+                        <td className={Style.address}>{user.address}</td>
+                        <td>{Number(user.totalCount)}</td>
+                        <td>{user.totalSpent} WEB</td>
                         <td>
-                          <button className={Style.smallButton}>
+                          <button
+                            className={Style.smallButton}
+                            onClick={() => {
+                              setSelectedUserTransactions(
+                                purchaseHistory.filter(
+                                  (tx) => tx.account === user.address
+                                )
+                              );
+                              setIsModalOpen(true);
+                            }}
+                          >
                             View Details
                           </button>
                         </td>
                       </tr>
-                    );
-                  })}
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className={Style.noData}>
+                        No users found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
-              {users.length === 0 && (
-                <div className={Style.noData}>No users found</div>
-              )}
             </div>
           </div>
         );
@@ -692,9 +724,14 @@ const AdminPage = () => {
           </div>
 
           {renderTabContent()}
+
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            userTransactions={selectedUserTransactions}
+          />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

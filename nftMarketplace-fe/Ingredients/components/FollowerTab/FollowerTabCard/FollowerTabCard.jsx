@@ -115,22 +115,6 @@ const FollowerTabCard = ({ el, i }) => {
           />
         </div>
 
-        {/* <div className={Style.FollowerTabCard_box_profile}>
-          <Image
-            className={Style.FollowerTabCard_box_profile_img}
-            alt="profile picture"
-            width={50}
-            height={50}
-            src={user?.photo || images.avatar}
-          />
-          <Link
-            href={{
-              pathname: "/userNFT",
-              query: `seller=${el.seller}`,
-            }}
-          />
-        </div> */}
-
         <div className={Style.FollowerTabCard_box_profile}>
           <Link
             href={{

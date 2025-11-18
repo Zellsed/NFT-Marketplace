@@ -25,22 +25,6 @@ const Brand = () => {
             opportunity to dive into the world of crypto—sign up today and start
             earning for free! 🚀💰
           </p>
-
-          {/* <div className={Style.Brand_box_left_btn}>
-            <button
-              className={Style.Brand_button}
-              onClick={() => router.push("/uploadNFT")}
-            >
-              Create
-            </button>
-
-            <button
-              className={Style.Brand_button}
-              onClick={() => router.push("/searchPage")}
-            >
-              Discover
-            </button>
-          </div> */}
         </div>
         <div className={Style.Brand_box_right}>
           <Image src={images.earn} alt="brand logo" width={800} height={600} />

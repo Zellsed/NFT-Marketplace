@@ -1,0 +1,180 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.modal {
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  color: #f1f1f1;
+  padding: 35px 30px;
+  border-radius: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: 700px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease-out;
+  border: 1px solid #333;
+  position: relative;
+}
+
+.modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+  border-radius: 16px 16px 0 0;
+}
+
+.modal h2 {
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  color: #ffd700;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.modal thead {
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+}
+
+.modal th {
+  padding: 16px 12px;
+  text-align: left;
+  color: #ffd700;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #ffd700;
+}
+
+.modal td {
+  padding: 14px 12px;
+  text-align: left;
+  color: #e1e1e1;
+  border-bottom: 1px solid #3a3a3a;
+  transition: all 0.2s ease;
+}
+
+.modal tbody tr {
+  transition: all 0.2s ease;
+}
+
+.modal tbody tr:hover {
+  background: rgba(255, 215, 0, 0.05);
+  transform: translateX(5px);
+}
+
+.modal tbody tr:hover td {
+  color: #ffffff;
+}
+
+.modal button {
+  margin-top: 25px;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #1e1e1e;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 120px;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.modal button:hover {
+  background: linear-gradient(135deg, #ffaa00, #ffd700);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+.modal button:active {
+  transform: translateY(0);
+}
+
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 4px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: #ffd700;
+  border-radius: 4px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background: #ffaa00;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 90%;
+    padding: 25px 20px;
+    margin: 20px;
+  }
+
+  .modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal th,
+  .modal td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+
+  .modal table {
+    display: block;
+    overflow-x: auto;
+  }
+}

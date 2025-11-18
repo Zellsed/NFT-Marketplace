@@ -56,7 +56,6 @@ const NavBar = () => {
     setShowNetworkModal,
   } = useContext(NFTMarketplaceContext);
 
-  // Kiểm tra quyền admin
   useEffect(() => {
     if (currentAccount && DeployerAddress) {
       const isAdminUser =
@@ -293,6 +292,18 @@ const NavBar = () => {
       return;
     }
 
+    if (!account) {
+      alert("Please create an account");
+      router.push("/signUp");
+      return;
+    }
+
+    if (!token) {
+      alert("Please login");
+      router.push("/login");
+      return;
+    }
+
     if (!isAdmin) {
       alert("Access denied. Admin only.");
       return;
@@ -342,7 +353,6 @@ const NavBar = () => {
               )}
             </div>
 
-            {/* Admin Link - chỉ hiển thị cho owner */}
             {isAdmin && (
               <p
                 className={`${Style.nav_item} ${Style.admin_nav_item} ${

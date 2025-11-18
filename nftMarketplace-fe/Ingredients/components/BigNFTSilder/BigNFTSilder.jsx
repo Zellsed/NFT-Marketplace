@@ -193,40 +193,31 @@ const BigNFTSilder = () => {
               el.fileExtension === "wav" ||
               el.fileExtension === "ogg" ? (
               <div className={Style.bigNFTSlider_box_right_audio_container}>
-                {/* * ĐIỂM CHỈNH SỬA CHÍNH:
-                 * Đặt player vào TRONG artwork để dùng position: absolute
-                 */}
-                               {" "}
+                {" "}
                 <div className={Style.bigNFTSlider_box_right_audio_artwork}>
-                                   {" "}
+                  {" "}
                   <Image
                     src={el.photo || images.creatorbackground10}
                     alt="Audio artwork"
-                    width={600} // Tăng kích thước Image để nó phủ hết container
-                    height={500} // Tăng kích thước Image để nó phủ hết container
+                    width={600}
+                    height={500}
                     className={Style.bigNFTSlider_box_right_audio_img}
-                  />
-                                 {/* BLOCK PLAYER ĐÃ ĐƯỢC CHUYỂN VÀO TRONG */} 
-                                 {" "}
+                  />{" "}
                   <div className={Style.bigNFTSlider_box_right_audio_player}>
-                                        <h3>{el.name}</h3>                   {" "}
+                    <h3>{el.name}</h3>{" "}
                     <audio
                       controls
                       className={Style.bigNFTSlider_box_right_audio_element}
                     >
-                                           {" "}
+                      {" "}
                       <source
                         src={el.pinataData}
                         type={`audio/${el.fileExtension}`}
                       />
-                                            Your browser does not support the
-                      audio element.                    {" "}
-                    </audio>
-                                     {" "}
-                  </div>
-                                 {" "}
-                </div>
-                             {" "}
+                      Your browser does not support the audio element.{" "}
+                    </audio>{" "}
+                  </div>{" "}
+                </div>{" "}
               </div>
             ) : (
               <Image
@@ -237,20 +228,16 @@ const BigNFTSilder = () => {
                 className={Style.bigNFTSlider_box_right_img}
                 priority={idNumber === 0}
               />
-            )}
-                       {" "}
+            )}{" "}
             <div className={Style.bigNFTSlider_box_right_like}>
-                           {" "}
+              {" "}
               <AiFillHeart className={Style.bigNFTSlider_box_right_like_icon} />
-                            <span>{el.likes || 0}</span>           {" "}
-            </div>
-                       {" "}
+              <span>{el.likes || 0}</span>{" "}
+            </div>{" "}
             <div className={Style.bigNFTSlider_box_right_badge}>
-                            <span>#{el.tokenId}</span>           {" "}
-            </div>
-                     {" "}
-          </div>
-                 {" "}
+              <span>#{el.tokenId}</span>{" "}
+            </div>{" "}
+          </div>{" "}
         </div>
       </div>
     </div>

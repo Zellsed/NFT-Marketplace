@@ -54,6 +54,22 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         bool sold
     );
 
+    event idMarketSaleCreated(
+        uint256 indexed tokenId,
+        address seller,
+        address owner,
+        uint256 price,
+        bool sold
+    );
+
+    event idMarketreSellTokenCreated(
+        uint256 indexed tokenId,
+        address seller,
+        address owner,
+        uint256 price,
+        bool sold
+    );
+
     struct MarketItem1155 {
         uint256 itemId;
         address nftContract;
@@ -243,6 +259,14 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         _itemsSold.decrement();
 
         _transfer(msg.sender, address(this), _tokenId);
+
+        emit idMarketreSellTokenCreated(
+            _tokenId,
+            msg.sender,
+            address(this),
+            _price,
+            false
+        );
     }
 
     function createMarketSale(uint256 _tokenId) public {
@@ -264,6 +288,14 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         _itemsSold.increment();
 
         _transfer(address(this), msg.sender, _tokenId);
+
+        emit idMarketSaleCreated(
+            _tokenId,
+            payable(address(0)),
+            msg.sender,
+            price,
+            true
+        );
     }
 
     function buyToken1155(uint256 _itemId, uint256 _buyQuantity) public {
