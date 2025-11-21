@@ -3,17 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { History } from 'src/common/enum';
 import {
   LikeEntity,
+  Nft1155Entity,
   Nft721Entity,
   NftHistoryEntity,
   UserEntity,
 } from 'src/core/lib/database/entities';
 import {
   LikeRepository,
+  NFT1155Repository,
   NftHistoryRepository,
   NFTRepository,
   UserRepository,
 } from 'src/core/lib/database/repositories';
 import { Repository } from 'typeorm';
+import { likeUserDto } from './dto/likeUser.dto';
 
 @Injectable()
 export class LikeService {
@@ -29,45 +32,86 @@ export class LikeService {
 
     @InjectRepository(NftHistoryEntity)
     private readonly nftHistoryRepo: NftHistoryRepository,
+
+    @InjectRepository(Nft1155Entity)
+    private readonly nft1155Repo: NFT1155Repository,
   ) { }
 
-  async likeNft(userId: number, nftId: number) {
+  async likeNft(userId: number, likeData: likeUserDto) {
     const existUser = await this.userRepo.findOne({ where: { id: userId } });
 
     if (!existUser) {
       throw new Error('User not found');
     }
 
-    const existNft = await this.nftRepo.findOne({ where: { tokenId: nftId } });
-
-    if (!existNft) {
-      throw new Error('NFT not found');
-    }
-
-    const existingLike = await this.likeRepo.findOne({
-      where: { user: { id: userId }, nft: { id: existNft.id } },
-    });
-
-    if (existingLike) {
-      await this.likeRepo.delete(existingLike.id);
-
-      return {
-        message: 'Unliked successfully',
-        liked: false,
-      };
-    } else {
-      const newLike = await this.likeRepo.create({
-        user: existUser,
-        tokenId: existNft.tokenId,
-        nft: existNft,
+    if (likeData.nft721) {
+      const existNft = await this.nftRepo.findOne({
+        where: { tokenId: Number(likeData.nftId) },
       });
 
-      await this.likeRepo.save(newLike);
+      if (!existNft) {
+        throw new Error('NFT not found');
+      }
 
-      return {
-        message: 'Like successfully',
-        liked: true,
-      };
+      const existingLike = await this.likeRepo.findOne({
+        where: { user: { id: userId }, nft721: { id: existNft.id } },
+      });
+
+      if (existingLike) {
+        await this.likeRepo.delete(existingLike.id);
+
+        return {
+          message: 'Unliked successfully',
+          liked: false,
+        };
+      } else {
+        const newLike = this.likeRepo.create({
+          user: existUser,
+          tokenId: existNft.tokenId,
+          nft721: existNft,
+        });
+
+        await this.likeRepo.save(newLike);
+
+        return {
+          message: 'Like successfully',
+          liked: true,
+        };
+      }
+    } else {
+      const existNft = await this.nft1155Repo.findOne({
+        where: { tokenId: Number(likeData.nftId) },
+      });
+
+      if (!existNft) {
+        throw new Error('NFT not found');
+      }
+
+      const existingLike = await this.likeRepo.findOne({
+        where: { user: { id: userId }, nft1155: { id: existNft.id } },
+      });
+
+      if (existingLike) {
+        await this.likeRepo.delete(existingLike.id);
+
+        return {
+          message: 'Unliked successfully',
+          liked: false,
+        };
+      } else {
+        const newLike = this.likeRepo.create({
+          user: existUser,
+          tokenId: existNft.tokenId,
+          nft1155: existNft,
+        });
+
+        await this.likeRepo.save(newLike);
+
+        return {
+          message: 'Like successfully',
+          liked: true,
+        };
+      }
     }
   }
 

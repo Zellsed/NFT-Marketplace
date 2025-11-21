@@ -4,6 +4,7 @@ import { LikeService } from './like.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   LikeEntity,
+  Nft1155Entity,
   Nft721Entity,
   NftHistoryEntity,
   UserEntity,
@@ -18,6 +19,7 @@ import { LikeRepository } from 'src/core/lib/database/repositories';
       UserEntity,
       Nft721Entity,
       NftHistoryEntity,
+      Nft1155Entity
     ]),
   ],
   controllers: [LikeController],

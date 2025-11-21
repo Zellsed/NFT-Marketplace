@@ -1,21 +1,17 @@
-import { CryptoLegend } from 'src/common/enum';
 import {
   BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from './user.entity';
-import { NftHistoryEntity } from './nft721History.entity';
-import { LikeEntity } from './like.entity';
-import { Nft721MetadataEntity } from './nft721Metadata.entity';
+import { Nft1155Entity } from './nft1155.entity';
+import { History } from 'src/common/enum';
 
-@Entity('nft_721')
-export class Nft721Entity {
+@Entity('nft_1155_history')
+export class Nft1155HistoryEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
     name: 'id',
@@ -23,11 +19,12 @@ export class Nft721Entity {
   id: number;
 
   @Column({
-    type: 'int',
-    name: 'token_id',
-    nullable: false,
+    type: 'enum',
+    name: 'history_type',
+    enum: History,
+    nullable: true,
   })
-  tokenId: number;
+  historyType: History;
 
   @Column({
     type: 'text',
@@ -45,17 +42,31 @@ export class Nft721Entity {
 
   @Column({
     type: 'float',
-    name: 'price',
+    name: 'amount',
     nullable: false,
+  })
+  amount: number;
+
+  @Column({
+    type: 'float',
+    name: 'price',
+    nullable: true,
   })
   price: number;
 
   @Column({
-    name: 'sold',
-    type: 'boolean',
-    default: false,
+    type: 'float',
+    name: 'total_price',
+    nullable: false,
   })
-  sold: boolean;
+  totalPrice: number;
+
+  @Column({
+    type: 'int',
+    name: 'token_id',
+    nullable: true,
+  })
+  tokenId: number;
 
   @Column({
     name: 'created_at',
@@ -76,13 +87,7 @@ export class Nft721Entity {
     this.updatedAt = new Date();
   }
 
-  @OneToMany(() => NftHistoryEntity, (history) => history.nft)
-  history: NftHistoryEntity[];
-
-  @OneToMany(() => LikeEntity, (like) => like.nft721)
-  likes: LikeEntity[];
-
-  @OneToOne(() => Nft721MetadataEntity, (metadata) => metadata.nft)
-  @JoinColumn({ name: 'metadata_id' })
-  metadata: Nft721MetadataEntity;
+  @ManyToOne(() => Nft1155Entity, (nft) => nft.history)
+  @JoinColumn({ name: 'nft_id' })
+  nft: Nft1155Entity;
 }

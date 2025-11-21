@@ -9,13 +9,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from './user.entity';
-import { NftHistoryEntity } from './nft721History.entity';
-import { LikeEntity } from './like.entity';
-import { Nft721MetadataEntity } from './nft721Metadata.entity';
+import { Nft1155Entity } from './nft1155.entity';
 
-@Entity('nft_721')
-export class Nft721Entity {
+@Entity('nft_1155_metadata')
+export class Nft1155MetadataEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
     name: 'id',
@@ -31,31 +28,56 @@ export class Nft721Entity {
 
   @Column({
     type: 'text',
-    name: 'seller',
+    name: 'token_uri',
     nullable: true,
   })
-  seller: string;
+  tokenURI: string;
+
+  @Column({
+    type: 'varchar',
+    name: 'name',
+    length: 255,
+    nullable: false,
+  })
+  name: string;
 
   @Column({
     type: 'text',
-    name: 'owner',
+    name: 'description',
     nullable: true,
   })
-  owner: string;
+  description: string;
 
   @Column({
-    type: 'float',
-    name: 'price',
-    nullable: false,
+    type: 'text',
+    name: 'pinata_data',
+    nullable: true,
   })
-  price: number;
+  pinataData: string;
 
   @Column({
-    name: 'sold',
-    type: 'boolean',
-    default: false,
+    type: 'enum',
+    name: 'category',
+    enum: CryptoLegend,
+    nullable: true,
   })
-  sold: boolean;
+  category: CryptoLegend;
+
+  @Column({
+    type: 'varchar',
+    name: 'file_extension',
+    length: 10,
+    nullable: true,
+  })
+  fileExtension: string;
+
+  @Column({
+    type: 'varchar',
+    name: 'file_size',
+    length: 10,
+    nullable: true,
+  })
+  fileSize: string;
 
   @Column({
     name: 'created_at',
@@ -76,13 +98,6 @@ export class Nft721Entity {
     this.updatedAt = new Date();
   }
 
-  @OneToMany(() => NftHistoryEntity, (history) => history.nft)
-  history: NftHistoryEntity[];
-
-  @OneToMany(() => LikeEntity, (like) => like.nft721)
-  likes: LikeEntity[];
-
-  @OneToOne(() => Nft721MetadataEntity, (metadata) => metadata.nft)
-  @JoinColumn({ name: 'metadata_id' })
-  metadata: Nft721MetadataEntity;
+  @OneToOne(() => Nft1155Entity, (nft) => nft.metadata)
+  nft: Nft1155Entity;
 }

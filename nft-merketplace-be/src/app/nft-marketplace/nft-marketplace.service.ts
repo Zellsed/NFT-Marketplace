@@ -1,58 +1,89 @@
 import { Injectable } from '@nestjs/common';
+import { Request } from 'express';
 import {
   LikeRepository,
+  Nft1155HistoryRepository,
+  NFT1155MetadataRepository,
+  NFT1155Repository,
+  NFT1155StakingRepository,
   NFT721MetadataRepository,
   NFT721StakingRepository,
   NftHistoryRepository,
   NFTRepository,
   UserInformationRepository,
+  UserNft1155Repository,
   UserRepository,
 } from 'src/core/lib/database/repositories';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   LikeEntity,
+  Nft1155Entity,
+  Nft1155HistoryEntity,
+  Nft1155MetadataEntity,
+  Nft1155StakingEntity,
   Nft721Entity,
   Nft721MetadataEntity,
   Nft721StakingEntity,
   NftHistoryEntity,
   UserEntity,
   UserInformationEntity,
+  UserNft1155Entity,
   UserSpentEntity,
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 
 import { DefaultPaging, History, SpentType } from 'src/common/enum';
 import slugify from 'slugify';
-import { createNFTDTo, metadataNFTDto } from './dto/createNft.dto';
+import {
+  createBuyNFT1155DTo,
+  createNFT1155DTo,
+  createNFTDTo,
+  metadataNFTDto,
+} from './dto/createNft.dto';
 import { UserSpentRepository } from 'src/core/lib/database/repositories/userSpent.repository';
 import { createNFTStakingDTo } from './dto/createNftStaking.dto';
 
 @Injectable()
 export class NftMarketplaceService {
   constructor(
-    @InjectRepository(Nft721Entity)
-    private readonly nftRepo: NFTRepository,
-
-    @InjectRepository(Nft721MetadataEntity)
-    private readonly nft721MetadataRepo: NFT721MetadataRepository,
-
     @InjectRepository(UserEntity)
     private readonly userRepo: UserRepository,
 
     @InjectRepository(UserInformationEntity)
     private readonly userInformationRepo: UserInformationRepository,
 
-    @InjectRepository(NftHistoryEntity)
-    private readonly nftHistoryRepo: NftHistoryRepository,
+    @InjectRepository(UserSpentEntity)
+    private readonly userSpentRepo: UserSpentRepository,
+
+    @InjectRepository(UserNft1155Entity)
+    private readonly userNft1155Repo: UserNft1155Repository,
 
     @InjectRepository(LikeEntity)
     private readonly likeRepo: LikeRepository,
 
-    @InjectRepository(UserSpentEntity)
-    private readonly userSpentRepo: UserSpentRepository,
+    @InjectRepository(Nft721Entity)
+    private readonly nftRepo: NFTRepository,
+
+    @InjectRepository(Nft721MetadataEntity)
+    private readonly nft721MetadataRepo: NFT721MetadataRepository,
+
+    @InjectRepository(NftHistoryEntity)
+    private readonly nftHistoryRepo: NftHistoryRepository,
 
     @InjectRepository(Nft721StakingEntity)
     private readonly nft721StakingRepo: NFT721StakingRepository,
+
+    @InjectRepository(Nft1155Entity)
+    private readonly nft1155Repo: NFT1155Repository,
+
+    @InjectRepository(Nft1155MetadataEntity)
+    private readonly nft1155MetadataRepo: NFT1155MetadataRepository,
+
+    @InjectRepository(Nft1155HistoryEntity)
+    private readonly nft1155HistoryRepo: Nft1155HistoryRepository,
+
+    @InjectRepository(Nft1155StakingEntity)
+    private readonly nft1155StakingRepo: NFT1155StakingRepository,
   ) { }
 
   async createNft721FromChain(
@@ -72,13 +103,13 @@ export class NftMarketplaceService {
       return;
     }
 
-    const existMetadata = await this.nft721MetadataRepo.findOne({
+    const existNft = await this.nftRepo.findOne({
       where: {
         tokenId: tokenId,
       },
     });
 
-    if (existMetadata) {
+    if (existNft) {
       return;
     }
 
@@ -148,7 +179,7 @@ export class NftMarketplaceService {
     await this.nftHistoryRepo.save({
       historyType: History.BUY,
       seller: existNft721.seller,
-      owner: nftData.owner,
+      owner: existNft721.owner,
       price: price,
       tokenId: tokenId,
       nft: existNft721,
@@ -163,6 +194,56 @@ export class NftMarketplaceService {
     await this.userSpentRepo.save({
       spent: price,
       spentType: SpentType.BUY,
+      user: existUser,
+    });
+  }
+
+  async createReSaleNft721FromChain(nftData: createNFTDTo, fee: number) {
+    const tokenId = Number(nftData.tokenId);
+    const price = Number(nftData.price) / 1e18;
+    const feePrice = Number(fee);
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: nftData.seller.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return;
+    }
+
+    const existNft721 = await this.nftRepo.findOne({
+      where: {
+        tokenId: tokenId,
+        sold: true,
+      },
+    });
+
+    if (!existNft721) {
+      return;
+    }
+
+    await this.nftRepo.update(
+      { tokenId: existNft721.tokenId },
+      {
+        owner: nftData.owner,
+        seller: nftData.seller,
+        price: price,
+        sold: nftData.sold,
+      },
+    );
+
+    await this.nftHistoryRepo.save({
+      historyType: History.RESELL,
+      seller: existNft721.seller,
+      owner: existNft721.owner,
+      price: price,
+      tokenId: tokenId,
+      nft: existNft721,
+    });
+
+    await this.userSpentRepo.save({
+      spent: feePrice,
+      spentType: SpentType.FEE,
       user: existUser,
     });
   }
@@ -200,6 +281,181 @@ export class NftMarketplaceService {
       tokenId: tokenId,
       amount: amount,
       duration: duration,
+    });
+  }
+
+  async createNft1155FromChain(
+    createNft: createNFT1155DTo,
+    nftData: metadataNFTDto,
+    fee: number,
+  ) {
+    const itemId = Number(createNft.itemId);
+    const tokenId = Number(createNft.tokenId);
+    const amount = Number(createNft.amount);
+    const amountAvailable = Number(createNft.amountAvailable);
+    const price = Number(createNft.price) / 1e18;
+    const totalPrice = amountAvailable * price;
+    const feePrice = Number(fee);
+    const logIndex = Number(createNft.logIndex);
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: createNft.seller.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return;
+    }
+
+    const existNft1155 = await this.nft1155Repo.findOne({
+      where: {
+        tokenId: tokenId,
+        txHash: createNft.txHash,
+        logIndex: logIndex,
+        sold: false,
+      },
+    });
+
+    if (existNft1155) {
+      return;
+    }
+
+    const metadata = await this.nft1155MetadataRepo.save({
+      tokenId: tokenId,
+      tokenURI: nftData.tokenURI,
+      name: nftData.name,
+      description: nftData.description,
+      pinataData: nftData.pinataData,
+      category: nftData.category,
+      fileExtension: nftData.fileExtension,
+      fileSize: nftData.fileSize,
+    });
+
+    const nft1155 = await this.nft1155Repo.save({
+      ...createNft,
+      itemId: itemId,
+      tokenId: tokenId,
+      amount: amount,
+      amountAvailable: amountAvailable,
+      price: price,
+      totalPrice: totalPrice,
+      metadata: metadata,
+    });
+
+    await this.nft1155HistoryRepo.save({
+      historyType: History.SELL,
+      seller: createNft.seller,
+      owner: createNft.owner,
+      amount: amount,
+      price: price,
+      totalPrice: totalPrice,
+      tokenId: tokenId,
+      nft: nft1155,
+    });
+
+    await this.userSpentRepo.save({
+      spent: feePrice,
+      spentType: SpentType.FEE,
+      user: existUser,
+    });
+  }
+
+  async createBuyNft1155FromChain(createNft: createBuyNFT1155DTo, fee: number) {
+    const tokenId = Number(createNft.tokenId);
+    const amountBought = Number(createNft.amountBought);
+    const price = Number(createNft.price) / 1e18;
+    const feePrice = Number(fee);
+    const logIndex = Number(createNft.logIndex);
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: createNft.buyer.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return;
+    }
+
+    const existNft1155 = await this.nft1155Repo.findOne({
+      where: {
+        tokenId: tokenId,
+        sold: false,
+      },
+    });
+
+    if (!existNft1155) {
+      return;
+    }
+
+    const remainingAmount = existNft1155.amountAvailable - amountBought;
+    const totalPrice = amountBought * price;
+    const remainingTotalPrice = existNft1155.totalPrice - totalPrice;
+
+    if (
+      existNft1155.txHash.toLowerCase() === createNft.txHash.toLowerCase() &&
+      existNft1155.logIndex === logIndex
+    ) {
+      return;
+    }
+
+    const existingUserNft1155 = await this.userNft1155Repo.findOne({
+      where: {
+        userId: existUser.id,
+        tokenId: existNft1155.tokenId,
+      },
+    });
+
+    if (existingUserNft1155) {
+      await this.userNft1155Repo.update(
+        { tokenId: existNft1155.tokenId },
+        {
+          amount: existingUserNft1155.amount + amountBought,
+        },
+      );
+    } else {
+      await this.userNft1155Repo.save({
+        user: existUser,
+        owner: createNft.buyer,
+        tokenId: existNft1155.tokenId,
+        amount: amountBought,
+        amountAvailable: 0,
+        nftContract: existNft1155.nftContract,
+        nft: existNft1155,
+      });
+    }
+
+    await this.nft1155Repo.update(
+      {
+        tokenId: existNft1155.tokenId,
+      },
+      {
+        amountAvailable: remainingAmount,
+        totalPrice: remainingTotalPrice,
+        txHash: createNft.txHash,
+        logIndex: logIndex,
+        sold: remainingAmount === 0 ? true : false,
+      },
+    );
+
+    await this.nft1155HistoryRepo.save({
+      historyType: History.BUY,
+      seller: createNft.seller,
+      owner: createNft.buyer,
+      price: price,
+      amount: amountBought,
+      totalPrice: totalPrice,
+      tokenId: tokenId,
+      nft: existNft1155,
+    });
+
+    await this.userSpentRepo.save({
+      spent: feePrice,
+      spentType: SpentType.FEE,
+      user: existUser,
+    });
+
+    await this.userSpentRepo.save({
+      spent: totalPrice,
+      spentType: SpentType.BUY,
+      user: existUser,
     });
   }
 
@@ -262,7 +518,7 @@ export class NftMarketplaceService {
         }
 
         const existingLinkNft = await this.likeRepo.find({
-          where: { nft: { id: existingNft.id } },
+          where: { nft721: { id: existingNft.id } },
         });
 
         return {
@@ -275,6 +531,451 @@ export class NftMarketplaceService {
     return {
       status: 'success',
       requestTime: requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
+  async getAllMyNft721Listed(req: Request, body: getNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      sort,
+      fields,
+      name,
+      duration,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      priceDiscount,
+    } = body;
+
+    const existUser = await this.userRepo.findOne({
+      where: { id: req.user.id },
+    });
+
+    if (!existUser) {
+      throw new Error('User not found');
+    }
+
+    const qb = this.nftRepo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.token_id' as 'tokenId',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.price' as 'price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: false })
+      .andWhere('LOWER(nft.seller) = LOWER(:seller)', {
+        seller: existUser.account,
+      })
+      .orderBy('nft.created_at', 'DESC');
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nftRepo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft721: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: req.requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
+  async getAllMyNft721(req: Request, body: getNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      sort,
+      fields,
+      name,
+      duration,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      priceDiscount,
+    } = body;
+
+    const existUser = await this.userRepo.findOne({
+      where: { id: req.user.id },
+    });
+
+    if (!existUser) {
+      throw new Error('User not found');
+    }
+
+    const qb = this.nftRepo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.token_id' as 'tokenId',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.price' as 'price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: true })
+      .andWhere('LOWER(nft.owner) = LOWER(:owner)', {
+        owner: existUser.account,
+      })
+      .orderBy('nft.created_at', 'DESC');
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nftRepo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft721: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: req.requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
+  async getAllNfts1155(requestTime: string, body: getNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      sort,
+      fields,
+      name,
+      duration,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      priceDiscount,
+    } = body;
+
+    const qb = this.nft1155Repo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.item_id' as 'item_id',
+        'nft.token_id' as 'token_id',
+        'nft.nft_contract' as 'nft_contract',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.amount' as 'amount',
+        'nft.amount_available' as 'amount_available',
+        'nft.price' as 'price',
+        'nft.total_price' as 'total_price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: false })
+      .orderBy('nft.created_at', 'DESC');
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nft1155Repo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft1155: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
+  async getAllMyNft1155Listed(req: Request, body: getNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      sort,
+      fields,
+      name,
+      duration,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      priceDiscount,
+    } = body;
+
+    const existUser = await this.userRepo.findOne({
+      where: { id: req.user.id },
+    });
+
+    if (!existUser) {
+      throw new Error('User not found');
+    }
+
+    const qb = this.nft1155Repo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.item_id' as 'item_id',
+        'nft.token_id' as 'token_id',
+        'nft.nft_contract' as 'nft_contract',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.amount' as 'amount',
+        'nft.amount_available' as 'amount_available',
+        'nft.price' as 'price',
+        'nft.total_price' as 'total_price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: false })
+      .andWhere('LOWER(nft.seller) = LOWER(:seller)', {
+        seller: existUser.account,
+      })
+      .orderBy('nft.created_at', 'DESC');
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nft1155Repo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft1155: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: req.requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
+  async getAllMyNft1155(req: Request, body: getNFTDto) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      sort,
+      fields,
+      name,
+      duration,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      priceDiscount,
+    } = body;
+
+    const existUser = await this.userRepo.findOne({
+      where: { id: req.user.id },
+    });
+
+    if (!existUser) {
+      throw new Error('User not found');
+    }
+
+    const qb = this.userNft1155Repo
+      .createQueryBuilder('user_nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.item_id' as 'item_id',
+        'nft.token_id' as 'token_id',
+        'nft.nft_contract' as 'nft_contract',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.amount' as 'amount',
+        'nft.amount_available' as 'amount_available',
+        'nft.price' as 'price',
+        'nft.total_price' as 'total_price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('user_nft.nft', 'nft')
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: false })
+      // .andWhere('LOWER(nft.seller) = LOWER(:seller)', {
+      //   seller: existUser.account,
+      // })
+      .orderBy('nft.created_at', 'DESC');
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nft1155Repo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft1155: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: req.requestTime,
       totalRows: totalRows,
       data: convertedData,
     };

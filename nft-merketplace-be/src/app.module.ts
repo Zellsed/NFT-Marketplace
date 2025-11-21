@@ -7,6 +7,10 @@ import { UserModule } from './app/user/user.module';
 import {
   FollowEntity,
   LikeEntity,
+  Nft1155Entity,
+  Nft1155HistoryEntity,
+  Nft1155MetadataEntity,
+  Nft1155StakingEntity,
   Nft721Entity,
   Nft721MetadataEntity,
   Nft721StakingEntity,
@@ -14,6 +18,7 @@ import {
   TranferTokenWebEntity,
   UserEntity,
   UserInformationEntity,
+  UserNft1155Entity,
   UserSpentEntity,
 } from './core/lib/database/entities';
 import {
@@ -35,16 +40,21 @@ import { NftDetailsModule } from './app/nft-details/nft-details.module';
 import { TranferTokenWebModule } from './app/tranfer-token-web/tranfer-token-web.module';
 
 const entities = [
-  Nft721Entity,
-  Nft721MetadataEntity,
   UserEntity,
   UserInformationEntity,
-  NftHistoryEntity,
+  UserSpentEntity,
+  UserNft1155Entity,
   LikeEntity,
   FollowEntity,
   TranferTokenWebEntity,
-  UserSpentEntity,
-  Nft721StakingEntity
+  Nft721Entity,
+  Nft721MetadataEntity,
+  NftHistoryEntity,
+  Nft721StakingEntity,
+  Nft1155Entity,
+  Nft1155MetadataEntity,
+  Nft1155HistoryEntity,
+  Nft1155StakingEntity
 ];
 
 const repositories = [
@@ -72,16 +82,21 @@ const repositories = [
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: [
-          Nft721Entity,
-          Nft721MetadataEntity,
           UserEntity,
           UserInformationEntity,
-          NftHistoryEntity,
+          UserSpentEntity,
+          UserNft1155Entity,
           LikeEntity,
           FollowEntity,
           TranferTokenWebEntity,
-          UserSpentEntity,
-          Nft721StakingEntity
+          Nft721Entity,
+          Nft721MetadataEntity,
+          NftHistoryEntity,
+          Nft721StakingEntity,
+          Nft1155Entity,
+          Nft1155MetadataEntity,
+          Nft1155HistoryEntity,
+          Nft1155StakingEntity
         ],
         synchronize: true,
         autoLoadEntities: true,

@@ -38,6 +38,107 @@ export class createNFTDTo {
   sold: boolean;
 }
 
+export class createNFT1155DTo {
+  @IsOptional()
+  @IsNumber()
+  itemId: number;
+
+  @IsOptional()
+  @IsNumber()
+  tokenId: number;
+
+  @IsOptional()
+  @IsString()
+  nftContract: string;
+
+  @IsOptional()
+  @IsString()
+  seller: string;
+
+  @IsOptional()
+  @IsString()
+  owner: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  amount: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  amountAvailable: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  price: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  totalPrice: number;
+
+  @IsOptional()
+  @IsString()
+  sold: boolean;
+
+  @IsOptional()
+  @IsString()
+  txHash: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  logIndex: number;
+}
+
+export class createBuyNFT1155DTo {
+  @IsOptional()
+  @IsNumber()
+  itemId: number;
+
+  @IsOptional()
+  @IsNumber()
+  tokenId: number;
+
+  @IsOptional()
+  @IsString()
+  seller: string;
+
+  @IsOptional()
+  @IsString()
+  buyer: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  amountBought: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  price: number;
+
+  @IsOptional()
+  @IsString()
+  txHash: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  logIndex: number;
+}
+
+
 export class metadataNFTDto {
   @IsOptional()
   @IsNumber()

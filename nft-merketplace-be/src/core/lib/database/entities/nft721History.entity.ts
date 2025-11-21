@@ -11,7 +11,7 @@ import { UserEntity } from './user.entity';
 import { Nft721Entity } from './nft721.entity';
 import { History } from 'src/common/enum';
 
-@Entity('nf_721_history')
+@Entity('nft_721_history')
 export class NftHistoryEntity {
   @PrimaryGeneratedColumn({
     type: 'int',

@@ -15,12 +15,12 @@ import { likeUserDto } from './dto/likeUser.dto';
 
 @Controller('like')
 export class LikeController {
-  constructor(private readonly likeService: LikeService) {}
+  constructor(private readonly likeService: LikeService) { }
 
   @Post('like-user')
   @UseGuards(AuthGuard)
   async likeNft(@Req() req: Request, @Body() body: likeUserDto) {
-    return await this.likeService.likeNft(req.user.id, Number(body.nftId));
+    return await this.likeService.likeNft(req.user.id, body);
   }
 
   @Get('like-status')

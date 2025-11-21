@@ -12,6 +12,7 @@ import { Nft721Entity } from './nft721.entity';
 import { FollowEntity } from './follow.entity';
 import { LikeEntity } from './like.entity';
 import { UserSpentEntity } from './userSpent.entity';
+import { UserNft1155Entity } from './userNft1155.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -98,6 +99,9 @@ export class UserEntity {
 
   @OneToMany(() => LikeEntity, (like) => like.user)
   likes: LikeEntity[];
+
+  @OneToMany(() => UserNft1155Entity, (userNft) => userNft.user)
+  nft1155s: UserNft1155Entity[];
 
   @Column({
     name: 'created_at',

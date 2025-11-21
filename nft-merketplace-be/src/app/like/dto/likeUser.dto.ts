@@ -1,6 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDate,
   IsEnum,
   IsNotEmpty,
@@ -18,4 +19,12 @@ export class likeUserDto {
   @IsOptional()
   @IsString()
   nftId: string;
+
+  @IsOptional()
+  @IsBoolean()
+  nft721?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  nft1155?: boolean;
 }

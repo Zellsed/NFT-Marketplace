@@ -31,6 +31,40 @@ export class NftMarketplaceController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('all-my-nft-721-listed')
+  async getAllMyNft721Listed(@Req() req: Request, @Query() body: getNFTDto) {
+    return await this.nftMarketplaceService.getAllMyNft721Listed(req, body);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('all-my-nft-721')
+  async getAllMyNft721(@Req() req: Request, @Query() body: getNFTDto) {
+    return await this.nftMarketplaceService.getAllMyNft721(req, body);
+  }
+
+  @ApiBearerAuth()
+  @Get('all-nft-marketplace-1155')
+  async getAllNfts1155(@Req() req: Request, @Query() body: getNFTDto) {
+    return await this.nftMarketplaceService.getAllNfts1155(req.requestTime, body);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('all-my-nft-1155-listed')
+  async getAllMyNft1155Listed(@Req() req: Request, @Query() body: getNFTDto) {
+    return await this.nftMarketplaceService.getAllMyNft1155Listed(req, body);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('all-my-nft-1155')
+  async getAllMyNft1155(@Req() req: Request, @Query() body: getNFTDto) {
+    // return await this.nftMarketplaceService.getAllMyNft1155Listed(req, body);
+  }
+
+  @ApiBearerAuth()
   @Get('slider-data')
   async getSliderData(@Req() req: Request) {
     return await this.nftMarketplaceService.getSliderData(req.requestTime);

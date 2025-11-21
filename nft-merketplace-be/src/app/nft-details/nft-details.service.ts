@@ -93,60 +93,11 @@ export class NftDetailsService {
       throw new Error('Nft not found');
     }
 
-    const existNftHistory = await this.nftHistoryRepo.find({
-      where: { tokenId: existNft.tokenId },
+    const existNftHistory = await this.nftHistoryRepo.findOne({
+      where: { tokenId: existNft.tokenId, historyType: History.SELL },
     });
 
-    const data = await Promise.all(
-      existNftHistory.map(async (history) => {
-        let existUser = null;
-
-        if (
-          history.owner.toLowerCase() ===
-          process.env.NFTMarketplaceAddress.toLowerCase()
-        ) {
-          existUser = await this.userRepo.findOne({
-            where: { account: history.seller.toLowerCase() },
-          });
-        } else {
-          existUser = await this.userRepo.findOne({
-            where: { account: history.owner.toLowerCase() },
-          });
-        }
-
-        if (!existUser) {
-          return null;
-        }
-
-        const existUserInformation = await this.userInformationRepo.findOne({
-          where: { user: existUser.id },
-        });
-
-        if (!existUserInformation) {
-          throw new Error('User Info not found');
-        }
-
-        return {
-          history: {
-            id: history.id,
-            historyType: history.historyType,
-            createdAt: new Date(history.createdAt).getTime(),
-            owner: history.owner,
-            seller: history.seller,
-            price: history.price,
-            tokenId: history.tokenId,
-          },
-
-          user: existUser,
-
-          information: existUserInformation,
-
-          existNft: existNft,
-        };
-      }),
-    );
-
-    return data.reverse();
+    return existNftHistory;
   }
 
   async getOwner(nftId: number) {
@@ -156,95 +107,18 @@ export class NftDetailsService {
       throw new Error('Nft not found');
     }
 
-    const userCreateNftHistory = await this.nftHistoryRepo.findOne({
-      where: { tokenId: existNft.tokenId, historyType: History.SELL },
+    const userCreateNftHistory = await this.nftHistoryRepo.find({
+      where: { tokenId: existNft.tokenId, historyType: History.SELL }, order: { createdAt: 'DESC' },
     });
 
     let userCreateNft = null;
 
-    if (
-      userCreateNftHistory.owner.toLowerCase() ===
-      process.env.NFTMarketplaceAddress.toLowerCase()
-    ) {
-      userCreateNft = await this.userRepo.findOne({
-        where: { account: userCreateNftHistory.seller.toLowerCase() },
-      });
-    } else {
-      userCreateNft = await this.userRepo.findOne({
-        where: { account: userCreateNftHistory.owner.toLowerCase() },
-      });
-    }
-
-    const userCreateNftInformation = await this.userInformationRepo.findOne({
-      where: { user: userCreateNft },
-    });
-
-    const existNftHistory = await this.nftHistoryRepo.find({
-      where: { tokenId: existNft.tokenId },
-    });
-
-    const newHistory = existNftHistory.reverse();
-
-    const owner = newHistory[0];
-
-    let user = null;
-
-    if (
-      owner.owner.toLowerCase() ===
-      process.env.NFTMarketplaceAddress.toLowerCase()
-    ) {
-      user = await this.userRepo.findOne({
-        where: { account: owner.seller.toLowerCase() },
-      });
-    } else {
-      user = await this.userRepo.findOne({
-        where: { account: owner.owner.toLowerCase() },
-      });
-    }
-
-    if (!user) {
-      return null;
-    }
-
-    const existUserInformation = await this.userInformationRepo.findOne({
-      where: { user: user.id },
-    });
-
-    if (!existUserInformation) {
-      throw new Error('User Info not found');
-    }
-
-    return {
-      ownerNft: {
-        history: {
-          id: owner.id,
-          historyType: owner.historyType,
-          createdAt: new Date(owner.createdAt).getTime(),
-          owner: owner.owner,
-          seller: owner.seller,
-          price: owner.price,
-          tokenId: owner.tokenId,
-        },
-
-        user: user,
-
-        information: existUserInformation,
-      },
-      createNft: {
-        history: {
-          id: userCreateNftHistory.id,
-          historyType: userCreateNftHistory.historyType,
-          createdAt: new Date(userCreateNftHistory.createdAt).getTime(),
-          owner: userCreateNftHistory.owner,
-          seller: userCreateNftHistory.seller,
-          price: userCreateNftHistory.price,
-          tokenId: userCreateNftHistory.tokenId,
-        },
-
-        user: userCreateNft,
-
-        information: userCreateNftInformation,
-      },
-    };
+    const data = await Promise.all(
+      userCreateNftHistory.map(async (history) => {
+        const existUser = await this.userRepo.findOne({
+          where: { account: history.seller.toLowerCase() },
+        });
+      }),
+    );
   }
 }
