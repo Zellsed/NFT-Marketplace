@@ -37,7 +37,7 @@ const NFTCollectiondetails = () => {
 
   return (
     <div>
-      <NFTCollectionDetailsPage nft={nft} />
+      <NFTCollectionDetailsPage nft={nft} nft721={false} nft1155={true} />
       {/* <Title
         heading="Browse by category"
         paragraph="Explore the NFTs in the most featured categories."

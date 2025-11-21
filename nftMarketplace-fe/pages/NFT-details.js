@@ -33,12 +33,12 @@ const NFTdetails = () => {
 
   return (
     <div>
-      <NFTDetailsPage nft={nft} />
-      <Title
+      <NFTDetailsPage nft={nft} nft721={true} nft1155={false} />
+      {/* <Title
         heading="Browse by category"
         paragraph="Explore the NFTs in the most featured categories."
       />
-      <Category />
+      <Category /> */}
       <Brand />
     </div>
   );

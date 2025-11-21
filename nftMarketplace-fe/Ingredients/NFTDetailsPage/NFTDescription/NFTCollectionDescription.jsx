@@ -19,7 +19,9 @@ import {
   TiSocialInstagram,
 } from "react-icons/ti";
 import { BiTransferAlt, BiDollar } from "react-icons/bi";
-
+import TokenAmount, {
+  formatRawValue,
+} from "../../components/formatTokenAmount/TokenAmount";
 import Style from "./NFTCollectionDescription.module.css";
 import images from "../../../img";
 import { Button } from "../../components/componentsindex";
@@ -226,14 +228,9 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
               >
                 <br />
                 <span>
-                  {new Intl.DateTimeFormat("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  }).format(Number(nft.createdAt))}
+                  {new Date(nft.createdAt).toLocaleString("vi-VN", {
+                    hour12: false,
+                  })}
                 </span>
               </div>
             </div>
@@ -245,7 +242,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                 }
               >
                 <small>Current Bid</small>
-                <p>{nft.totalPrice} ZELL </p>
+                <p>{formatRawValue(nft.totalPrice)} ZELL </p>
               </div>
             </div>
 

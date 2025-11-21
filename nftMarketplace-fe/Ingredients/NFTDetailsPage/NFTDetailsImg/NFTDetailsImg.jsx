@@ -8,7 +8,7 @@ import Style from "./NFTDetailsImg.module.css";
 
 dotenv.config();
 
-const NFTDetailsImg = ({ nft, token }) => {
+const NFTDetailsImg = ({ nft, token, nft721, nft1155 }) => {
   const [description, setDescription] = useState(true);
   const [details, setDetails] = useState(true);
   const [likeStatus, setLikeStatus] = useState(false);
@@ -31,7 +31,7 @@ const NFTDetailsImg = ({ nft, token }) => {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/like-user`,
-        { nftId: nft.tokenId },
+        { nftId: nft.tokenId, nft721: nft721, nft1155: nft1155 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

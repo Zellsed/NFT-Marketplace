@@ -175,7 +175,7 @@ const AdminPage = () => {
                 <div className={Style.statIcon}>💸</div>
                 <div className={Style.statContent}>
                   <h3>Total Cash Flow</h3>
-                  <p>{marketplaceStats.totalSpent} WEB</p>
+                  <p>{formatRawValue(marketplaceStats.totalSpent)} WEB</p>
                 </div>
               </div>
               <div className={Style.statCard}>

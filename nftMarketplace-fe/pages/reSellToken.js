@@ -44,29 +44,9 @@ const ReSellToken = () => {
 
   const resell = async () => {
     try {
-      const { transaction, tokenId } = await createSale(
-        tokenURI,
-        price,
-        true,
-        id
-      );
+      await createSale(tokenURI, price, true, id);
 
-      if (transaction) {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/resell-nft`,
-          {
-            tokenId: tokenId,
-            owner: transaction.to,
-            seller: transaction.from,
-            price: price,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
-
-      router.push("/author");
+      router.push("/searchPage");
     } catch (error) {
       console.log("Error while resell:", error);
     }

@@ -1,95 +1,109 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { AiFillHeart, AiOutlineHeart, AiOutlineTeam } from "react-icons/ai";
-import { MdVerified, MdTimer } from "react-icons/md";
+import { AiFillHeart, AiOutlineTeam } from "react-icons/ai";
+import { MdTimer } from "react-icons/md";
 import Link from "next/link";
-import { format } from "timeago.js";
 
 import Style from "./NFTCollectionCardTwo.module.css";
 import { LikeProfile } from "../../components/componentsindex";
 
-const NFTCardTwo = ({ NFTData }) => {
+const NFTCollectionCardTwo = ({ NFTData }) => {
   return (
     <div className={Style.NFTCardTwo}>
       {NFTData?.filter((el) => el !== null).map((el, i) => (
         <Link href={{ pathname: "/NFTCollection-details", query: el }} key={i}>
-          <div className={Style.NFTCardTwo_box} key={i + 1}>
-            <div className={Style.NFTCardTwo_box_like}>
-              <div className={Style.NFTCardTwo_box_like_box}>
-                <div className={Style.NFTCardTwo_box_like_box_box}>
-                  <h3 className={Style.NFTCardTwo_box_like_box_box_icon}>
-                    {el.category}
-                  </h3>
-                  <p>
-                    <AiFillHeart />
-                    {""}
-                    <span>{el.likes}</span>
-                  </p>
-                </div>
+          <div className={Style.NFTCardTwo_box}>
+            <div className={Style.NFTCardTwo_box_header}>
+              <span className={Style.NFTCardTwo_box_category}>
+                {el.category}
+              </span>
+              <div className={Style.NFTCardTwo_box_likes}>
+                <AiFillHeart className={Style.heart_icon} />
+                <span>{el.likes}</span>
               </div>
             </div>
 
-            <div className={Style.NFTCardTwo_box_img}>
+            <div className={Style.NFTCardTwo_box_media}>
               {el.fileExtension === "mp4" || el.fileExtension === "webm" ? (
-                <video controls autoPlay muted loop>
-                  <source
-                    src={el.pinataData}
-                    type={`video/${el.fileExtension}`}
-                  />
-                </video>
-              ) : el.fileExtension === "mp3" ||
-                el.fileExtension === "wav" ||
-                el.fileExtension === "ogg" ? (
-                <div className={Style.audioContainer}>
-                  <audio
+                <div className={Style.media_container}>
+                  <video
                     controls
-                    className={Style.NFTCardTwo_box_NFT_audio_element}
+                    autoPlay
+                    muted
+                    loop
+                    className={Style.media_element}
                   >
                     <source
                       src={el.pinataData}
-                      type={`audio/${el.fileExtension}`}
+                      type={`video/${el.fileExtension}`}
                     />
-                  </audio>
+                  </video>
+                  <div className={Style.media_badge}>VIDEO</div>
+                </div>
+              ) : el.fileExtension === "mp3" ||
+                el.fileExtension === "wav" ||
+                el.fileExtension === "ogg" ? (
+                <div className={Style.media_container}>
+                  <div className={Style.audio_container}>
+                    <audio controls className={Style.audio_element}>
+                      <source
+                        src={el.pinataData}
+                        type={`audio/${el.fileExtension}`}
+                      />
+                    </audio>
+                  </div>
+                  <div className={Style.media_badge}>AUDIO</div>
                 </div>
               ) : (
-                <Image
-                  src={el.pinataData}
-                  alt="NFT image"
-                  width={250}
-                  height={250}
-                  objectFit="cover"
-                />
+                <div className={Style.media_container}>
+                  <Image
+                    src={el.pinataData}
+                    alt="NFT image"
+                    width={250}
+                    height={250}
+                    className={Style.media_element}
+                  />
+                  <div className={Style.media_badge}>IMAGE</div>
+                </div>
               )}
             </div>
 
             <div className={Style.NFTCardTwo_box_info}>
               <div className={Style.NFTCardTwo_box_info_left}>
-                <LikeProfile />
-                <p>
-                  {el.name.slice(0, 15)}...{el.name.slice(-5)}
+                {/* <LikeProfile /> */}
+                <p className={Style.nft_name}>
+                  {el.name.length > 20 ? `${el.name.slice(0, 20)}...` : el.name}
                 </p>
               </div>
-
-              <small>
-                <AiOutlineTeam /> {el.likes}
-              </small>
+              <div className={Style.NFTCardTwo_box_info_right}>
+                <AiOutlineTeam className={Style.team_icon} />
+                <span>{el.likes}</span>
+              </div>
             </div>
 
             <div className={Style.NFTCardTwo_box_price}>
-              <div className={Style.NFTCardTwo_box_price_box}>
-                <small>Current Bid</small>
-                <p>{el.price} ZELL</p>
-
-                {el.amountAvailable && (
-                  <span className={Style.NFTCardTwo_box_price_amount}>
-                    Quantity: {el.amountAvailable}
+              <div className={Style.NFTCardTwo_box_price_content}>
+                <div className={Style.NFTCardTwo_box_price_box}>
+                  <small>Current Bid</small>
+                  <p>{el.price} ZELL</p>
+                  {el.amountAvailable && (
+                    <div className={Style.amount_container}>
+                      <span className={Style.amount_label}>Quantity:</span>
+                      <span className={Style.amount_value}>
+                        {el.amountAvailable}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className={Style.NFTCardTwo_box_price_stock}>
+                  <MdTimer />
+                  <span>
+                    {new Date(el.createdAt).toLocaleString("vi-VN", {
+                      hour12: false,
+                    })}
                   </span>
-                )}
+                </div>
               </div>
-              <p className={Style.NFTCardTwo_box_price_stock}>
-                <MdTimer />
-                <span>{format(Number(el.createdAt), "vi")}</span>
-              </p>
             </div>
           </div>
         </Link>
@@ -98,4 +112,4 @@ const NFTCardTwo = ({ NFTData }) => {
   );
 };
 
-export default NFTCardTwo;
+export default NFTCollectionCardTwo;

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Style from "./AuthorNFTCardBos.module.css";
-import { NFTCardTwo, NFTCard } from "../../collectionPage/collectionIndex";
+import {
+  NFTCardTwo,
+  NFTCard,
+  NFTCollectionCardTwo,
+  NFTCollectionOwnerNft,
+} from "../../collectionPage/collectionIndex";
 import FollowerTabCard from "../../components/FollowerTab/FollowerTabCard/FollowerTabCard";
 
 const AuthorNFTCardBox = ({
@@ -19,82 +24,75 @@ const AuthorNFTCardBox = ({
   const [listFollow, setListFollow] = useState([]);
   const [listFollower, setListFollower] = useState([]);
 
-  const getDisplayData = () => {
-    if (collectiables) {
-      return {
-        erc721: Array.isArray(nfts) ? nfts.filter((item) => item !== null) : [],
-        erc1155: Array.isArray(nfts1155)
-          ? nfts1155.filter((item) => item !== null && item.isListing)
-          : [],
-        title: "Listed NFTs",
-        icon: "🛒",
-        description: "Your NFTs currently on marketplace",
-        gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      };
-    } else if (created) {
-      return {
-        erc721: Array.isArray(myNfts)
-          ? myNfts.filter((item) => item !== null)
-          : [],
-        erc1155: Array.isArray(myNfts1155)
-          ? myNfts1155.filter((item) => item !== null && item.isOwned)
-          : [],
-        title: "Owned NFTs",
-        icon: "🎨",
-        description: "NFTs in your collection",
-        gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      };
-    }
-    return {
-      erc721: [],
-      erc1155: [],
-      title: "",
-      icon: "",
-      description: "",
-      gradient: "",
-    };
+  const listedNFTsData = {
+    erc721: Array.isArray(nfts) ? nfts.filter((item) => item !== null) : [],
+    erc1155: Array.isArray(nfts1155)
+      ? nfts1155.filter((item) => item !== null)
+      : [],
+
+    title: "🛒 Listed NFTs",
+    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    emptyText: "No NFTs listed on marketplace",
   };
 
-  const { erc721, erc1155, title, icon, description, gradient } =
-    getDisplayData();
+  const ownedNFTsData = {
+    erc721: Array.isArray(myNfts) ? myNfts.filter((item) => item !== null) : [],
+    erc1155: Array.isArray(nfts1155)
+      ? nfts1155.filter((item) => item !== null)
+      : [],
 
-  const hasERC721 = erc721.length > 0;
-  const hasERC1155 = erc1155.length > 0;
-  const hasAnyNFT = hasERC721 || hasERC1155;
+    title: "🎨 Owned NFTs",
+    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    emptyText: "No NFTs in your collection",
+  };
 
-  console.log("nfts1155", nfts1155);
-  console.log("myNfts1155", myNfts1155);
-  console.log("erc1155", erc1155);
+  const renderNFTSection = (data, isListed = false) => {
+    const hasERC721 = data.erc721.length > 0;
+    const hasERC1155 = data.erc1155.length > 0;
+    const hasAnyNFT = hasERC721 || hasERC1155;
+
+    return (
+      <div className={Style.nftSection}>
+        <div className={Style.sectionHeader}>
+          <h2 className={Style.sectionTitle}>{data.title}</h2>
+          <p className={Style.sectionDescription}>{data.description}</p>
+        </div>
+
+        {hasAnyNFT ? (
+          <div className={Style.nftGrid}>
+            {hasERC721 && (
+              <div className={Style.tokenStandardSection}>
+                <h3 className={Style.tokenStandardTitle}>ERC-721 NFTs</h3>
+                <NFTCardTwo NFTData={data.erc721} />
+              </div>
+            )}
+
+            {hasERC1155 && (
+              <div className={Style.tokenStandardSection}>
+                <h3 className={Style.tokenStandardTitle}>ERC-1155 NFTs</h3>
+                <NFTCollectionCardTwo
+                  NFTData={isListed ? data.erc1155 : myNfts1155}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className={Style.emptyState}>
+            <p className={Style.emptyText}>{data.emptyText}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className={Style.AuthorNFTCardBox}>
       {(collectiables || created) && (
-        <>
-          {hasAnyNFT ? (
-            <div className={Style.nftSections}>
-              <h2 className={Style.mainTitle}>{title}</h2>
-              <div className={Style.nftSection}>
-                <h3 className={Style.sectionTitle}>ERC-721 NFTs</h3>
-                {hasERC721 ? (
-                  <NFTCardTwo NFTData={erc721} />
-                ) : (
-                  <p className={Style.noNFTText}>No ERC-721 NFTs found</p>
-                )}
-              </div>
+        <div className={Style.nftSections}>
+          {collectiables && renderNFTSection(listedNFTsData, true)}
 
-              <div className={Style.nftSection}>
-                <h3 className={Style.sectionTitle}>ERC-1155 NFTs</h3>
-                {hasERC1155 ? (
-                  <NFTCard NFTData={erc1155} />
-                ) : (
-                  <p className={Style.noNFTText}>No ERC-1155 NFTs found</p>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </>
+          {created && renderNFTSection(ownedNFTsData, false)}
+        </div>
       )}
 
       {like && nftLike.length > 0 && (

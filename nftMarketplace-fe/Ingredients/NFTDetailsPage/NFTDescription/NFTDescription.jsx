@@ -95,7 +95,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const bidHistory = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history/${nft.tokenId}`
       );
 
       setBidHtr(statusResponse.data);
@@ -107,7 +107,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const provenanceNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance/${nft.tokenId}`
       );
 
       setProvance(statusResponse.data);
@@ -119,7 +119,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const accountOwnerNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner/${nft.tokenId}`
       );
 
       setOwnerNft(statusResponse.data);

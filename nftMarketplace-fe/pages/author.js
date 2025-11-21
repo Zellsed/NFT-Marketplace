@@ -97,27 +97,28 @@ const author = () => {
   }, [token]);
 
   useEffect(() => {
-    fetchMyNFTsOrListedNFTs("fetchItemsListed").then((item) => {
-      setNfts(item);
-    });
+    if (token) {
+      fetchMyNFTsOrListedNFTs("fetchItemsListed", token).then((item) => {
+        setNfts(item);
+      });
 
-    fetchMyNFTsOrListedNFTs1155("fetchItemsListed").then((item) => {
-      setNfts1155(item);
-    });
-  }, []);
+      fetchMyNFTsOrListedNFTs1155("fetchItemsListed", token).then((item) => {
+        setNfts1155(item);
+      });
+    }
+  }, [token]);
 
   useEffect(() => {
-    fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((item) => {
-      setMyNfts(item);
-    });
+    if (token) {
+      fetchMyNFTsOrListedNFTs("fetchMyNFTs", token).then((item) => {
+        setMyNfts(item);
+      });
 
-    fetchMyNFTsOrListedNFTs1155("fetchMyNFTs").then((item) => {
-      setMyNfts1155(item);
-    });
-  }, []);
-
-  console.log("nfts1155", nfts1155);
-  console.log("myNfts1155", myNfts1155);
+      fetchMyNFTsOrListedNFTs1155("fetchMyNFTs", token).then((item) => {
+        setMyNfts1155(item);
+      });
+    }
+  }, [token]);
 
   useEffect(() => {
     const checkTokenValidity = () => {

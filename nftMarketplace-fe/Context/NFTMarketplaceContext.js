@@ -477,11 +477,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const url = `https://amaranth-mad-gayal-357.mypinata.cloud/ipfs/${upload.cid}`;
 
-      const { transaction, tokenId } = await createSale1155(
-        url,
-        totalSupply,
-        price
-      );
+      await createSale1155(url, totalSupply, price);
 
       router.push("/searchPage");
     } catch (error) {
@@ -575,14 +571,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         listingPrice
       );
 
-      const approvalFeeReceipt = await approvalFee.wait();
+      await approvalFee.wait();
 
       const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
         contract.address,
         true
       );
 
-      const approveNFTReceipt = await txApproveNFT.wait();
+      await txApproveNFT.wait();
 
       const transaction = await contract.reSellToken1155(
         id,
@@ -603,11 +599,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         );
         return;
       }
-
-      const newItemId = event.args.itemId.toNumber();
-      const resellPrice = ethers.utils.formatUnits(newPrice, 18);
-
-      return { transaction, newItemId };
     } catch (error) {
       setError(`Error while creating sale1155: ${error.message}`);
       setOpenError(true);
@@ -688,76 +679,32 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const fetchNFTs1155 = async () => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider();
-
-      const contract = fetchContract(provider);
-
-      const data = await contract.fetchMarketItems1155();
+      const nft1155Data = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace-1155`
+      );
 
       const items = await Promise.all(
-        data.map(
-          async ({
-            itemId,
-            nftContract,
-            tokenId,
-            amount,
-            amountAvailable,
-            totalPrice,
-            price,
-            seller,
-            owner,
-          }) => {
-            const nft = new ethers.Contract(
-              nftContract,
-              NFTCollection1155ABI,
-              provider
-            );
-            const tokenURI = await nft.uri(tokenId);
-
-            const { data } = await axios.get(tokenURI);
-
-            const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-            const {
-              pinataData,
-              name,
-              description,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            } = metadata;
-
-            const totalPriceData = ethers.utils.formatUnits(
-              totalPrice.toString(),
-              "ether"
-            );
-
-            const priceData = ethers.utils.formatUnits(
-              price.toString(),
-              "ether"
-            );
-
-            return {
-              itemId: itemId.toString(),
-              price: priceData,
-              totalPrice: totalPriceData,
-              amount: amount.toString(),
-              amountAvailable: amountAvailable.toString(),
-              tokenId: tokenId.toString(),
-              seller,
-              owner,
-              pinataData,
-              name,
-              description,
-              tokenURI,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            };
-          }
-        )
+        nft1155Data.data.data.map(async (e) => {
+          return {
+            itemId: e.item_id,
+            tokenId: e.token_id,
+            amount: e.nft_amount,
+            amountAvailable: e.amount_available,
+            price: e.nft_price,
+            totalPrice: e.total_price,
+            seller: e.nft_seller,
+            owner: e.nft_owner,
+            pinataData: e.pinata_data,
+            name: e.metadata_name,
+            description: e.metadata_description,
+            tokenURI: e.token_uri,
+            category: e.metadata_category,
+            fileExtension: e.file_extension,
+            fileSize: e.file_size,
+            createdAt: e.created_at,
+            likes: e.like,
+          };
+        })
       );
 
       return items;
@@ -772,62 +719,37 @@ export const NFTMarketplaceProvider = ({ children }) => {
     fetchNFTs1155();
   }, []);
 
-  const fetchMyNFTsOrListedNFTs = async (type) => {
+  const fetchMyNFTsOrListedNFTs = async (type, token) => {
     try {
-      const contract = await connectingWithSmartContract();
-
-      const data =
+      const response =
         type == "fetchItemsListed"
-          ? await contract.fetchItemsListed()
-          : await contract.fetchMyNFTs();
+          ? await axios.get(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721-listed`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            )
+          : await axios.get(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
 
       const items = await Promise.all(
-        data.map(
-          async ({ tokenId, seller, owner, price: unformattedPrice }) => {
-            const tokenURI = await contract.tokenURI(tokenId);
-
-            const { data } = await axios.get(tokenURI);
-
-            const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-            const {
-              pinataData,
-              name,
-              description,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            } = metadata;
-
-            const price = ethers.utils.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-
-            const countTokenLike = await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/like/nft-likes?id=${tokenId}`
-            );
-
-            const likes = countTokenLike.data.likeCount;
-
-            return {
-              price,
-              tokenId: tokenId.toNumber(),
-              seller,
-              owner,
-              pinataData,
-              name,
-              description,
-              tokenURI,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-              likes,
-            };
-          }
-        )
+        response.data.data.map(async (e) => {
+          return {
+            price: e.nft_price,
+            tokenId: e.token_id,
+            seller: e.nft_seller,
+            owner: e.nft_owner,
+            pinataData: e.pinata_data,
+            name: e.metadata_name,
+            description: e.metadata_description,
+            tokenURI: e.token_uri,
+            category: e.metadata_category,
+            fileExtension: e.file_extension,
+            fileSize: e.file_size,
+            createdAt: e.created_at,
+            likes: e.like,
+          };
+        })
       );
 
       return items;
@@ -837,134 +759,42 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const fetchMyNFTsOrListedNFTs1155 = async (type) => {
+  const fetchMyNFTsOrListedNFTs1155 = async (type, token) => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider();
-      const contract = fetchContract(provider);
-      const nft1155 = new ethers.Contract(
-        NFTCollection1155Address,
-        NFTCollection1155ABI,
-        provider
+      const response =
+        type == "fetchItemsListed"
+          ? await axios.get(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155-listed`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            )
+          : await axios.get(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+      const items = await Promise.all(
+        response.data.data.map(async (e) => {
+          return {
+            itemId: e.item_id,
+            tokenId: e.token_id,
+            amount: e.nft_amount,
+            amountAvailable: e.amount_available,
+            price: e.nft_price,
+            totalPrice: e.total_price,
+            seller: e.nft_seller,
+            owner: e.nft_owner,
+            pinataData: e.pinata_data,
+            name: e.metadata_name,
+            description: e.metadata_description,
+            tokenURI: e.token_uri,
+            category: e.metadata_category,
+            fileExtension: e.file_extension,
+            fileSize: e.file_size,
+            createdAt: e.created_at,
+            likes: e.like,
+          };
+        })
       );
-
-      const items = [];
-
-      if (type === "fetchItemsListed") {
-        const marketItems = await contract.fetchMarketItems1155();
-
-        for (const item of marketItems) {
-          if (
-            item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
-            item.amountAvailable > 0 &&
-            !item.sold
-          ) {
-            const tokenURI = await nft1155.uri(item.tokenId);
-            const { data } = await axios.get(tokenURI);
-
-            const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-            const {
-              pinataData,
-              name,
-              description,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            } = metadata;
-
-            items.push({
-              itemId: item.itemId.toNumber(),
-              tokenId: item.tokenId.toNumber(),
-              amountAvailable: item.amountAvailable.toNumber(),
-              totalAmount: item.amount.toNumber(),
-              price: ethers.utils.formatUnits(item.price.toString(), 18),
-              totalPrice: ethers.utils.formatUnits(
-                item.totalPrice.toString(),
-                18
-              ),
-              pinataData,
-              name,
-              description,
-              tokenURI,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-              isOwned: false,
-              isListing: true,
-            });
-          }
-        }
-      } else {
-        const marketItems = await contract.fetchMarketItems1155();
-        const listedTokenIds = new Set();
-
-        for (const item of marketItems) {
-          if (
-            item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
-            item.amountAvailable > 0
-          ) {
-            listedTokenIds.add(item.tokenId.toNumber());
-          }
-        }
-
-        const allMarketItems = await contract.fetchMarketItems1155();
-        const uniqueTokenIds = [
-          ...new Set(allMarketItems.map((item) => item.tokenId.toNumber())),
-        ];
-
-        for (const tokenId of uniqueTokenIds) {
-          const userBalance = await nft1155.balanceOf(currentAccount, tokenId);
-
-          if (userBalance > 0) {
-            const tokenURI = await nft1155.uri(tokenId);
-            const { data } = await axios.get(tokenURI);
-
-            const metadata = typeof data === "string" ? JSON.parse(data) : data;
-
-            const {
-              pinataData,
-              name,
-              description,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-            } = metadata;
-
-            const userListings = marketItems.filter(
-              (item) =>
-                item.seller.toLowerCase() === currentAccount?.toLowerCase() &&
-                item.tokenId.toNumber() === tokenId &&
-                item.amountAvailable > 0
-            );
-
-            const totalListed = userListings.reduce(
-              (sum, item) => sum + item.amountAvailable.toNumber(),
-              0
-            );
-
-            items.push({
-              tokenId: tokenId,
-              totalBalance: userBalance.toNumber(),
-              availableBalance: userBalance.toNumber() - totalListed,
-              listedAmount: totalListed,
-              pinataData,
-              name,
-              description,
-              tokenURI,
-              category,
-              fileExtension,
-              fileSize,
-              createdAt,
-              isOwned: true,
-              isListing: false,
-              hasActiveListings: totalListed > 0,
-            });
-          }
-        }
-      }
 
       return items;
     } catch (error) {
@@ -1010,10 +840,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const contract = await connectingWithSmartContract();
       const customTokenContract =
         await connectingWithCustomTokenSmartContract();
-      const NFTColelction1155Contract =
-        await connectToNftCollection1155Contract();
-      const price = ethers.utils.parseUnits(nft.price.toString(), 18);
 
+      const price = ethers.utils.parseUnits(nft.price.toString(), 18);
       const totalPrice = price.mul(BigNumber.from(quantity));
 
       const approval = await customTokenContract.approve(
@@ -1023,25 +851,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       await approval.wait();
 
-      await NFTColelction1155Contract.setApprovalForAll(contract.address, true);
-
       const transaction = await contract.buyToken1155(nft.itemId, quantity);
 
-      const existTransaction = await transaction.wait();
-
-      //  if (existTransaction) {
-      //    await axios.post(
-      //      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/buy-nft`,
-      //      {
-      //        nftId: nft.tokenId,
-      //        owner: existTransaction.from,
-      //        seller: existTransaction.to,
-      //      },
-      //      {
-      //        headers: { Authorization: `Bearer ${token}` },
-      //      }
-      //    );
-      //  }
+      await transaction.wait();
 
       router.push("/author");
     } catch (error) {

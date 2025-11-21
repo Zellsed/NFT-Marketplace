@@ -19,7 +19,9 @@ import {
   TiSocialInstagram,
 } from "react-icons/ti";
 import { BiTransferAlt, BiDollar } from "react-icons/bi";
-
+import TokenAmount, {
+  formatRawValue,
+} from "../../components/formatTokenAmount/TokenAmount";
 import Style from "./NFTCollectionDescription.module.css";
 import images from "../../../img";
 import { Button } from "../../components/componentsindex";
@@ -232,14 +234,9 @@ const NFTReSellCollectionDescription = ({
               >
                 <br />
                 <span>
-                  {new Intl.DateTimeFormat("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  }).format(Number(nft.createdAt))}
+                  {new Date(nft.createdAt).toLocaleString("vi-VN", {
+                    hour12: false,
+                  })}
                 </span>
               </div>
             </div>
@@ -251,7 +248,24 @@ const NFTReSellCollectionDescription = ({
                 }
               >
                 <small>Current Bid</small>
-                <p>{nft.balance} ZELL </p>
+                <p>{formatRawValue(nft.totalPrice)} ZELL </p>
+              </div>
+            </div>
+
+            <div
+              className={Style.NFTDescription_box_profile_biding_box_quantity}
+            >
+              <small className={Style.quantity_title}>Quantity</small>
+              <div className={Style.quantity_box}>
+                <div className={Style.quantity_item}>
+                  <small>Available</small>
+                  <p>{nft.amountAvailable || 0}</p>
+                </div>
+                <div className={Style.quantity_divider}></div>
+                <div className={Style.quantity_item}>
+                  <small>Total</small>
+                  <p>{nft.amount || 0}</p>
+                </div>
               </div>
             </div>
 
@@ -261,20 +275,79 @@ const NFTReSellCollectionDescription = ({
               }
             >
               <small>Price per NFT</small>
-              <p>0 ZELL </p>
+              <p>{nft.price || 0} ZELL </p>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
-              <Button
-                icon=<FaWallet />
-                btnName="List on Marketplace"
-                onClick={() =>
-                  router.push(
-                    `/reSellToken1155?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&tokenQuantity=${nft.balance}&nftData=${nft}&token=${token}`
-                  )
-                }
-                classStyle={Style.button}
-              />
+              {currentAccount == nft.seller?.toLowerCase() ? (
+                <p>You cannot buy your own NFT</p>
+              ) : currentAccount == nft.owner?.toLowerCase() ? (
+                <Button
+                  icon=<FaWallet />
+                  btnName="List on Marketplace"
+                  onClick={() =>
+                    router.push(
+                      `/reSellToken1155?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&tokenQuantity=${nft.amount}&nftData=${nft}&token=${token}`
+                    )
+                  }
+                  classStyle={Style.button}
+                />
+              ) : (
+                <>
+                  <Button
+                    icon=<FaWallet />
+                    btnName="Buy NFT"
+                    onClick={() => setShowQuantityInput(true)}
+                    classStyle={Style.button}
+                  />
+
+                  {showQuantityInput && (
+                    <div className={Style.modalOverlay}>
+                      <div className={Style.modalContent}>
+                        <h3>Buy NFT</h3>
+                        <p>Available: {nft.amountAvailable || 0}</p>
+
+                        <input
+                          type="number"
+                          min="1"
+                          max={nft.amountAvailable || 1}
+                          value={buyQuantity}
+                          onChange={(e) =>
+                            setBuyQuantity(Number(e.target.value))
+                          }
+                          className={Style.inputQuantity}
+                          placeholder="Enter quantity"
+                        />
+
+                        <div className={Style.modalButtons}>
+                          <Button
+                            icon=<FaWallet />
+                            btnName="Confirm Buy"
+                            onClick={() => {
+                              if (
+                                buyQuantity > 0 &&
+                                buyQuantity <= (nft.amountAvailable || 1)
+                              ) {
+                                buyNFT1155(nft, buyQuantity, token);
+                                setShowQuantityInput(false);
+                              } else {
+                                alert("Invalid quantity!");
+                              }
+                            }}
+                            classStyle={Style.button}
+                          />
+                          <button
+                            className={Style.cancelBtn}
+                            onClick={() => setShowQuantityInput(false)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_tabs}>

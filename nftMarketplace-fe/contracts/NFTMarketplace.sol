@@ -96,13 +96,15 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
     event MarketItem1155Created(
         uint256 indexed itemId,
+        address nftContract,
         uint256 tokenId,
         uint256 amount,
         uint256 amountAvailable,
         uint256 totalPrice,
         uint256 price,
         address seller,
-        address owner
+        address owner,
+        bool sold
     );
 
     event MarketItem1155Sold(
@@ -116,10 +118,15 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
     event MarketItem1155Relisted(
         uint256 indexed itemId,
+        address nftContract,
         uint256 tokenId,
         uint256 amount,
-        uint256 newPrice,
-        address seller
+        uint256 amountAvailable,
+        uint256 totalPrice,
+        uint256 price,
+        address seller,
+        address owner,
+        bool sold
     );
 
     constructor(
@@ -226,13 +233,15 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
         emit MarketItem1155Created(
             itemId,
+            nftCollection1155,
             tokenId,
             _totalSupply,
             _totalSupply,
             _price,
             _pricePerToken,
             msg.sender,
-            address(this)
+            address(this),
+            false
         );
 
         return itemId;
@@ -277,7 +286,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
 
         webToken.transfer(owner, listingPrice);
 
-        uint256 sellerProceeds = price;
+        uint256 sellerProceeds = price - listingPrice;
 
         webToken.transfer(idMarketItem[_tokenId].seller, sellerProceeds);
 
@@ -293,7 +302,7 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
             _tokenId,
             payable(address(0)),
             msg.sender,
-            price,
+            sellerProceeds,
             true
         );
     }
@@ -398,15 +407,17 @@ contract NFTMarketplace is ERC721URIStorage, ERC1155Receiver {
         userListings1155[msg.sender].push(newItemId);
         activeListings[newItemId] = true;
 
-        emit MarketItem1155Created(
+        emit MarketItem1155Relisted(
             newItemId,
+            nftCollection1155,
             _tokenId,
             _sellAmount,
             _sellAmount,
             _totalPrice,
             _newPrice,
             msg.sender,
-            address(this)
+            address(this),
+            false
         );
     }
 

@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const NFTDetailsPage = ({ nft }) => {
+const NFTDetailsPage = ({ nft, nft721, nft1155 }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState({});
   const [userInformation, setUserInformation] = useState({});
@@ -46,7 +46,12 @@ const NFTDetailsPage = ({ nft }) => {
   return (
     <div className={Style.NFTDetailsPage}>
       <div className={Style.NFTDetailsPage_box}>
-        <NFTDetailsImg nft={nft} token={token} />
+        <NFTDetailsImg
+          nft={nft}
+          token={token}
+          nft721={nft721}
+          nft1155={nft1155}
+        />
         <NFTDescription
           nft={nft}
           userInformation={userInformation}
