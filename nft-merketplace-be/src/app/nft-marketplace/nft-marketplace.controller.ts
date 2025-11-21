@@ -61,7 +61,7 @@ export class NftMarketplaceController {
   @UseGuards(AuthGuard)
   @Get('all-my-nft-1155')
   async getAllMyNft1155(@Req() req: Request, @Query() body: getNFTDto) {
-    // return await this.nftMarketplaceService.getAllMyNft1155Listed(req, body);
+    return await this.nftMarketplaceService.getAllMyNft1155(req, body);
   }
 
   @ApiBearerAuth()
