@@ -34,6 +34,17 @@ async function main() {
 
   await (await tranferToken.connect(deployer).depositToken(price)).wait();
 
+  const AMMSwap = await hre.ethers.getContractFactory("AMMSwap");
+  const amm = await AMMSwap.deploy(
+    customToken.address,
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+  );
+  await amm.deployed();
+  console.log("CustomToken deployed to:", customToken.address);
+  console.log("AMMSwap deployed to:", amm.address);
+
+  console.log("Setup liquidity!");
+
   const NFTCollection1155 = await hre.ethers.getContractFactory(
     "NFTCollection1155"
   );
@@ -70,22 +81,22 @@ async function main() {
     "Approving NFTMarketplace to spend WEB tokens (for listing fees)..."
   );
 
-  // 2M tokens
-  // const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
-  const rewardPoolAmount = ethers.utils.parseUnits("500000", 18);
-  await customToken
-    .connect(deployer)
-    .approve(nftStakinge.address, rewardPoolAmount);
-  console.log(
-    `Approved ${rewardPoolAmount / 1e18} ZELL for NFTStaking reward pool`
-  );
-  console.log("Depositing initial reward pool into NFTStaking...");
+  // // 2M tokens
+  // // const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
+  // const rewardPoolAmount = ethers.utils.parseUnits("500000", 18);
+  // await customToken
+  //   .connect(deployer)
+  //   .approve(nftStakinge.address, rewardPoolAmount);
+  // console.log(
+  //   `Approved ${rewardPoolAmount / 1e18} ZELL for NFTStaking reward pool`
+  // );
+  // console.log("Depositing initial reward pool into NFTStaking...");
 
-  await nftStakinge.connect(deployer).depositReward(rewardPoolAmount);
-  console.log(
-    `Deposited ${rewardPoolAmount / 1e18} ZELL into staking reward pool`
-  );
-  console.log("Deployment + Approvals + Reward Pool Setup COMPLETED!");
+  // await nftStakinge.connect(deployer).depositReward(rewardPoolAmount);
+  // console.log(
+  //   `Deposited ${rewardPoolAmount / 1e18} ZELL into staking reward pool`
+  // );
+  // console.log("Deployment + Approvals + Reward Pool Setup COMPLETED!");
 }
 
 main().catch((error) => {

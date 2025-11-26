@@ -17,6 +17,7 @@ import {
   Brand,
   Video,
   Loader,
+  Swap,
 } from "../Ingredients/components/componentsindex";
 
 import { getTopCreators } from "../Ingredients/TopCreators/TopCreators";
@@ -46,6 +47,7 @@ const Home = () => {
   return (
     <div className={Style.homePage}>
       <HeroSection />
+      <Swap />
       <Service />
       <BigNFTSilder />
       <Title

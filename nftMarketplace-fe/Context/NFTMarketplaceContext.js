@@ -309,6 +309,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const accounts = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
+        console.log("accounts", accounts);
         setCurrentAccount(accounts[0]);
         return;
       }

@@ -4,6 +4,7 @@ import NavBar from "../Ingredients/components/NavBar/NavBar";
 import { Footer } from "../Ingredients/components/componentsindex";
 import Spacer from "../Ingredients/components/Spacer/Spacer";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
+import { SwapContextProvider } from "../Context/SwapContext";
 
 const MyApp = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -24,10 +25,12 @@ const MyApp = ({ Component, pageProps }) => {
 
   return (
     <NFTMarketplaceProvider>
-      <NavBar />
-      <Spacer />
-      <Component {...pageProps} />
-      <Footer />
+      <SwapContextProvider>
+        <NavBar />
+        <Spacer />
+        <Component {...pageProps} />
+        <Footer />
+      </SwapContextProvider>
     </NFTMarketplaceProvider>
   );
 };
