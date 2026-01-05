@@ -5,18 +5,18 @@ import Style from "./Discover.module.css";
 
 const Discover = ({ token, information }) => {
   const tokendetected = [
-    { name: "Transfer Funds", link: "transferFunds" },
-    { name: "Collection", link: "collection" },
-    { name: "Search", link: "searchPage" },
-    { name: "Author Profile", link: "author" },
-    { name: "Account Setting", link: "account" },
-    { name: "Upload NFT", link: "uploadNFT" },
+    { name: "Chuyển tiền", link: "transferFunds" },
+    { name: "Bộ sưu tập", link: "collection" },
+    { name: "Tìm kiếm", link: "searchPage" },
+    { name: "Trang cá nhân tác giả", link: "author" },
+    { name: "Cài đặt tài khoản", link: "account" },
+    { name: "Đăng NFT", link: "uploadNFT" },
   ];
 
   const noTokendetected = [
-    { name: "Transfer Funds", link: "transferFunds" },
-    { name: "Collection", link: "collection" },
-    { name: "Search", link: "searchPage" },
+    { name: "Chuyển tiền", link: "transferFunds" },
+    { name: "Bộ sưu tập", link: "collection" },
+    { name: "Tìm kiếm", link: "searchPage" },
   ];
 
   return (

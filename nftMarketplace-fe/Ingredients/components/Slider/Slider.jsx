@@ -28,9 +28,9 @@ const Slider = ({ NFTData }) => {
   return (
     <div className={Style.slider}>
       <div className={Style.slider_box}>
-        <h2>Explore NFTs Video</h2>
+        <h2>Khám phá NFT Video</h2>
         <div className={Style.slider_box_button}>
-          <p>Click on play icon & enjoy Nfts Video</p>
+          <p>Nhấn vào biểu tượng phát và thưởng thức các NFT video.</p>
           <div className={Style.slider_box_button_btn}>
             <div
               className={Style.slider_box_button_btn_icon}

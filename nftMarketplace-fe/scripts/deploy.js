@@ -73,9 +73,11 @@ async function main() {
   // 2M tokens
   // const rewardPoolAmount = ethers.utils.parseUnits("2000000", 18);
   const rewardPoolAmount = ethers.utils.parseUnits("500000", 18);
-  await customToken
-    .connect(deployer)
-    .approve(nftStakinge.address, rewardPoolAmount);
+  await (
+    await customToken
+      .connect(deployer)
+      .approve(nftStakinge.address, rewardPoolAmount)
+  ).wait();
   console.log(
     `Approved ${rewardPoolAmount / 1e18} ZELL for NFTStaking reward pool`
   );

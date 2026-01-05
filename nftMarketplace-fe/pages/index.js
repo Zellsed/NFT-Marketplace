@@ -49,8 +49,8 @@ const Home = () => {
       <Service />
       <BigNFTSilder />
       <Title
-        heading="Audio Collection"
-        paragraph="Audio Collection is a dedicated collection of NFTs for audio-based creations, including digital music, podcasts, sound effects, and other exclusive audio content. It offers artists, music producers, and content creators a unique way to share and monetize their recordings through blockchain technology."
+        heading="Bộ sưu tập âm thanh"
+        paragraph="Bộ sưu tập NFT chuyên biệt dành cho các sáng tạo dựa trên âm thanh, bao gồm nhạc số, podcast, hiệu ứng âm thanh và nhiều nội dung âm thanh độc quyền khác. Bộ sưu tập này mang đến cho nghệ sĩ, nhà sản xuất âm nhạc và người sáng tạo nội dung một cách thức độc đáo để chia sẻ và kiếm tiền từ các bản ghi của họ thông qua công nghệ blockchain."
       />
       <AudioLive />
       {/* {creators.length === 0 ? (
@@ -61,18 +61,17 @@ const Home = () => {
       <Slider NFTData={nfts} />
       {/* <Collection /> */}
       <Title
-        heading="Featured NFTs"
-        paragraph="Discover the most outstanding NFTs in all topics of life."
+        heading="NFT nổi bật"
+        paragraph="Khám phá những NFT nổi bật nhất trong mọi lĩnh vực của cuộc sống."
       />
       <Filter />
       {nfts?.length === 0 ? <Loader /> : <NFTCard NFTData={nfts} />}
       <Title
-        heading="Browse by category"
-        paragraph="Explore the NFTs in the most featured categories."
+        heading="Duyệt theo danh mục"
+        paragraph="Khám phá các NFT trong những danh mục nổi bật nhất."
       />
       <Category />
       <Brand />
-      <Video />
     </div>
   );
 };

@@ -40,11 +40,12 @@ const transferFunds = () => {
   return (
     <div className={Style.transfer}>
       <div className={Style.transfer_box}>
-        <h1>Transfer Token - {baseCoinNetwork}</h1>
+        <h1>Chuyển token - {baseCoinNetwork}</h1>
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere
-          perferendis, praesentium obcaecati nostrum architecto nisi! Eum
-          numquam error, illo eaque.{" "}
+          Chuyển token cho phép bạn gửi token từ ví của mình sang ví khác một
+          cách nhanh chóng và an toàn. Bạn có thể theo dõi trạng thái giao dịch,
+          đảm bảo số lượng token chính xác và quản lý lịch sử chuyển token mọi
+          lúc, mọi nơi.{" "}
         </p>
         <div className={Style.transfer_box_box}>
           <div className={Style.transfer_box_box_left}>
@@ -56,16 +57,16 @@ const transferFunds = () => {
             />
           </div>
           <div className={Style.transfer_box_box_right}>
-            <h2>Now you can transfer {baseCoinNetwork}</h2>
+            <h2>Bây giờ bạn có thể chuyển token {baseCoinNetwork}</h2>
             <div className={Style.transfer_box_box_right_info}>
               <p className={Style.transfer_box_box_right_info_deskTop}>
-                Account: {currentAccount}
+                Tài khoản: {currentAccount}
               </p>
               <p className={Style.transfer_box_box_right_info_mobile}>
-                Account: {currentAccount.slice(1, 30)}...
+                Tài khoản: {currentAccount.slice(1, 30)}...
               </p>
               <p>
-                Balance:{" "}
+                Số dư:{" "}
                 <span style={{ whiteSpace: "nowrap" }}>
                   {accountBalance.slice(0, 15)}... {baseCoinNetwork}
                 </span>
@@ -80,7 +81,7 @@ const transferFunds = () => {
                   </div>
                   <input
                     type="text"
-                    placeholder="address*"
+                    placeholder="Địa chỉ *"
                     onChange={(e) => setTranferAccount(e.target.value)}
                   />
                 </div>
@@ -100,13 +101,13 @@ const transferFunds = () => {
                 </div>
               </div>
               <div className={StyleFrom.Form_box_input}>
-                <label htmlFor="description">Description</label>
+                <label htmlFor="description">Mô tả</label>
                 <textarea
                   name=""
                   id=""
                   cols="30"
                   rows="6"
-                  placeholder="your message in few words"
+                  placeholder="Nhập mô tả"
                   onChange={(e) => setMessage(e.target.value)}
                 ></textarea>
               </div>
@@ -115,7 +116,7 @@ const transferFunds = () => {
                 <Loader />
               ) : (
                 <Button
-                  btnName="Transfer Funds"
+                  btnName="Chuyển tiền"
                   onClick={() =>
                     transferEther(tranferAccount, tranferAmount, message)
                   }
@@ -126,11 +127,12 @@ const transferFunds = () => {
           </div>
         </div>
 
-        <h1 className={Style.transfer_box_h1}>Transaction History</h1>
+        <h1 className={Style.transfer_box_h1}>Lịch sử giao dịch</h1>
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere
-          perferendis, praesentium obcaecati nostrum architecto nisi! Eum
-          numquam error, illo eaque.
+          Lịch sử giao dịch cho phép bạn theo dõi toàn bộ các giao dịch đã thực
+          hiện trên hệ thống. Bạn có thể xem chi tiết mỗi giao dịch, bao gồm
+          ngày, giờ, số tiền, loại giao dịch và trạng thái, giúp quản lý tài
+          chính minh bạch và dễ dàng hơn.
         </p>
 
         <div className={Style.transfer_box_history}>

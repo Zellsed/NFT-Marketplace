@@ -97,10 +97,10 @@ const Account = () => {
   return (
     <div className={Style.account}>
       <div className={Style.account_info}>
-        <h1>Profile settings</h1>
+        <h1>Cài đặt hồ sơ</h1>
         <p>
-          You can set preferred display name, create your profile URL, and
-          manage other personal settings.
+          Bạn có thể thiết lập tên hiển thị ưa thích, tạo URL hồ sơ của mình, và
+          quản lý các cài đặt cá nhân khác.
         </p>
       </div>
 
@@ -113,7 +113,7 @@ const Account = () => {
           height={300}
           className={Style.account_background_img}
         />
-        <p className={Style.account_background_para}>Change Background</p>
+        <p className={Style.account_background_para}>Thay đổi nền</p>
       </div>
 
       <div className={Style.account_box}>

@@ -13,19 +13,19 @@ const HelpCenter = () => {
 
   const helpCenter = [
     {
-      name: "Sign Up",
+      name: "Đăng ký",
       link: "signUp",
     },
     {
-      name: "Sign In",
+      name: "Đăng nhập",
       link: "login",
     },
     {
-      name: "Contact Us",
+      name: "Liên hệ",
       link: "contactus",
     },
     {
-      name: "About",
+      name: "Giới thiệu",
       link: "aboutus",
     },
   ];

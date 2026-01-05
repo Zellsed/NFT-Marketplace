@@ -17,14 +17,14 @@ const HeroSection = () => {
         <div className={Style.heroSection_box_left}>
           <h1>{titleData} 🖼️</h1>
           <p>
-            Discover the most outstanding NTFs in all topics of life. Creative
-            your NTFs and sell them
+            Khám phá những NFT nổi bật nhất trong mọi lĩnh vực của cuộc sống.
+            Sáng tạo NFT của riêng bạn và bán chúng.
           </p>
           <button
             className={Style.heroSection_box_button}
             onClick={() => router.push("/searchPage")}
           >
-            Start your search
+            Bắt đầu tìm kiếm
           </button>
         </div>
         <div className={Style.heroSection_box_right}>

@@ -134,13 +134,13 @@ const NavBar = () => {
 
   const openMenu = (e) => {
     const btnText = e.target.innerText;
-    if (btnText == "Discover") {
+    if (btnText == "Khám phá") {
       setDiscover((prev) => !prev);
       setHelp(false);
       setNotification(false);
       setProfile(false);
       setCreateMenu(false);
-    } else if (btnText == "Help Center") {
+    } else if (btnText == "Trung tâm hỗ trợ") {
       setDiscover(false);
       setHelp((prev) => !prev);
       setNotification(false);
@@ -249,7 +249,7 @@ const NavBar = () => {
           setCreateMenu(false);
         }}
       >
-        Create NFT
+        Tạo NFT
       </div>
       <div
         className={Style.create_menu_item}
@@ -258,7 +258,7 @@ const NavBar = () => {
           setCreateMenu(false);
         }}
       >
-        Create NFT Collection
+        Tạo bộ sưu tập NFT
       </div>
     </div>
   );
@@ -325,7 +325,7 @@ const NavBar = () => {
             <div className={Style.navbar_container_left_box_input_box}>
               <input
                 type="text"
-                placeholder="Search NFT, collections, accounts..."
+                placeholder="Tìm kiếm NFT, bộ sưu tập, tài khoản..."
               />
               <BsSearch className={Style.search_icon} />
             </div>
@@ -339,7 +339,7 @@ const NavBar = () => {
               ref={discoverRef}
             >
               <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
-                Discover
+                Khám phá
                 <BsChevronDown
                   className={`${Style.chevron} ${
                     discover ? Style.chevron_rotated : ""
@@ -361,7 +361,7 @@ const NavBar = () => {
                 onClick={handleAdminRoute}
               >
                 <MdAdminPanelSettings className={Style.admin_icon} />
-                Admin
+                Quản trị viên
               </p>
             )}
 
@@ -377,7 +377,7 @@ const NavBar = () => {
 
             <div className={Style.navbar_container_right_help} ref={helpRef}>
               <p onClick={(e) => openMenu(e)} className={Style.nav_item}>
-                Help Center
+                Trung tâm hỗ trợ
                 <BsChevronDown
                   className={`${Style.chevron} ${
                     help ? Style.chevron_rotated : ""
@@ -443,7 +443,7 @@ const NavBar = () => {
                 <Button
                   btnName={
                     <div className={Style.create_btn_content}>
-                      Create
+                      Tạo
                       <BsChevronDown
                         className={`${Style.chevron} ${
                           createMenu ? Style.chevron_rotated : ""

@@ -19,16 +19,17 @@ const aboutus = () => {
       <div className={Style.aboutus_box}>
         <div className={Style.aboutus_box_hero}>
           <div className={Style.aboutus_box_hero_left}>
-            <h1>👋 About Us.</h1>
+            <h1>👋 Giới thiệu.</h1>
             <p>
-              I take pride in being impartial and independent, ensuring that
-              every piece of content I create reflects these values. Each day, I
-              dedicate myself to producing distinctive, world-class programs and
-              materials that not only inform and educate but also inspire and
-              entertain millions of people across the globe. My goal is to
-              deliver high-quality, meaningful content that resonates with
-              diverse audiences, enriching their knowledge and experiences in an
-              engaging and thought-provoking way.
+              Tôi tự hào vì luôn giữ lập trường công bằng và độc lập, đảm bảo
+              rằng mọi nội dung tôi tạo ra đều phản ánh những giá trị này. Mỗi
+              ngày, tôi dành trọn tâm huyết để sản xuất các chương trình và tài
+              liệu độc đáo, đẳng cấp thế giới, không chỉ cung cấp thông tin và
+              kiến thức mà còn truyền cảm hứng và giải trí cho hàng triệu người
+              trên khắp thế giới. Mục tiêu của tôi là mang đến những nội dung
+              chất lượng cao, ý nghĩa, gây tiếng vang với đa dạng khán giả, làm
+              phong phú thêm kiến thức và trải nghiệm của họ theo cách cuốn hút
+              và kích thích tư duy.
             </p>
           </div>
           <div className={Style.aboutus_box_hero_right}>
@@ -37,12 +38,13 @@ const aboutus = () => {
         </div>
 
         <div className={Style.aboutus_box_title}>
-          <h2>⛱️ Founder</h2>
+          <h2>⛱️ Người sáng lập.</h2>
           <p>
-            We're impartial and independent, creating world-class programmes
-            that inform, educate, and entertain millions worldwide. Committed to
-            quality and integrity, we inspire curiosity, spark discussions, and
-            deliver impactful, accessible content.
+            Tôi duy trì sự công bằng và độc lập, tạo ra các chương trình đẳng
+            cấp thế giới, vừa cung cấp thông tin, vừa giáo dục, đồng thời giải
+            trí cho hàng triệu người trên toàn cầu. Cam kết về chất lượng và sự
+            liêm chính, tôi khơi dậy sự tò mò, thúc đẩy các cuộc thảo luận, và
+            mang đến những nội dung có tác động sâu sắc, dễ tiếp cận.
           </p>
         </div>
 

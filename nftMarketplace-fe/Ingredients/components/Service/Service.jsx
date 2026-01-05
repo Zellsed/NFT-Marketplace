@@ -11,84 +11,84 @@ const Service = () => {
         <div className={Style.service_box_img}>
           <Image
             src={images.service1}
-            alt="Learn About NFT Marketplace"
+            alt="Tìm hiểu về chợ giao dịch NFT"
             width={100}
             height={100}
           />
           <p className={Style.service_box_img_step}>
-            <span>Step 1</span>
+            <span>Bước 1</span>
           </p>
-          <h3>Learn About NFT Marketplace</h3>
+          <h3>Tìm hiểu về chợ giao dịch NFT</h3>
           <p>
-            Before diving into the world of NFTs, it's essential to understand
-            what an NFT marketplace is. These platforms allow users to buy,
-            sell, and trade digital assets like artwork, music, and virtual
-            collectibles. Popular marketplaces include OpenSea, Rarible, and
-            Foundation. Research how they work, the transaction fees, and the
-            types of NFTs available.
+            Trước khi bước vào thế giới NFT, điều quan trọng là bạn cần hiểu NFT
+            Marketplace là gì. Đây là những nền tảng cho phép người dùng mua,
+            bán và giao dịch các tài sản kỹ thuật số như tác phẩm nghệ thuật, âm
+            nhạc và các vật phẩm sưu tầm ảo. Những marketplace phổ biến có thể
+            kể đến như OpenSea, Rarible và Foundation. Hãy tìm hiểu cách chúng
+            hoạt động, các loại phí giao dịch và những dạng NFT được cung cấp.
           </p>
         </div>
 
         <div className={Style.service_box_img}>
           <Image
             src={images.service2}
-            alt="Connect Wallet & Create an Account"
+            alt="Kết nối ví & tạo tài khoản"
             width={100}
             height={100}
           />
           <p className={Style.service_box_img_step}>
-            <span>Step 2</span>
+            <span>Bước 2</span>
           </p>
-          <h3>Connect Wallet & Create an Account</h3>
+          <h3>Kết nối ví & tạo tài khoản</h3>
           <p>
-            To participate in an NFT marketplace, you need a digital wallet such
-            as MetaMask, Trust Wallet, or Coinbase Wallet. These wallets store
-            your cryptocurrencies and NFTs. Once your wallet is set up, connect
-            it to your chosen marketplace and create an account. Ensure you have
-            some cryptocurrency (like ETH for Ethereum-based marketplaces) to
-            cover transaction fees.
+            Để tham gia vào một NFT Marketplace, bạn cần có một ví điện tử như
+            MetaMask, Trust Wallet hoặc Coinbase Wallet. Những ví này dùng để
+            lưu trữ tiền mã hóa và NFT của bạn. Sau khi thiết lập ví xong, hãy
+            kết nối ví với marketplace mà bạn chọn và tạo tài khoản. Đảm bảo bạn
+            có sẵn một lượng tiền mã hóa (ví dụ như ETH đối với các marketplace
+            dựa trên Ethereum) để chi trả phí giao dịch.
           </p>
         </div>
 
         <div className={Style.service_box_img}>
           <Image
             src={images.service3}
-            alt="Create & Purchase NFTs, Trade Coins"
+            alt="Tạo & mua NFT, giao dịch coin"
             width={100}
             height={100}
           />
           <p className={Style.service_box_img_step}>
-            <span>Step 3</span>
+            <span>Bước 3</span>
           </p>
-          <h3>Create & Purchase NFTs, Trade Coins</h3>
+          <h3>Tạo & mua NFT, giao dịch coin</h3>
           <p>
-            Now that your account is ready, you can start minting your own NFTs
-            by uploading digital files and setting their attributes. If you're
-            looking to buy, explore various collections and place bids or
-            purchase directly. Additionally, you can trade cryptocurrencies
-            within the marketplace to optimize your assets and maximize
-            potential profits.
+            “Khi tài khoản của bạn đã sẵn sàng, bạn có thể bắt đầu mint NFT của
+            riêng mình bằng cách tải lên các tệp kỹ thuật số và thiết lập các
+            thuộc tính cho chúng. Nếu bạn muốn mua NFT, hãy khám phá các bộ sưu
+            tập khác nhau và đặt giá thầu hoặc mua trực tiếp. Ngoài ra, bạn cũng
+            có thể giao dịch tiền mã hóa ngay trên marketplace để tối ưu tài sản
+            và gia tăng lợi nhuận tiềm năng.
           </p>
         </div>
 
         <div className={Style.service_box_img}>
           <Image
             src={images.service4}
-            alt="Start Trading"
+            alt="Kiếm tiền"
             width={100}
             height={100}
           />
           <p className={Style.service_box_img_step}>
-            <span>Step 4</span>
+            <span>Bước 4</span>
           </p>
-          <h3>Earn Money</h3>
+          <h3>Kiếm tiền</h3>
           <p>
-            There are multiple ways to earn from NFTs. You can sell your own
-            creations, trade rare NFTs, or even participate in play-to-earn
-            games that reward you with tokens. Some platforms also offer
-            royalties, meaning you'll earn a percentage every time your NFT is
-            resold. Keep an eye on trends and market movements to maximize
-            earnings.
+            Có nhiều cách để kiếm tiền từ NFT. Bạn có thể bán các tác phẩm do
+            chính mình tạo ra, giao dịch những NFT hiếm, hoặc tham gia các trò
+            chơi play-to-earn để nhận phần thưởng là token. Một số nền tảng còn
+            hỗ trợ cơ chế bản quyền (royalties), nghĩa là bạn sẽ nhận được một
+            phần trăm doanh thu mỗi khi NFT của bạn được bán lại. Hãy luôn theo
+            dõi xu hướng và biến động thị trường để tối đa hóa thu nhập.
           </p>
         </div>
       </div>

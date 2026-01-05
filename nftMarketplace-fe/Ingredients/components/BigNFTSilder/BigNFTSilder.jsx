@@ -52,7 +52,7 @@ const BigNFTSilder = () => {
     return (
       <div className={Style.bigNFTSlider_loading}>
         <div className={Style.bigNFTSlider_loading_spinner}></div>
-        <p>Loading latest NFTs...</p>
+        <p>Đang tải các NFT mới nhất…</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ const BigNFTSilder = () => {
   if (!sliderData?.length) {
     return (
       <div className={Style.bigNFTSlider_empty}>
-        <p>No NFTs available</p>
+        <p>Không có NFT nào khả dụng</p>
         <Button btnName="Explore" onClick={() => {}} />{" "}
       </div>
     );
@@ -74,13 +74,14 @@ const BigNFTSilder = () => {
         <div className={Style.bigNFTSlider_box_left}>
           <div className={Style.bigNFTSlider_box_left_content}>
             <div className={Style.bigNFTSlider_box_left_badge}>
-              <span>New</span>
-              <span>Latest Drop</span>
+              <span>Mới</span>
+              <span>Bộ sưu tập vừa ra mắt</span>
             </div>
 
             <h1>{el.name}</h1>
             <p className={Style.bigNFTSlider_box_left_description}>
-              {el.description || "A unique digital collectible just created."}
+              {el.description ||
+                "Một vật phẩm sưu tầm kỹ thuật số độc nhất vừa được tạo ra."}
             </p>
 
             <div className={Style.bigNFTSlider_box_left_creator}>
@@ -98,7 +99,7 @@ const BigNFTSilder = () => {
                 <div
                   className={Style.bigNFTSlider_box_left_creator_profile_info}
                 >
-                  <p>Creator</p>
+                  <p>Người sáng tạo</p>
                   <h4>
                     {el.userName}
                     <MdVerified
@@ -121,7 +122,7 @@ const BigNFTSilder = () => {
                     Style.bigNFTSlider_box_left_creator_collection_info
                   }
                 >
-                  <p>Collection</p>
+                  <p>Bộ sưu tập</p>
                   <h4>{el.category || "Arts"}</h4>
                 </div>
               </div>
@@ -129,11 +130,11 @@ const BigNFTSilder = () => {
 
             <div className={Style.bigNFTSlider_box_left_info}>
               <div className={Style.bigNFTSlider_box_left_info_item}>
-                <small>Created on</small>
+                <small>Ngày tạo</small>
                 <p>{new Date(el.createdAt).toLocaleDateString("en-US")}</p>
               </div>
               <div className={Style.bigNFTSlider_box_left_info_item}>
-                <small>Likes</small>
+                <small>Lượt thích</small>
                 <p>
                   {el.likes || 0} <AiFillHeart />
                 </p>
@@ -142,7 +143,7 @@ const BigNFTSilder = () => {
 
             <div className={Style.bigNFTSlider_box_left_buttons}>
               <Button
-                btnName="View Details"
+                btnName="Xem chi tiết"
                 onClick={() => {}}
                 classStyle={Style.bigNFTSlider_btn_primary}
               />
@@ -187,7 +188,7 @@ const BigNFTSilder = () => {
                   src={el.pinataData}
                   type={`video/${el.fileExtension}`}
                 />
-                Your browser does not support the video tag.{" "}
+                Trình duyệt của bạn không hỗ trợ thẻ video.{" "}
               </video>
             ) : el.fileExtension === "mp3" ||
               el.fileExtension === "wav" ||
@@ -214,7 +215,7 @@ const BigNFTSilder = () => {
                         src={el.pinataData}
                         type={`audio/${el.fileExtension}`}
                       />
-                      Your browser does not support the audio element.{" "}
+                      Trình duyệt của bạn không hỗ trợ thẻ audio.{" "}
                     </audio>{" "}
                   </div>{" "}
                 </div>{" "}

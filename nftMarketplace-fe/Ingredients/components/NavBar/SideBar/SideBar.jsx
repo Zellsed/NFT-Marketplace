@@ -46,19 +46,19 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
 
   const helpCenter = [
     {
-      name: "About",
+      name: "Giới thiệu",
       link: "about",
     },
     {
-      name: "Contact Us",
+      name: "Liên hệ",
       link: "contact-us",
     },
     {
-      name: "Sign Up",
+      name: "Đăng ký",
       link: "sign-up",
     },
     {
-      name: "Sign In",
+      name: "Đăng nhập",
       link: "sign-in",
     },
   ];
