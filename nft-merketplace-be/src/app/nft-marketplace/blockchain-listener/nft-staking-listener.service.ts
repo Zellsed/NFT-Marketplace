@@ -16,7 +16,7 @@ export class NFTStakingListenerService implements OnModuleInit {
   }
 
   private async startListening() {
-    this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+    this.provider = new ethers.WebSocketProvider(process.env.RPC_URL);
     this.contract = new ethers.Contract(NFTStakingAddress,
       NFTStakingABI,
       this.provider);

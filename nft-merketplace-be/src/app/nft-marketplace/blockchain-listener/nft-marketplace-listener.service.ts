@@ -22,7 +22,7 @@ export class NftMarketplaceListenerService implements OnModuleInit {
   }
 
   private async startListening() {
-    this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+    this.provider = new ethers.WebSocketProvider(process.env.RPC_URL);
     this.contract = new ethers.Contract(
       NFTMarketplaceAddress,
       NFTMarketplaceABI,
@@ -140,6 +140,7 @@ export class NftMarketplaceListenerService implements OnModuleInit {
         event,
       ) => {
         try {
+          console.log('event', event);
           const txHash = event.log.transactionHash;
           const logIndex = event.log.index;
 

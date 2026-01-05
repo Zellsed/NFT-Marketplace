@@ -20,7 +20,7 @@ export class TranferTokenWebListenerService implements OnModuleInit {
   private async startListening() {
     if (this.isListening) return;
     this.isListening = true;
-    this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+    this.provider = new ethers.WebSocketProvider(process.env.RPC_URL);
     this.contract = new ethers.Contract(TranferTokenAddress,
       TranferTokenABI,
       this.provider);
@@ -47,6 +47,8 @@ export class TranferTokenWebListenerService implements OnModuleInit {
             blockNumber,
             blockHash,
           }
+
+          console.log('data', data);
 
           await this.tranferTokenWebService.createTranferTokenWebHistory(data);
 
