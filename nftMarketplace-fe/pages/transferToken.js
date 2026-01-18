@@ -27,7 +27,7 @@ const TransferToken = () => {
   return (
     <div className={Style.transfer}>
       <div className={Style.transfer_box}>
-        <h1>Transfer Token</h1>
+        <h1>Mua token</h1>
 
         <div className={Style.transfer_box_box}>
           <div className={Style.transfer_box_box_left}>
@@ -40,16 +40,16 @@ const TransferToken = () => {
           </div>
 
           <div className={Style.transfer_box_box_right}>
-            <h2>Now you can transfer token</h2>
+            <h2>Bây giờ bạn có thể mua token</h2>
             <div className={Style.transfer_box_box_right_info}>
               <p className={Style.transfer_box_box_right_info_deskTop}>
-                Account: {currentAccount}
+                Tài khoản: {currentAccount}
               </p>
               <p className={Style.transfer_box_box_right_info_mobile}>
-                Account: {currentAccount?.slice(0, 30)}...
+                Tài khoản: {currentAccount?.slice(0, 30)}...
               </p>
               <p>
-                Balance:{" "}
+                Số dư:{" "}
                 <span style={{ whiteSpace: "nowrap" }}>
                   {accountBalance?.slice(0, 15)}... {baseCoinNetwork}
                 </span>
@@ -75,7 +75,7 @@ const TransferToken = () => {
                 <Loader />
               ) : (
                 <Button
-                  btnName="Buy Token WEB"
+                  btnName="Mua Token WEB"
                   onClick={() => tranferToken(baseCoinNetwork, tranferAmount)}
                   classStyle={Style.button}
                 />
@@ -84,56 +84,23 @@ const TransferToken = () => {
           </div>
         </div>
 
-        <h1 className={Style.transfer_box_h1}>Web Token Purchase History</h1>
+        <h1 className={Style.transfer_box_h1}>Lịch sử mua token trên web</h1>
         <p>
-          The Web Token purchase history provides a detailed record of all token
-          transactions made by users on the platform. Each entry includes
-          essential information such as the transaction ID, token amount,
-          purchase date, payment method, and transaction status. This history
-          helps users easily track their spending, verify completed purchases,
-          and maintain transparency in their digital asset management. It also
-          serves as an important reference for auditing and customer support,
-          ensuring users have full control and visibility over their
-          token-related activities.
+          Lịch sử mua token trên web cung cấp bản ghi chi tiết về tất cả các
+          giao dịch token mà người dùng đã thực hiện trên nền tảng. Mỗi mục bao
+          gồm các thông tin quan trọng như mã giao dịch, số lượng token, ngày
+          mua, phương thức thanh toán và trạng thái giao dịch.
         </p>
 
-        {/* <div className={Style.transfer_box_history}>
-          {tranferTokenWeb.map((el, i) => (
-            <div className={Style.transfer_box_history_item} key={i + 1}>
-              <Image
-                src={images.ethereTransfer}
-                width={200}
-                height={200}
-                alt="image"
-              />
+        <p>
+          Lịch sử này giúp người dùng dễ dàng theo dõi chi tiêu, xác minh các
+          giao dịch đã hoàn tất và đảm bảo tính minh bạch trong việc quản lý tài
+          sản số. Đồng thời, đây cũng là nguồn tham chiếu quan trọng cho việc
+          kiểm toán và hỗ trợ khách hàng, giúp người dùng có toàn quyền kiểm
+          soát và khả năng theo dõi đầy đủ các hoạt động liên quan đến token của
+          mình.
+        </p>
 
-              <div className={Style.transfer_box_history_item_info}>
-                <p>
-                  {" "}
-                  <span>Transfer ID:</span> #{el.id}
-                </p>
-                <p>
-                  <span>User Address:</span>{" "}
-                  {`${el.userAddress.slice(0, 16)}...${el.userAddress.slice(
-                    -5
-                  )}`}
-                </p>
-                <p>
-                  <span>Base Coin Amount:</span> {el.baseCoinAmount}{" "}
-                  {el.baseCoin}
-                </p>
-                <p>
-                  <span>Web Token Amount:</span> {el.webTokenAmount} WEB
-                </p>
-                <span>
-                  {new Date(el.createdAt).toLocaleString("vi-VN", {
-                    hour12: false,
-                  })}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div> */}
         <div className={Style.transfer_box_history}>
           {tranferTokenWeb.map((el, i) => (
             <div className={Style.transfer_box_history_item} key={i + 1}>
@@ -147,24 +114,24 @@ const TransferToken = () => {
 
               <div className={Style.transfer_box_history_item_info}>
                 <p>
-                  <span>Transfer ID:</span>
+                  <span>Mã giao dịch chuyển:</span>
                   <span>#{el.id}</span>
                 </p>
                 <p>
-                  <span>User Address:</span>
+                  <span>Địa chỉ người dùng:</span>
                   <span>{`${el.userAddress.slice(
                     0,
                     8
                   )}...${el.userAddress.slice(-6)}`}</span>
                 </p>
                 <p>
-                  <span>Base Coin Amount:</span>
+                  <span>Số lượng coin gốc:</span>
                   <span>
                     {el.baseCoinAmount} {el.baseCoin}
                   </span>
                 </p>
                 <p>
-                  <span>Web Token Amount:</span>
+                  <span>Số lượng token web:</span>
                   <span>{el.webTokenAmount} WEB</span>
                 </p>
                 <span>

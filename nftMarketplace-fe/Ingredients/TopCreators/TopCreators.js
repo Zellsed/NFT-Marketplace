@@ -3,7 +3,7 @@ export const getTopCreators = (creators) => {
 
   const finalResults = creators?.reduce((index, currentValue) => {
     (index[currentValue.seller] = index[currentValue.seller] || []).push(
-      currentValue
+      currentValue,
     );
 
     return index;

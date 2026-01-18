@@ -91,8 +91,8 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
       <DropZone
         title="JPG, PNG, GIF, SVG, MP4, WEBM ,MP3, WAV, OGG,
             GLTF."
-        heading="Drag & frop file"
-        subHeading="or Browse media on your device"
+        heading="Kéo & thả tệp"
+        subHeading="hoặc duyệt tệp đa phương tiện trên thiết bị của bạn"
         name={name}
         description={description}
         category={category}
@@ -104,7 +104,7 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
 
       <div className={Style.upload_box}>
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="nft">Item Name</label>
+          <label htmlFor="nft">Tên vật phẩm</label>
           <input
             type="text"
             placeholder="NFT Collection Name"
@@ -114,7 +114,7 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
         </div>
 
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Mô tả</label>
           <textarea
             name=""
             id=""
@@ -124,15 +124,15 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
           <p>
-            The description will be included on the item's detail page
-            underneath its image. Markdown syntax is supported.
+            Phần mô tả sẽ được hiển thị trên trang chi tiết của vật phẩm, bên
+            dưới hình ảnh của nó.
           </p>
         </div>
 
         <div className={formStyle.Form_box_input}>
           <label htmlFor="name">Choose collection</label>
           <p className={Style.upload_box_input_para}>
-            Choose an exiting collection or create a new one
+            Chọn một danh mục cho bộ sưu tập NFT của bạn
           </p>
 
           <div className={Style.upload_box_slider_div}>
@@ -158,7 +158,7 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
                     <TiTick />
                   </div>
                 </div>
-                <p>Crypto Legend - {el.category}</p>
+                <p>Loại danh mục - {el.category}</p>
               </div>
             ))}
           </div>
@@ -180,9 +180,8 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
           </div>
         </div>
         <p>
-          Please specify the total number of NFTs you want to mint in this
-          collection. This determines how many tokens will be available for
-          purchase.
+          Vui lòng chỉ định tổng số NFT bạn muốn mint trong bộ sưu tập này. Điều
+          này sẽ quyết định có bao nhiêu token sẽ được phát hành để mua.
         </p>
 
         <div className={formStyle.Form_box_input_social}>
@@ -201,13 +200,13 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
           </div>
         </div>
         <p>
-          Please enter the price for your NFT collection. This will be the
-          amount buyers must pay to purchase your digital asset.
+          Vui lòng nhập giá cho bộ sưu tập NFT của bạn. Đây sẽ là số tiền người
+          mua phải trả để sở hữu tài sản số của bạn.
         </p>
 
         <div className={Style.upload_box_btn}>
           <Button
-            btnName="Upload"
+            btnName="Tải lên"
             onClick={async () => {
               const createdAt = Date.now();
               createNFT1155(
@@ -227,7 +226,7 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
             classStyle={Style.upload_box_btn_style}
           />
           <Button
-            btnName="Preview"
+            btnName="Xem trước"
             onClick={() => setShowPreview(true)}
             classStyle={Style.upload_box_btn_style}
           />
@@ -239,7 +238,7 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
                 onClick={() => setShowPreview(false)}
               />
               <div className={Style.preview_content}>
-                <h2>Preview NFT</h2>
+                <h2>Xem trước bộ sưu tập NFT</h2>
 
                 <div className={Style.media_wrapper}>
                   {image ? (
@@ -263,29 +262,29 @@ const UploadNFT1155 = ({ uploadToIPFS, createNFT1155 }) => {
                       />
                     )
                   ) : (
-                    <p>No Media Selected</p>
+                    <p>Chưa chọn phương tiện</p>
                   )}
                 </div>
 
                 <div className={Style.details}>
                   <div className={Style.detail_item}>
-                    <strong>Name:</strong>
+                    <strong>Tên:</strong>
                     <span>{name || "N/A"}</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Description:</strong>
+                    <strong>Mô tả:</strong>
                     <span>{description || "N/A"}</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Total Supply:</strong>
+                    <strong>Tổng cung:</strong>
                     <span>{totalSupply || "0"}</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Price:</strong>
+                    <strong>Giá:</strong>
                     <span>{price || "0"} ZELL</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Category:</strong>
+                    <strong>Danh mục:</strong>
                     <span>{category || "N/A"}</span>
                   </div>
                 </div>

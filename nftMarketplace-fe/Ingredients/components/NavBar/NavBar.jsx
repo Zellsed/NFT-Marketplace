@@ -372,7 +372,7 @@ const NavBar = () => {
               onClick={() => handleProtectedRoute("/staking")}
             >
               <FaLock className={Style.staking_icon} />
-              Staking
+              Đặt cược NFT
             </p>
 
             <div className={Style.navbar_container_right_help} ref={helpRef}>

@@ -23,16 +23,16 @@ const contactus = () => {
       <div className={Style.contactus_box}>
         <h1>
           <TiContacts />
-          Contact
+          Liên hệ
         </h1>
         <div className={Style.contactus_box_box}>
           <div className={Style.contactus_box_box_left}>
             <div className={Style.contactus_box_box_left_item}>
               <p>
-                The Contact section allows users to connect with the owner or
-                support team. It typically includes an email, phone number,
-                contact form, social media links, and sometimes a location map
-                for inquiries, feedback, or support requests.
+                Mục Liên hệ cho phép người dùng kết nối với chủ sở hữu hoặc đội
+                ngũ hỗ trợ. Phần này thường bao gồm email, số điện thoại, biểu
+                mẫu liên hệ, các liên kết mạng xã hội và đôi khi là bản đồ vị
+                trí để gửi câu hỏi, phản hồi hoặc yêu cầu hỗ trợ.
               </p>
             </div>
             <div className={Style.contactus_box_box_left_item}>
@@ -40,35 +40,17 @@ const contactus = () => {
               <p>zellsed123@gmail.com</p>
             </div>
             <div className={Style.contactus_box_box_left_item}>
-              <h3>☎️ PHONE</h3>
+              <h3>☎️ SỐ ĐIỆN THOẠI</h3>
               <p>096-906-8386</p>
             </div>
-            {/* <div className={Style.contactus_box_box_left_item}>
-              <h3>🌍 SOCIALS</h3>
-              <a href="#">
-                <TiSocialFacebook />
-              </a>
-              <a href="#">
-                <TiSocialInstagram />
-              </a>
-              <a href="#">
-                <TiSocialLinkedin />
-              </a>
-              <a href="#">
-                <TiSocialYoutube />
-              </a>
-              <a href="#">
-                <TiSocialTwitter />
-              </a>
-            </div> */}
           </div>
           <div className={Style.contactus_box_box_right}>
             <form>
               <div className={formStyle.Form_box_input}>
-                <label htmlFor="name">Full Name</label>
+                <label htmlFor="name">Họ và tên</label>
                 <input
                   type="text"
-                  placeholder="name*"
+                  placeholder="Tên người dùng*"
                   className={formStyle.Form_box_input_userName}
                 />
               </div>
@@ -84,17 +66,17 @@ const contactus = () => {
               </div>
 
               <div className={formStyle.Form_box_input}>
-                <label htmlFor="description">Message</label>
+                <label htmlFor="description">Tin nhắn</label>
                 <textarea
                   name=""
                   id=""
                   cols="30"
                   rows="6"
-                  placeholder="Describe the data you want to send*"
+                  placeholder="Mô tả dữ liệu bạn muốn gửi*"
                 ></textarea>
               </div>
               <Button
-                btnName="Send Message"
+                btnName="Gửi tin nhắn"
                 onClick={() => {}}
                 classStyle={Style.button}
               />

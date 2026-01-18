@@ -90,8 +90,8 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
       <DropZone
         title="JPG, PNG, GIF, SVG, MP4, WEBM ,MP3, WAV, OGG,
             GLTF."
-        heading="Drag & frop file"
-        subHeading="or Browse media on your device"
+        heading="Kéo & thả tệp"
+        subHeading="hoặc duyệt tệp đa phương tiện trên thiết bị của bạn"
         name={name}
         description={description}
         category={category}
@@ -103,7 +103,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
 
       <div className={Style.upload_box}>
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="nft">Item Name</label>
+          <label htmlFor="nft">Tên vật phẩm</label>
           <input
             type="text"
             placeholder="NFT Name"
@@ -113,25 +113,25 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
         </div>
 
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Mô tả</label>
           <textarea
             name=""
             id=""
             cols="30"
             rows="6"
-            placeholder="something about yourself NFT in few words"
+            placeholder="Mô tả ngắn gọn về NFT của bạn bằng vài từ"
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
           <p>
-            The description will be included on the item's detail page
-            underneath its image. Markdown syntax is supported.
+            Phần mô tả sẽ được hiển thị trên trang chi tiết của vật phẩm, bên
+            dưới hình ảnh của nó.
           </p>
         </div>
 
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="name">Choose collection</label>
+          <label htmlFor="name">Chọn danh mục</label>
           <p className={Style.upload_box_input_para}>
-            Choose an exiting collection or create a new one
+            Chọn một danh mục cho NFT của bạn
           </p>
 
           <div className={Style.upload_box_slider_div}>
@@ -157,7 +157,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                     <TiTick />
                   </div>
                 </div>
-                <p>Crypto Legend - {el.category}</p>
+                <p>Loại danh mục - {el.category}</p>
               </div>
             ))}
           </div>
@@ -165,7 +165,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
 
         <div className={formStyle.Form_box_input_social}>
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="price">Price</label>
+            <label htmlFor="price">Giá</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <AiTwotonePropertySafety />
@@ -179,13 +179,13 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
           </div>
         </div>
         <p>
-          Please enter the price for your NFT. This will be the amount buyers
-          must pay to purchase your digital asset.
+          Vui lòng nhập giá cho NFT của bạn. Đây sẽ là số tiền mà người mua cần
+          thanh toán để sở hữu tài sản số của bạn
         </p>
 
         <div className={Style.upload_box_btn}>
           <Button
-            btnName="Upload"
+            btnName="Tải lên"
             onClick={async () => {
               const createdAt = Date.now();
               createNFT(
@@ -204,62 +204,10 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
             classStyle={Style.upload_box_btn_style}
           />
           <Button
-            btnName="Preview"
+            btnName="Xem trước"
             onClick={() => setShowPreview(true)}
             classStyle={Style.upload_box_btn_style}
           />
-          {/* {showPreview && (
-            <div className={Style.preview_modal}>
-              <div className={Style.preview_content}>
-                <h2>Preview NFT</h2>
-                {image ? (
-                  fileExtension === "mp4" || fileExtension === "webm" ? (
-                    <video controls autoPlay muted loop>
-                      <source src={image} type={`video/${fileExtension}`} />
-                    </video>
-                  ) : fileExtension === "mp3" ||
-                    fileExtension === "wav" ||
-                    fileExtension === "ogg" ? (
-                    <audio
-                      controls
-                      style={{ display: "block", margin: "auto" }}
-                    >
-                      <source src={image} type={`audio/${fileExtension}`} />
-                    </audio>
-                  ) : (
-                    <Image
-                      src={image}
-                      alt="nft image"
-                      width={450}
-                      height={450}
-                      type={`image/${fileExtension}`}
-                    />
-                  )
-                ) : (
-                  <p>No Media Selected</p>
-                )}
-
-                <p>
-                  <strong>Name:</strong> {name || ""}
-                </p>
-                <p>
-                  <strong>Description:</strong> {description || ""}
-                </p>
-                <p>
-                  <strong>Price:</strong> {price || ""} ZELL
-                </p>
-                <p>
-                  <strong>Category:</strong> {category || ""}
-                </p>
-
-                <Button
-                  btnName="Close"
-                  onClick={() => setShowPreview(false)}
-                  classStyle={Style.upload_box_btn_style}
-                />
-              </div>
-            </div>
-          )} */}
 
           {showPreview && (
             <div className={Style.preview_modal}>
@@ -268,7 +216,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                 onClick={() => setShowPreview(false)}
               />
               <div className={Style.preview_content}>
-                <h2>Preview NFT</h2>
+                <h2>Xem trước NFT</h2>
 
                 <div className={Style.media_wrapper}>
                   {image ? (
@@ -292,25 +240,25 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                       />
                     )
                   ) : (
-                    <p>No Media Selected</p>
+                    <p>Chưa chọn phương tiện</p>
                   )}
                 </div>
 
                 <div className={Style.details}>
                   <div className={Style.detail_item}>
-                    <strong>Name:</strong>
+                    <strong>Tên:</strong>
                     <span>{name || "N/A"}</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Description:</strong>
+                    <strong>Mô tả:</strong>
                     <span>{description || "N/A"}</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Price:</strong>
+                    <strong>Giá:</strong>
                     <span>{price || "0"} ZELL</span>
                   </div>
                   <div className={Style.detail_item}>
-                    <strong>Category:</strong>
+                    <strong>Danh mục:</strong>
                     <span>{category || "N/A"}</span>
                   </div>
                 </div>

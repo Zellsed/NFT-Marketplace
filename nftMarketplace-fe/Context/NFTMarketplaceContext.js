@@ -25,7 +25,6 @@ import {
 dotenv.config();
 
 import NetworkModal from "../Ingredients/NetworkModal/NetworkModal";
-import { set } from "date-fns";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT_TOKEN,
@@ -70,7 +69,7 @@ const fetchNftCollection1155Contract = (signerOrProvider) =>
   new ethers.Contract(
     NFTCollection1155Address,
     NFTCollection1155ABI,
-    signerOrProvider
+    signerOrProvider,
   );
 
 const connectToNftCollection1155Contract = async () => {
@@ -91,7 +90,7 @@ const fetchContract = (signerOrProvider) =>
   new ethers.Contract(
     NFTMarketplaceAddress,
     NFTMarketplaceABI,
-    signerOrProvider
+    signerOrProvider,
   );
 
 const connectingWithSmartContract = async () => {
@@ -352,7 +351,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     fileExtension,
     fileSize,
     createdAt,
-    token
+    token,
   ) => {
     if (
       !name ||
@@ -403,12 +402,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const listingPrice = await contract.getListingPrice();
       const approveListingPrice = ethers.utils.parseUnits(
         listingPrice.toString(),
-        18
+        18,
       );
 
       const approval = await customTokenContract.approve(
         contract.address,
-        approveListingPrice
+        approveListingPrice,
       );
 
       await approval.wait();
@@ -446,7 +445,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     fileExtension,
     fileSize,
     createdAt,
-    token
+    token,
   ) => {
     if (
       !name ||
@@ -500,19 +499,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const approveListingPrice = ethers.utils.parseUnits(
         listingPrice.toString(),
-        18
+        18,
       );
 
       const approval = await customTokenContract.approve(
         contract.address,
-        approveListingPrice
+        approveListingPrice,
       );
 
       await approval.wait();
 
       const txApprove1155 = await nftCollection1155Contract.setApprovalForAll(
         contract.address,
-        true
+        true,
       );
 
       await txApprove1155.wait();
@@ -520,19 +519,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const transaction = await contract.createToken1155(
         url,
         totalSupply,
-        price
+        price,
       );
 
       const txRecceipt = await transaction.wait();
 
       const event = txRecceipt.events?.find(
-        (e) => e.event === "MarketItem1155Created"
+        (e) => e.event === "MarketItem1155Created",
       );
 
       if (!event) {
         console.error(
           "MarketItem1155Created event not found",
-          txRecceipt.events
+          txRecceipt.events,
         );
         return;
       }
@@ -568,14 +567,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const approvalFee = await customTokenContract.approve(
         contract.address,
-        listingPrice
+        listingPrice,
       );
 
       await approvalFee.wait();
 
       const txApproveNFT = await nftCollection1155Contract.setApprovalForAll(
         contract.address,
-        true
+        true,
       );
 
       await txApproveNFT.wait();
@@ -583,19 +582,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const transaction = await contract.reSellToken1155(
         id,
         quantity,
-        newPrice
+        newPrice,
       );
 
       const receipt = await transaction.wait();
 
       const event = receipt.events?.find(
-        (e) => e.event === "MarketItem1155Created"
+        (e) => e.event === "MarketItem1155Created",
       );
 
       if (!event) {
         console.warn(
           "⚠️ Event MarketItem1155Created not found",
-          receipt.events
+          receipt.events,
         );
         return;
       }
@@ -605,43 +604,51 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const fetchNFTs = async () => {
+  const fetchNFTs = async ({ page, limit } = {}) => {
     try {
       const nftData = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace`,
+        {
+          params: { page, limit },
+        },
       );
 
-      const items = await Promise.all(
-        nftData.data.data.map(async (e) => {
-          return {
-            price: e.nft_price,
-            tokenId: e.token_id,
-            seller: e.nft_seller,
-            owner: e.nft_owner,
-            pinataData: e.pinata_data,
-            name: e.metadata_name,
-            description: e.metadata_description,
-            tokenURI: e.token_uri,
-            category: e.metadata_category,
-            fileExtension: e.file_extension,
-            fileSize: e.file_size,
-            createdAt: e.created_at,
-            likes: e.like,
-          };
-        })
-      );
+      const items = nftData.data.data.map((e) => ({
+        price: e.nft_price,
+        tokenId: e.token_id,
+        seller: e.nft_seller,
+        owner: e.nft_owner,
+        pinataData: e.pinata_data,
+        name: e.metadata_name,
+        description: e.metadata_description,
+        tokenURI: e.token_uri,
+        category: e.metadata_category,
+        fileExtension: e.file_extension,
+        fileSize: e.file_size,
+        createdAt: e.created_at,
+        likes: e.like,
+      }));
 
-      return items;
+      return {
+        items,
+        totalRows: nftData.data.totalRows,
+        totalPages: Math.ceil(nftData.data.totalRows / limit),
+      };
     } catch (error) {
       setError("Error while fetching NFTs");
       setOpenError(true);
+      return {
+        items: [],
+        totalRows: 0,
+        totalPages: 1,
+      };
     }
   };
 
   const getSliderData = async () => {
     try {
       const sliderData = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/slider-data`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/slider-data`,
       );
 
       const items = await Promise.all(
@@ -667,7 +674,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             background: e.userInformation.background,
             description: e.userInformation.description,
           };
-        })
+        }),
       );
 
       return items;
@@ -677,10 +684,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const fetchNFTs1155 = async () => {
+  const fetchNFTs1155 = async ({ page, limit } = {}) => {
     try {
       const nft1155Data = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace-1155`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace-1155`,
+        {
+          params: { page, limit },
+        },
       );
 
       const items = await Promise.all(
@@ -704,13 +714,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
             createdAt: e.created_at,
             likes: e.like,
           };
-        })
+        }),
       );
+      console.log(items);
 
-      return items;
+      return {
+        items,
+        totalRows: nftData.data.totalRows,
+        totalPages: Math.ceil(nftData.data.totalRows / limit),
+      };
     } catch (error) {
       setError("Error while fetching NFTs");
       setOpenError(true);
+      return {
+        items: [],
+        totalRows: 0,
+        totalPages: 1,
+      };
     }
   };
 
@@ -725,11 +745,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
         type == "fetchItemsListed"
           ? await axios.get(
               `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721-listed`,
-              { headers: { Authorization: `Bearer ${token}` } }
+              { headers: { Authorization: `Bearer ${token}` } },
             )
           : await axios.get(
               `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721`,
-              { headers: { Authorization: `Bearer ${token}` } }
+              { headers: { Authorization: `Bearer ${token}` } },
             );
 
       const items = await Promise.all(
@@ -749,7 +769,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             createdAt: e.created_at,
             likes: e.like,
           };
-        })
+        }),
       );
 
       return items;
@@ -765,11 +785,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
         type == "fetchItemsListed"
           ? await axios.get(
               `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155-listed`,
-              { headers: { Authorization: `Bearer ${token}` } }
+              { headers: { Authorization: `Bearer ${token}` } },
             )
           : await axios.get(
               `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155`,
-              { headers: { Authorization: `Bearer ${token}` } }
+              { headers: { Authorization: `Bearer ${token}` } },
             );
 
       const items = await Promise.all(
@@ -793,7 +813,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             createdAt: e.created_at,
             likes: e.like,
           };
-        })
+        }),
       );
 
       return items;
@@ -819,7 +839,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const approval = await customTokenContract.approve(
         contract.address,
-        price
+        price,
       );
 
       await approval.wait();
@@ -846,7 +866,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const approval = await customTokenContract.approve(
         contract.address,
-        totalPrice
+        totalPrice,
       );
 
       await approval.wait();
@@ -887,7 +907,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const transaction = await contract.addToBlockchain(
           isAddress,
           unFormatedAmount,
-          message
+          message,
         );
 
         setLoading(true);
@@ -918,7 +938,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
           addressTo: transaction.receiver,
           addressFrom: transaction.sender,
           timestamp: new Date(
-            transaction.timestamp.toNumber() * 1000
+            transaction.timestamp.toNumber() * 1000,
           ).toLocaleString(),
           message: transaction.message,
           amount: parseInt(transaction.amount._hex) / 10 ** 18,
@@ -936,7 +956,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const getAllWebTokenPurchaseHistory = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/tranfer-token-web/history`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/tranfer-token-web/history`,
       );
 
       setTranferTokenWeb(response.data);
@@ -1051,7 +1071,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const transaction = await stakingContract.stakeERC721(
         tokenId,
-        durationIndex
+        durationIndex,
       );
 
       setLoading(true);
@@ -1106,7 +1126,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             pinataData: metadata.pinataData,
             estimatedReward: calculateReward(),
           };
-        })
+        }),
       );
 
       return items;
@@ -1124,7 +1144,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       if (stakeIndex >= count.toNumber() || stakeIndex < 0) {
         throw new Error(
-          `Invalid stake ID: ${stakeIndex} (max: ${count.toNumber() - 1})`
+          `Invalid stake ID: ${stakeIndex} (max: ${count.toNumber() - 1})`,
         );
       }
 
@@ -1217,7 +1237,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const getAllUsers = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/all-user`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/all-user`,
       );
 
       return response.data.allUser;
@@ -1231,7 +1251,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const getTotalTransactionMarketplaceAll = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/total-transaction-marketplace-all`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/total-transaction-marketplace-all`,
       );
 
       return {

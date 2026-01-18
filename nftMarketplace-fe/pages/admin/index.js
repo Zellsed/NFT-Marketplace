@@ -148,54 +148,54 @@ const AdminPage = () => {
       case 0:
         return (
           <div className={Style.tabPanel}>
-            <h2>Overview</h2>
+            <h2>Tổng quan</h2>
             <div className={Style.statsGrid}>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🎨</div>
                 <div className={Style.statContent}>
-                  <h3>ERC721 NFTs</h3>
+                  <h3>NFT theo tiêu chuẩn ERC-721</h3>
                   <p>{nfts721.length}</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🖼️</div>
                 <div className={Style.statContent}>
-                  <h3>ERC1155 NFTs</h3>
+                  <h3>NFT theo tiêu chuẩn ERC-1155</h3>
                   <p>{nfts1155.length}</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🛒</div>
                 <div className={Style.statContent}>
-                  <h3>Total Transactions</h3>
+                  <h3>Tổng số giao dịch</h3>
                   <p>{marketplaceStats.totalCount}</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>💸</div>
                 <div className={Style.statContent}>
-                  <h3>Total Cash Flow</h3>
+                  <h3>Tổng dòng tiền</h3>
                   <p>{formatRawValue(marketplaceStats.totalSpent)} WEB</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>👥</div>
                 <div className={Style.statContent}>
-                  <h3>Users</h3>
+                  <h3>Người dùng</h3>
                   <p>{users.length}</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🔒</div>
                 <div className={Style.statContent}>
-                  <h3>Staked NFTs</h3>
+                  <h3>NFT đã đặt cọc</h3>
                   <p>{stakedNFTs.length}</p>
                 </div>
               </div>
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>💰</div>
                 <div className={Style.statContent}>
-                  <h3>Listing Price</h3>
+                  <h3>Giá niêm yết</h3>
                   <p>{listingPrice}</p>
                   <div className={Style.rawValue}>{listingPrice} WEB</div>
                 </div>
@@ -203,7 +203,7 @@ const AdminPage = () => {
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🏆</div>
                 <div className={Style.statContent}>
-                  <h3>Reward Pool</h3>
+                  <h3>Quỹ phần thưởng</h3>
                   <p>
                     <TokenAmount amount={rewardPool} />
                   </p>
@@ -215,7 +215,7 @@ const AdminPage = () => {
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>🏦</div>
                 <div className={Style.statContent}>
-                  <h3>Transfer Contract</h3>
+                  <h3>Hợp đồng chuyển giao</h3>
                   <p>
                     <TokenAmount amount={transferBalance} />
                   </p>
@@ -227,7 +227,7 @@ const AdminPage = () => {
               <div className={Style.statCard}>
                 <div className={Style.statIcon}>👑</div>
                 <div className={Style.statContent}>
-                  <h3>Owner Balance</h3>
+                  <h3>Số dư của chủ sở hữu</h3>
                   <p>
                     <TokenAmount amount={ownerBalance} />
                   </p>
@@ -243,10 +243,10 @@ const AdminPage = () => {
       case 1:
         return (
           <div className={Style.tabPanel}>
-            <h2>NFT Management</h2>
+            <h2>Quản lý NFT</h2>
 
             <div className={Style.controlSection}>
-              <h3>Current Settings</h3>
+              <h3>Cài đặt hiện tại</h3>
               <div className={Style.currentSettings}>
                 <div className={Style.currentSetting}>
                   <span className={Style.settingLabel}>Listing Price:</span>
@@ -256,41 +256,18 @@ const AdminPage = () => {
                   </span>
                 </div>
               </div>
-
-              <h3>Update Listing Price</h3>
-              <div className={Style.controlGroup}>
-                <input
-                  type="number"
-                  placeholder="New Listing Price (WEB)"
-                  value={newListingPrice}
-                  onChange={(e) => setNewListingPrice(e.target.value)}
-                  className={Style.input}
-                />
-                <button
-                  className={Style.button}
-                  onClick={() => updateListingPrice(newListingPrice)}
-                >
-                  Update Listing Price
-                </button>
-              </div>
-              {newListingPrice && (
-                <div className={Style.preview}>
-                  <strong>Preview:</strong> Changing from {listingPrice} WEB to{" "}
-                  {newListingPrice} WEB
-                </div>
-              )}
             </div>
 
             <div className={Style.section}>
-              <h3>ERC721 NFTs</h3>
+              <h3>NFT theo tiêu chuẩn ERC-721</h3>
               <div className={Style.tableContainer}>
                 <table className={Style.table}>
                   <thead>
                     <tr>
-                      <th>Token ID</th>
-                      <th>Seller</th>
-                      <th>Price (WEB)</th>
-                      <th>Status</th>
+                      <th>Mã Token</th>
+                      <th>Người bán</th>
+                      <th>Giá (WEB)</th>
+                      <th>Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -313,22 +290,24 @@ const AdminPage = () => {
                   </tbody>
                 </table>
                 {nfts721.length === 0 && (
-                  <div className={Style.noData}>No ERC721 NFTs found</div>
+                  <div className={Style.noData}>
+                    Không tìm thấy NFT ERC-721 nào
+                  </div>
                 )}
               </div>
             </div>
 
             <div className={Style.section}>
-              <h3>ERC1155 NFTs</h3>
+              <h3>NFT theo tiêu chuẩn ERC-1155</h3>
               <div className={Style.tableContainer}>
                 <table className={Style.table}>
                   <thead>
                     <tr>
-                      <th>Item ID</th>
-                      <th>Token ID</th>
-                      <th>Amount Available</th>
-                      <th>Price (WEB)</th>
-                      <th>Seller</th>
+                      <th>ID vật phẩm</th>
+                      <th>Mã Token</th>
+                      <th>Số lượng khả dụng</th>
+                      <th>Giá (WEB)</th>
+                      <th>Người bán</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -344,7 +323,9 @@ const AdminPage = () => {
                   </tbody>
                 </table>
                 {nfts1155.length === 0 && (
-                  <div className={Style.noData}>No ERC1155 NFTs found</div>
+                  <div className={Style.noData}>
+                    Không tìm thấy NFT ERC-1155 nào
+                  </div>
                 )}
               </div>
             </div>
@@ -354,19 +335,19 @@ const AdminPage = () => {
       case 2:
         return (
           <div className={Style.tabPanel}>
-            <h2>Transactions & History</h2>
+            <h2>Giao dịch & Lịch sử</h2>
 
             <div className={Style.section}>
-              <h3>Web Token Purchases</h3>
+              <h3>Giao dịch mua Token trên web</h3>
               <div className={Style.tableContainer}>
                 <table className={Style.table}>
                   <thead>
                     <tr>
-                      <th>User</th>
-                      <th>Base Coin</th>
-                      <th>Base Amount</th>
-                      <th>Web Amount</th>
-                      <th>Timestamp</th>
+                      <th>Người dùng</th>
+                      <th>Đồng coin gốc</th>
+                      <th>Số lượng gốc</th>
+                      <th>Số lượng (Web)</th>
+                      <th>Thời gian ghi nhận</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -382,21 +363,23 @@ const AdminPage = () => {
                   </tbody>
                 </table>
                 {tranferTokenWeb.length === 0 && (
-                  <div className={Style.noData}>No purchase history found</div>
+                  <div className={Style.noData}>
+                    Không tìm thấy lịch sử mua hàng
+                  </div>
                 )}
               </div>
             </div>
 
             <div className={Style.section}>
-              <h3>Fund Transfers</h3>
+              <h3>Chuyển tiền</h3>
               <div className={Style.tableContainer}>
                 <table className={Style.table}>
                   <thead>
                     <tr>
-                      <th>Sender</th>
-                      <th>Receiver</th>
-                      <th>Amount (WEB)</th>
-                      <th>Timestamp</th>
+                      <th>Người gửi</th>
+                      <th>Người nhận</th>
+                      <th>Số lượng (WEB)</th>
+                      <th>Thời gian ghi nhận</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -423,11 +406,11 @@ const AdminPage = () => {
       case 3:
         return (
           <div className={Style.tabPanel}>
-            <h2>Staking Management</h2>
+            <h2>Quản lý đặt cọc</h2>
 
             <div className={Style.statsCard}>
               <div className={Style.statsHeader}>
-                <h3>Current Reward Pool</h3>
+                <h3>Quỹ phần thưởng hiện tại</h3>
                 <div className={Style.rewardAmount}>
                   <p>
                     <TokenAmount amount={rewardPool} />
@@ -440,7 +423,7 @@ const AdminPage = () => {
 
               <div className={Style.balanceInfo}>
                 <div className={Style.balanceItem}>
-                  <span>Owner Balance:</span>
+                  <span>Số dư chủ sở hữu:</span>
                   <span className={Style.balanceAmount}>
                     <TokenAmount amount={ownerBalance} />
                     <div className={Style.rawValue}>
@@ -449,43 +432,20 @@ const AdminPage = () => {
                   </span>
                 </div>
               </div>
-
-              <div className={Style.controlGroup}>
-                <input
-                  type="number"
-                  placeholder="Deposit Amount (WEB)"
-                  value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
-                  className={Style.input}
-                />
-                <button
-                  className={Style.button}
-                  onClick={() => depositReward(depositAmount)}
-                >
-                  Deposit Reward
-                </button>
-              </div>
-              {depositAmount && (
-                <div className={Style.preview}>
-                  <strong>Preview:</strong> Adding {depositAmount} WEB to reward
-                  pool ({rewardPool} WEB →{" "}
-                  {Number(rewardPool) + Number(depositAmount)} WEB)
-                </div>
-              )}
             </div>
 
             <div className={Style.section}>
-              <h3>Staked NFTs</h3>
+              <h3>NFT đã đặt cọc</h3>
               <div className={Style.tableContainer}>
                 <table className={Style.table}>
                   <thead>
                     <tr>
-                      <th>Staker</th>
-                      <th>Token ID</th>
-                      <th>Amount</th>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Estimated Reward</th>
+                      <th>Người đặt cọc</th>
+                      <th>Mã Token</th>
+                      <th>Số lượng</th>
+                      <th>Thời gian bắt đầu</th>
+                      <th>Thời gian kết thúc</th>
+                      <th>Phần thưởng ước tính</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -510,7 +470,9 @@ const AdminPage = () => {
                   </tbody>
                 </table>
                 {stakedNFTs.length === 0 && (
-                  <div className={Style.noData}>No staked NFTs found</div>
+                  <div className={Style.noData}>
+                    Không tìm thấy NFT đã đặt cọc nào
+                  </div>
                 )}
               </div>
             </div>
@@ -520,13 +482,13 @@ const AdminPage = () => {
       case 4:
         return (
           <div className={Style.tabPanel}>
-            <h2>Token Management</h2>
+            <h2>Quản lý Token</h2>
 
             <div className={Style.balanceSection}>
-              <h3>Current Balances</h3>
+              <h3>Số dư hiện tại</h3>
               <div className={Style.balanceGrid}>
                 <div className={Style.balanceCard}>
-                  <h4>Owner Wallet</h4>
+                  <h4>Ví của chủ sở hữu</h4>
                   <div className={Style.balanceAmount}>
                     <TokenAmount amount={ownerBalance} />
                   </div>
@@ -535,7 +497,7 @@ const AdminPage = () => {
                   </div>
                 </div>
                 <div className={Style.balanceCard}>
-                  <h4>Transfer Contract</h4>
+                  <h4>Hợp đồng chuyển giao</h4>
                   <div className={Style.balanceAmount}>
                     <TokenAmount amount={transferBalance} />
                   </div>
@@ -544,7 +506,7 @@ const AdminPage = () => {
                   </div>
                 </div>
                 <div className={Style.balanceCard}>
-                  <h4>Staking Reward Pool</h4>
+                  <h4>Quỹ phần thưởng hiện tại</h4>
                   <div className={Style.balanceAmount}>
                     <TokenAmount amount={rewardPool} />
                   </div>
@@ -556,33 +518,7 @@ const AdminPage = () => {
             </div>
 
             <div className={Style.controlSection}>
-              <h3>Token Transfers</h3>
-              <div className={Style.controlGroup}>
-                <input
-                  type="number"
-                  placeholder="Deposit Token Amount (WEB)"
-                  value={tokenDepositAmount}
-                  onChange={(e) => setTokenDepositAmount(e.target.value)}
-                  className={Style.input}
-                />
-                <button
-                  className={Style.button}
-                  onClick={() => depositTokenToTransfer(tokenDepositAmount)}
-                >
-                  Deposit to Transfer Contract
-                </button>
-              </div>
-              {tokenDepositAmount && (
-                <div className={Style.preview}>
-                  <strong>Preview:</strong> Transferring {tokenDepositAmount}{" "}
-                  WEB from owner ({ownerBalance} WEB) to transfer contract (
-                  {transferBalance} WEB)
-                </div>
-              )}
-            </div>
-
-            <div className={Style.controlSection}>
-              <h3>Current Base Coin Rates</h3>
+              <h3>Tỷ giá coin gốc hiện tại</h3>
               <div className={Style.ratesGrid}>
                 {Object.entries(baseRates).map(([coin, rate]) => (
                   <div key={coin} className={Style.rateCard}>
@@ -590,42 +526,10 @@ const AdminPage = () => {
                     <div className={Style.rateValue}>
                       1 {coin} = {rate} WEB
                     </div>
-                    <div className={Style.rawValue}>Rate: {rate}</div>
+                    <div className={Style.rawValue}>Tỷ lệ: {rate}</div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div className={Style.controlSection}>
-              <h3>Update Base Coin Rates</h3>
-              <div className={Style.controlGroup}>
-                <input
-                  type="text"
-                  placeholder="Coin (ETH/BNB/etc)"
-                  value={newRateCoin}
-                  onChange={(e) => setNewRateCoin(e.target.value)}
-                  className={Style.input}
-                />
-                <input
-                  type="number"
-                  placeholder="New Rate"
-                  value={newRateValue}
-                  onChange={(e) => setNewRateValue(e.target.value)}
-                  className={Style.input}
-                />
-                <button
-                  className={Style.button}
-                  onClick={() => updateBaseCoinRate(newRateCoin, newRateValue)}
-                >
-                  Update Rate
-                </button>
-              </div>
-              {newRateCoin && newRateValue && (
-                <div className={Style.preview}>
-                  <strong>Preview:</strong> Changing {newRateCoin} rate from{" "}
-                  {baseRates[newRateCoin] || "N/A"} to {newRateValue}
-                </div>
-              )}
             </div>
           </div>
         );
@@ -633,16 +537,16 @@ const AdminPage = () => {
       case 5:
         return (
           <div className={Style.tabPanel}>
-            <h2>User Management</h2>
+            <h2>Quản lý người dùng</h2>
 
             <div className={Style.tableContainer}>
               <table className={Style.table}>
                 <thead>
                   <tr>
-                    <th>Wallet Address</th>
-                    <th>Transactions</th>
-                    <th>Total Spent (WEB)</th>
-                    <th>Actions</th>
+                    <th>Địa chỉ ví</th>
+                    <th>Giao dịch</th>
+                    <th>Tổng chi tiêu (WEB)</th>
+                    <th>Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -664,7 +568,7 @@ const AdminPage = () => {
                               setIsModalOpen(true);
                             }}
                           >
-                            View Details
+                            Xem chi tiết
                           </button>
                         </td>
                       </tr>
@@ -672,7 +576,7 @@ const AdminPage = () => {
                   ) : (
                     <tr>
                       <td colSpan={4} className={Style.noData}>
-                        No users found
+                        Không tìm thấy người dùng nào
                       </td>
                     </tr>
                   )}
@@ -685,8 +589,8 @@ const AdminPage = () => {
       default:
         return (
           <div className={Style.tabPanel}>
-            <h2>Overview</h2>
-            <div className={Style.noData}>Select a tab to view content</div>
+            <h2>Tổng quan</h2>
+            <div className={Style.noData}>Chọn một tab để xem nội dung</div>
           </div>
         );
     }
@@ -699,17 +603,17 @@ const AdminPage = () => {
       <NavBar />
       <Spacer />
       <div className={Style.container}>
-        <h1 className={Style.title}>Admin Dashboard</h1>
+        <h1 className={Style.title}>Bảng điều khiển quản trị</h1>
 
         <div className={Style.tabContainer}>
           <div className={Style.tabList}>
             {[
-              "Dashboard",
-              "NFT Management",
-              "Transactions",
-              "Staking",
-              "Token Management",
-              "User Management",
+              "Bảng điều khiển",
+              "Quản lý NFT",
+              "Giao dịch",
+              "Đặt cọc",
+              "Quản lý Token",
+              "Quản lý người dùng",
             ].map((tabName, index) => (
               <button
                 key={index}

@@ -17,7 +17,7 @@ import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 
 const SearchPage = () => {
   const { fetchNFTs, fetchNFTs1155, setError } = useContext(
-    NFTMarketplaceContext
+    NFTMarketplaceContext,
   );
 
   const [nfts721, setNfts721] = useState([]);
@@ -26,17 +26,27 @@ const SearchPage = () => {
   const [nfts1155Copy, setNfts1155Copy] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [page1155, setPage1155] = useState(1);
+  const [totalPages1155, setTotalPages1155] = useState(1);
+
   useEffect(() => {
     const loadNFTs = async () => {
       try {
         setLoading(true);
-        const items721 = await fetchNFTs();
-        const items1155 = await fetchNFTs1155();
+        const items721 = await fetchNFTs({ page, limit: 3 });
+        const items1155 = await fetchNFTs1155({ page, limit: 3 });
+        console.log("items1155", items1155);
 
-        setNfts721(items721 || []);
-        setNfts721Copy(items721 || []);
-        setNfts1155(items1155 || []);
-        setNfts1155Copy(items1155 || []);
+        setNfts721(items721.items || []);
+        setNfts721Copy(items721.items || []);
+        setTotalPages(items721.totalPages || 1);
+
+        setNfts1155(items1155.items || []);
+        setNfts1155Copy(items1155.items || []);
+        setTotalPages1155(items1155.totalPages || 1);
       } catch (error) {
         console.error(error);
         setError("Please reload the browser");
@@ -46,16 +56,16 @@ const SearchPage = () => {
     };
 
     loadNFTs();
-  }, []);
+  }, [page]);
 
   const onHandleSearch = (value) => {
     const query = value.toLowerCase();
 
     const filtered721 = nfts721Copy.filter((nft) =>
-      nft.name.toLowerCase().includes(query)
+      nft.name.toLowerCase().includes(query),
     );
     const filtered1155 = nfts1155Copy.filter((nft) =>
-      nft.name.toLowerCase().includes(query)
+      nft.name.toLowerCase().includes(query),
     );
 
     setNfts721(filtered721);
@@ -83,21 +93,56 @@ const SearchPage = () => {
         <Loader />
       ) : (
         <>
-          <h2 className={Style.sectionTitle}>ERC-721 NFTs</h2>
+          <h2 className={Style.sectionTitle}>NFT ERC-721</h2>
           {nfts721.length > 0 ? (
             <NFTCardTwo NFTData={nfts721} />
           ) : (
-            <p className={Style.noNFTText}>No ERC-721 NFTs found</p>
+            <p className={Style.noNFTText}>Không tìm thấy NFT ERC-721 nào.</p>
           )}
 
-          <h2 className={Style.sectionTitle}>ERC-1155 NFTs</h2>
+          <div className={Style.pagination}>
+            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+              Prev
+            </button>
+
+            <span>
+              {page} / {totalPages}
+            </span>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
+
+          <h2 className={Style.sectionTitle}>NFT ERC-1155</h2>
           {nfts1155.length > 0 ? (
             <NFTCollectionCardTwo NFTData={nfts1155} />
           ) : (
-            <p className={Style.noNFTText}>No ERC-1155 NFTs found</p>
+            <p className={Style.noNFTText}>Không tìm thấy NFT ERC-1155 nào.</p>
           )}
 
-          {/* <Slider NFTData={[...nfts721, ...nfts1155]} /> */}
+          <div className={Style.pagination}>
+            <button
+              disabled={page1155 === 1}
+              onClick={() => setPage1155((p) => p - 1)}
+            >
+              Prev
+            </button>
+
+            <span>
+              {page1155} / {totalPages1155}
+            </span>
+
+            <button
+              disabled={page1155 === totalPages1155}
+              onClick={() => setNfts1155((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
           <Brand />
         </>
       )}

@@ -13,19 +13,19 @@ const uploadNFTCollection = () => {
     <div className={Style.uploadNFT}>
       <div className={Style.uploadNFT_box}>
         <div className={Style.uploadNFT_box_heading}>
-          <h1>Create New NFT Collection</h1>
+          <h1>Tạo bộ sưu tập NFT mới</h1>
           <p>
-            Create a new NFT collection by uploading your digital asset, setting
-            a price, and adding relevant details. Share your unique creation
-            with the world!
+            Tạo một bộ sưu tập NFT mới bằng cách tải lên tài sản số của bạn,
+            thiết lập giá và thêm các thông tin liên quan. Hãy chia sẻ tác phẩm
+            độc đáo của bạn với toàn thế giới!
           </p>
         </div>
 
         <div className={Style.uploadNFT_box_title}>
-          <h2>Image, Video, Audio, or 3D Model</h2>
+          <h2>Hình ảnh, video, âm thanh hoặc mô hình 3D</h2>
           <p>
-            File types supported: JPG, PNG, GIF, SVG, MP4, WEBM ,MP3, WAV, OGG,
-            GLTF.
+            Các định dạng tệp được hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3,
+            WAV, OGG, GLTF.
           </p>
         </div>
 

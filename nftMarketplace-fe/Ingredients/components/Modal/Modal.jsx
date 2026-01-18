@@ -31,14 +31,14 @@ const Modal = ({ isOpen, onClose, userTransactions }) => {
   return (
     <div className={Style.overlay} onClick={onClose}>
       <div className={Style.modal} onClick={(e) => e.stopPropagation()}>
-        <h2>Transaction details</h2>
+        <h2>Chi tiết giao dịch</h2>
         <table>
           <thead>
             <tr>
-              <th>User ID</th>
-              <th>Spent</th>
-              <th>Spent Type</th>
-              <th>Created At</th>
+              <th>Mã người dùng</th>
+              <th>Đã chi</th>
+              <th>Loại chi tiêu</th>
+              <th>Thời gian tạo</th>
             </tr>
           </thead>
           <tbody>
@@ -61,7 +61,7 @@ const Modal = ({ isOpen, onClose, userTransactions }) => {
             ))}
           </tbody>
         </table>
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose}>Đóng</button>
       </div>
     </div>
   );

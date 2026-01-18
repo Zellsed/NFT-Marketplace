@@ -219,7 +219,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
         <div className={Style.button_group}>
           <Button
             icon=<FaLock />
-            btnName="List on Marketplace"
+            btnName="Đưa lên thị trường"
             onClick={null}
             classStyle={`${Style.button} ${Style.disabled_button}`}
             disabled={true}
@@ -227,7 +227,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
 
           <Button
             icon=<FaLock />
-            btnName="NFT is Staked"
+            btnName="NFT đã được đặt cược"
             onClick={handleViewStaking}
             classStyle={`${Style.button} ${Style.staked_button}`}
           />
@@ -238,7 +238,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
         <div className={Style.button_group}>
           <Button
             icon=<FaWallet />
-            btnName="List on Marketplace"
+            btnName="Niêm yết trên thị trường"
             onClick={() =>
               router.push(
                 `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`
@@ -248,7 +248,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
           />
           <Button
             icon=<FaPercentage />
-            btnName="Stake NFT"
+            btnName="Đặt cược NFT"
             onClick={handleOpenStakePopup}
             classStyle={`${Style.button} ${Style.stake_button}`}
           />
@@ -264,7 +264,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
       <div className={Style.popup_overlay}>
         <div className={Style.popup_content}>
           <div className={Style.popup_header}>
-            <h2>Stake NFT</h2>
+            <h2>Khóa NFT</h2>
             <button
               className={Style.popup_close}
               onClick={handleCloseStakePopup}
@@ -274,7 +274,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
           </div>
 
           <div className={Style.popup_body}>
-            <p>Select staking duration for your NFT:</p>
+            <p>Chọn thời gian khóa cho NFT của bạn:</p>
 
             <div className={Style.duration_options}>
               {durationOptions.map((option) => (
@@ -295,7 +295,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
                   <div className={Style.duration_info}>
                     <span className={Style.duration_label}>{option.label}</span>
                     <span className={Style.duration_days}>
-                      {option.days} days
+                      {option.days} ngày
                     </span>
                   </div>
                 </div>
@@ -307,7 +307,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
                 <strong>NFT:</strong> {nft.name} #{nft.tokenId}
               </p>
               <p>
-                <strong>Selected Duration:</strong>{" "}
+                <strong>Thời gian đã chọn:</strong>{" "}
                 {durationOptions[selectedDuration]?.label}
               </p>
             </div>
@@ -337,20 +337,6 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
       <div className={Style.NFTDescription_box}>
         <div className={Style.NFTDescription_box_share}>
           <p>{nft.category}</p>
-          <div className={Style.NFTDescription_box_share_box}>
-            <BsThreeDots
-              className={Style.NFTDescription_box_share_box_icon}
-              onClick={() => openNFTMenu()}
-            />
-
-            {NFTMenu && (
-              <div className={Style.NFTDescription_box_share_box_social}>
-                <a href="#">
-                  <MdOutlineDeleteSweep /> Delete item
-                </a>
-              </div>
-            )}
-          </div>
         </div>
         <div className={Style.NFTDescription_box_profile}>
           <h1>
@@ -366,7 +352,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
                 className={Style.NFTDescription_box_profile_box_left_img}
               />
               <div className={Style.NFTDescription_box_profile_box_left_info}>
-                <small>Creator</small> <br />
+                <small>Người tạo</small> <br />
                 <Link
                   href={{
                     pathname: "/userNFT",
@@ -385,11 +371,11 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
             <p>
               {userInformation.description
                 ? userInformation.description
-                : "NFTs are created using blockchain technology, enabling the verification of ownership and the uniqueness of digital assets. Each NFT is a non-fungible token that can represent images, videos, music, or any other digital content."}
+                : "NFT được tạo ra bằng công nghệ blockchain, cho phép xác thực quyền sở hữu và tính độc nhất của tài sản số. Mỗi NFT là một token không thể thay thế, có thể đại diện cho hình ảnh, video, nhạc hoặc bất kỳ nội dung số nào khác."}
             </p>
             <br />
             <p>
-              <MdTimer /> <span>NFT is created from: </span>
+              <MdTimer /> <span>NFT được tạo từ: </span>
             </p>
 
             <div className={Style.NFTDescription_box_profile_biding_box_timer}>
@@ -413,20 +399,20 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
                   Style.NFTDescription_box_profile_biding_box_price_bid
                 }
               >
-                <small>Current Bid</small>
+                <small>Giá đặt hiện tại</small>
                 <p>{nft.price} ZELL </p>
               </div>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
               {currentAccount == nft.seller?.toLowerCase() ? (
-                <p>You cannoy buy your own NFT</p>
+                <p>Bạn không thể mua NFT của chính mình</p>
               ) : currentAccount == nft.owner?.toLowerCase() ? (
                 renderOwnerButtons()
               ) : (
                 <Button
                   icon=<FaWallet />
-                  btnName="Buy NFT"
+                  btnName="Mua NFT"
                   onClick={() => buyNFT(nft, token)}
                   classStyle={Style.button}
                 />
@@ -434,9 +420,9 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
-              <button onClick={(e) => openTabs(e)}>Bid History</button>
-              <button onClick={(e) => openTabs(e)}>Provanance</button>
-              <button onClick={() => openOwmer()}>Owner</button>
+              <button onClick={(e) => openTabs(e)}>Lịch sử đấu giá</button>
+              <button onClick={(e) => openTabs(e)}>Nguồn gốc</button>
+              <button onClick={() => openOwmer()}>Chủ sở hữu</button>
             </div>
 
             {history && (

@@ -63,9 +63,9 @@ export default function StakingPage() {
   return (
     <div className={Style.staking_page}>
       <div className={Style.header}>
-        <h1>Stake Your NFTs & Earn WEB</h1>
+        <h1>Đặt cược NFT của bạn & kiếm WEB</h1>
         <br />
-        <p>Lock your NFTs to earn passive rewards</p>
+        <p>Khóa NFT của bạn để nhận phần thưởng thụ động</p>
         <br />
         <p>TOKEN WEB - ( ZELL )</p>
       </div>
@@ -73,11 +73,11 @@ export default function StakingPage() {
       <div className={Style.spacing_section}>
         <div className={Style.stats}>
           <div className={Style.stat_item}>
-            <span>Total Staked</span>
-            <strong>{stakedNFTs?.length} NFTs</strong>
+            <span>Tổng NFT đã đặt cược</span>
+            <strong>{stakedNFTs?.length} NFT</strong>
           </div>
           <div className={Style.stat_item}>
-            <span>Reward Pool</span>
+            <span>Quỹ phần thưởng</span>
             <strong>
               <TokenAmount amount={rewardPool} /> ZELL
             </strong>
@@ -89,9 +89,11 @@ export default function StakingPage() {
         <div className={Style.staking_grid}>
           {stakedNFTs?.length === 0 ? (
             <div className={Style.empty_state}>
-              <p>No NFTs staked yet.</p>
+              <p>Chưa có NFT nào được đặt cược.</p>
               <Link href="/author">
-                <button className={Style.go_stake_btn}>Go Stake Now</button>
+                <button className={Style.go_stake_btn}>
+                  Đặt cược ngay bây giờ
+                </button>
               </Link>
             </div>
           ) : (

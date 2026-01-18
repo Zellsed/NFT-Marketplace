@@ -124,7 +124,7 @@ const NFTDetailsImg = ({ nft, token, nft721, nft1155 }) => {
           className={Style.NFTDetailsImg_section}
           onClick={toggleDescription}
         >
-          <p>Description</p>
+          <p>Mô tả</p>
           {description ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
         {description && (
@@ -134,25 +134,25 @@ const NFTDetailsImg = ({ nft, token, nft721, nft1155 }) => {
         )}
 
         <div className={Style.NFTDetailsImg_section} onClick={toggleDetails}>
-          <p>Details</p>
+          <p>Chi tiết</p>
           {details ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
         {details && (
           <div className={Style.NFTDetailsImg_content}>
             <p>
-              <small>File Size:</small> {nft.fileSize} MB
+              <small>Kích thước tệp:</small> {nft.fileSize} MB
             </p>
             <p>
-              <small>File Type:</small> {nft.fileExtension}
+              <small>Loại tệp:</small> {nft.fileExtension}
             </p>
             <p>
-              <small>Owner:</small> {nft.owner}
+              <small>Chủ sở hữu:</small> {nft.owner}
             </p>
             <p>
-              <small>Seller:</small> {nft.seller}
+              <small>Người bán:</small> {nft.seller}
             </p>
             <p>
-              <small>Token ID:</small> {nft.tokenId}
+              <small>Mã Token:</small> {nft.tokenId}
             </p>
           </div>
         )}
