@@ -32,7 +32,7 @@ import {
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 
-import { DefaultPaging, History, SpentType } from 'src/common/enum';
+import { CryptoLegend, DefaultPaging, History, SpentType } from 'src/common/enum';
 import slugify from 'slugify';
 import {
   createBuyNFT1155DTo,
@@ -463,15 +463,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const qb = this.nftRepo
@@ -497,6 +489,10 @@ export class NftMarketplaceService {
       .leftJoin('nft.metadata', 'metadata')
       .andWhere('nft.sold = :sold', { sold: false })
       .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -540,15 +536,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -585,6 +573,10 @@ export class NftMarketplaceService {
         seller: existUser.account,
       })
       .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -628,15 +620,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -673,6 +657,10 @@ export class NftMarketplaceService {
         owner: existUser.account,
       })
       .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -716,15 +704,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const qb = this.nft1155Repo
@@ -755,6 +735,10 @@ export class NftMarketplaceService {
       .leftJoin('nft.metadata', 'metadata')
       .where('nft.sold = :sold', { sold: false })
       .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -798,15 +782,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -848,6 +824,10 @@ export class NftMarketplaceService {
         seller: existUser.account,
       })
       .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
 
     const [data, totalRows] = await Promise.all([
       qb
@@ -891,15 +871,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      sort,
-      fields,
-      name,
-      duration,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      priceDiscount,
+      category
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -943,6 +915,10 @@ export class NftMarketplaceService {
       // })
       .orderBy('nft.created_at', 'DESC');
 
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
+
     const [data, totalRows] = await Promise.all([
       qb
         .offset((page - 1) * limit)
@@ -982,7 +958,7 @@ export class NftMarketplaceService {
   }
 
   async getSliderData(requestTime: string) {
-    const data = this.getAllNfts(requestTime, { page: 1, limit: 5 });
+    const data = await this.getAllNfts(requestTime, { page: 1, limit: 5, category: CryptoLegend.ARTS });
 
     if (!data) {
       return;
@@ -991,7 +967,7 @@ export class NftMarketplaceService {
     const convertedData = await Promise.all(
       (await data).data.map(async (item) => {
         const existingNft = await this.nftRepo.findOne({
-          where: { id: item.id },
+          where: { id: item.nft_id },
         });
 
         if (!existingNft) {
