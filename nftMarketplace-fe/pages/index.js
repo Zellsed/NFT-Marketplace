@@ -34,10 +34,10 @@ const Home = () => {
   const [nfts, setNfts] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
-  const creators = getTopCreators(nfts);
+  const creators = getTopCreators(nfts.items);
 
   useEffect(() => {
-    fetchNFTs().then((items) => {
+    fetchNFTs({ page: 1, limit: 100 }).then((items) => {
       setNfts(items);
       setNftsCopy(items);
     });
@@ -53,24 +53,23 @@ const Home = () => {
         paragraph="Bộ sưu tập NFT chuyên biệt dành cho các sáng tạo dựa trên âm thanh, bao gồm nhạc số, podcast, hiệu ứng âm thanh và nhiều nội dung âm thanh độc quyền khác. Bộ sưu tập này mang đến cho nghệ sĩ, nhà sản xuất âm nhạc và người sáng tạo nội dung một cách thức độc đáo để chia sẻ và kiếm tiền từ các bản ghi của họ thông qua công nghệ blockchain."
       />
       <AudioLive />
-      {/* {creators.length === 0 ? (
+      {creators.length === 0 ? (
         <Loader />
       ) : (
         <FollowerTab TopCreator={creators} />
-      )} */}
-      <Slider NFTData={nfts} />
+      )}
+      <Slider NFTData={nfts.items} />
       {/* <Collection /> */}
       <Title
         heading="NFT nổi bật"
         paragraph="Khám phá những NFT nổi bật nhất trong mọi lĩnh vực của cuộc sống."
       />
       <Filter />
-      {nfts?.length === 0 ? <Loader /> : <NFTCard NFTData={nfts} />}
-      <Title
+      {nfts.items?.length === 0 ? <Loader /> : <NFTCard NFTData={nfts.items} />}
+      {/* <Title
         heading="Duyệt theo danh mục"
         paragraph="Khám phá các NFT trong những danh mục nổi bật nhất."
-      />
-      <Category />
+      /> */}
       <Brand />
     </div>
   );

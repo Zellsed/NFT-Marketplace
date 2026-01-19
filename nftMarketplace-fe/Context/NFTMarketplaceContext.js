@@ -604,12 +604,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const fetchNFTs = async ({ page, limit } = {}) => {
+  const fetchNFTs = async ({ page, limit, category } = {}) => {
     try {
       const nftData = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace`,
         {
-          params: { page, limit },
+          params: { page, limit, category },
         },
       );
 
@@ -684,48 +684,47 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const fetchNFTs1155 = async ({ page, limit } = {}) => {
+  const fetchNFTs1155 = async ({ page, limit, category } = {}) => {
     try {
       const nft1155Data = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-nft-marketplace-1155`,
         {
-          params: { page, limit },
+          params: { page, limit, category },
         },
       );
 
       const items = await Promise.all(
-        nft1155Data.data.data.map(async (e) => {
-          return {
-            itemId: e.item_id,
-            tokenId: e.token_id,
-            amount: e.nft_amount,
-            amountAvailable: e.amount_available,
-            price: e.nft_price,
-            totalPrice: e.total_price,
-            seller: e.nft_seller,
-            owner: e.nft_owner,
-            pinataData: e.pinata_data,
-            name: e.metadata_name,
-            description: e.metadata_description,
-            tokenURI: e.token_uri,
-            category: e.metadata_category,
-            fileExtension: e.file_extension,
-            fileSize: e.file_size,
-            createdAt: e.created_at,
-            likes: e.like,
-          };
-        }),
+        nft1155Data.data.data.map(async (e) => ({
+          itemId: e.item_id,
+          tokenId: e.token_id,
+          amount: e.nft_amount,
+          amountAvailable: e.amount_available,
+          price: e.nft_price,
+          totalPrice: e.total_price,
+          seller: e.nft_seller,
+          owner: e.nft_owner,
+          pinataData: e.pinata_data,
+          name: e.metadata_name,
+          description: e.metadata_description,
+          tokenURI: e.token_uri,
+          category: e.metadata_category,
+          fileExtension: e.file_extension,
+          fileSize: e.file_size,
+          createdAt: e.created_at,
+          likes: e.like,
+        })),
       );
-      console.log(items);
 
       return {
         items,
-        totalRows: nftData.data.totalRows,
-        totalPages: Math.ceil(nftData.data.totalRows / limit),
+        totalRows: nft1155Data.data.totalRows,
+        totalPages: Math.ceil(nft1155Data.data.totalRows / limit),
       };
     } catch (error) {
-      setError("Error while fetching NFTs");
+      console.error("fetchNFTs1155 error", error);
+      setError("Error while fetching NFTs 1155");
       setOpenError(true);
+
       return {
         items: [],
         totalRows: 0,
@@ -739,89 +738,111 @@ export const NFTMarketplaceProvider = ({ children }) => {
     fetchNFTs1155();
   }, []);
 
-  const fetchMyNFTsOrListedNFTs = async (type, token) => {
+  const fetchMyNFTsOrListedNFTs = async (
+    type,
+    token,
+    page,
+    limit,
+    category,
+  ) => {
     try {
-      const response =
-        type == "fetchItemsListed"
-          ? await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721-listed`,
-              { headers: { Authorization: `Bearer ${token}` } },
-            )
-          : await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-721`,
-              { headers: { Authorization: `Bearer ${token}` } },
-            );
+      const url =
+        type === "fetchItemsListed"
+          ? "/api/v1/nft-marketplace/all-my-nft-721-listed"
+          : "/api/v1/nft-marketplace/all-my-nft-721";
 
-      const items = await Promise.all(
-        response.data.data.map(async (e) => {
-          return {
-            price: e.nft_price,
-            tokenId: e.token_id,
-            seller: e.nft_seller,
-            owner: e.nft_owner,
-            pinataData: e.pinata_data,
-            name: e.metadata_name,
-            description: e.metadata_description,
-            tokenURI: e.token_uri,
-            category: e.metadata_category,
-            fileExtension: e.file_extension,
-            fileSize: e.file_size,
-            createdAt: e.created_at,
-            likes: e.like,
-          };
-        }),
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}${url}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { page, limit, category },
+        },
       );
 
-      return items;
+      const items = response.data.data.map((e) => ({
+        price: e.nft_price,
+        tokenId: e.token_id,
+        seller: e.nft_seller,
+        owner: e.nft_owner,
+        pinataData: e.pinata_data,
+        name: e.metadata_name,
+        description: e.metadata_description,
+        tokenURI: e.token_uri,
+        category: e.metadata_category,
+        fileExtension: e.file_extension,
+        fileSize: e.file_size,
+        createdAt: e.created_at,
+        likes: e.like,
+      }));
+
+      return {
+        items,
+        totalRows: response.data.totalRows,
+        totalPages: Math.ceil(response.data.totalRows / limit),
+      };
     } catch (error) {
-      setError("Error while fetching listed NFTs");
-      setOpenError(true);
+      console.error("fetchMyNFTsOrListedNFTs error", error);
+      return {
+        items: [],
+        totalRows: 0,
+        totalPages: 0,
+      };
     }
   };
 
-  const fetchMyNFTsOrListedNFTs1155 = async (type, token) => {
+  const fetchMyNFTsOrListedNFTs1155 = async (
+    type,
+    token,
+    page,
+    limit,
+    category,
+  ) => {
     try {
-      const response =
-        type == "fetchItemsListed"
-          ? await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155-listed`,
-              { headers: { Authorization: `Bearer ${token}` } },
-            )
-          : await axios.get(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/all-my-nft-1155`,
-              { headers: { Authorization: `Bearer ${token}` } },
-            );
+      const url =
+        type === "fetchItemsListed"
+          ? "/api/v1/nft-marketplace/all-my-nft-1155-listed"
+          : "/api/v1/nft-marketplace/all-my-nft-1155";
 
-      const items = await Promise.all(
-        response.data.data.map(async (e) => {
-          return {
-            itemId: e.item_id,
-            tokenId: e.token_id,
-            amount: e.nft_amount,
-            amountAvailable: e.amount_available,
-            price: e.nft_price,
-            totalPrice: e.total_price,
-            seller: e.nft_seller,
-            owner: e.nft_owner,
-            pinataData: e.pinata_data,
-            name: e.metadata_name,
-            description: e.metadata_description,
-            tokenURI: e.token_uri,
-            category: e.metadata_category,
-            fileExtension: e.file_extension,
-            fileSize: e.file_size,
-            createdAt: e.created_at,
-            likes: e.like,
-          };
-        }),
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}${url}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { page, limit, category },
+        },
       );
 
-      return items;
-    } catch (error) {
-      setError("Error while fetching listed NFTs");
-      setOpenError(true);
+      const items = response.data.data.map((e) => ({
+        itemId: e.item_id,
+        tokenId: e.token_id,
+        amount: e.nft_amount,
+        amountAvailable: e.amount_available,
+        price: e.nft_price,
+        totalPrice: e.total_price,
+        seller: e.nft_seller,
+        owner: e.nft_owner,
+        pinataData: e.pinata_data,
+        name: e.metadata_name,
+        description: e.metadata_description,
+        tokenURI: e.token_uri,
+        category: e.metadata_category,
+        fileExtension: e.file_extension,
+        fileSize: e.file_size,
+        createdAt: e.created_at,
+        likes: e.like,
+      }));
 
-      return [];
+      return {
+        items,
+        totalRows: response.data.totalRows,
+        totalPages: Math.ceil(response.data.totalRows / limit),
+      };
+    } catch (error) {
+      console.error("fetchMyNFTsOrListedNFTs1155 error", error);
+      return {
+        items: [],
+        totalRows: 0,
+        totalPages: 0,
+      };
     }
   };
 

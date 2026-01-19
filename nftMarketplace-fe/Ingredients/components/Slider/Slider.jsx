@@ -11,12 +11,15 @@ const Slider = ({ NFTData }) => {
   const dragSlider = useRef();
 
   useEffect(() => {
-    setWidth(dragSlider.current.scrollWidth - dragSlider.current.offsetWidth);
-  });
+    setWidth(
+      dragSlider.current.scrollWidth - dragSlider.current.offsetWidth + 50,
+    );
+  }, [NFTData]);
 
   const handleScroll = (direction) => {
     const { current } = dragSlider;
-    const scrollAmount = window.innerWidth > 1800 ? 270 : 210;
+    const scrollAmount =
+      window.innerWidth > 1800 ? 300 : window.innerWidth > 1200 ? 280 : 240;
 
     if (direction == "left") {
       current.scrollLeft -= scrollAmount;

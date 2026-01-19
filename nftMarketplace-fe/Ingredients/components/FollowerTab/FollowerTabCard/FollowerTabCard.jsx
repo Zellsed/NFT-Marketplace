@@ -44,7 +44,7 @@ const FollowerTabCard = ({ el, i }) => {
         {
           accountFollowing: el.seller,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       setIsFollowing(followUser.data.liked);
@@ -60,7 +60,7 @@ const FollowerTabCard = ({ el, i }) => {
   const fetchUserProfile = async () => {
     try {
       const userProfile = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/account-details?account=${el.seller}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/account-details?account=${el.seller}`,
       );
 
       setUserDetail(userProfile.data.user);
@@ -78,7 +78,7 @@ const FollowerTabCard = ({ el, i }) => {
       try {
         const statusResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/follow/follow-status?account=${el.seller}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
 
         setAccountUser(statusResponse.data.user.account);
@@ -97,68 +97,63 @@ const FollowerTabCard = ({ el, i }) => {
 
   return (
     <div className={Style.FollowerTabCard}>
-      <div className={Style.FollowerTabCard_rank}>
-        <p>
-          #{i + 1} <span>🥇</span>
-        </p>
+      <div className={Style.rank}>
+        <span>#{i + 1}</span>
+        <span className={Style.trophy}>🏆</span>
       </div>
 
-      <div className={Style.FollowerTabCard_box}>
-        <div className={Style.FollowerTabCard_box_img}>
+      <div className={Style.card}>
+        <div className={Style.bgWrapper}>
           <Image
-            className={Style.FollowerTabCard_box_img_img}
             src={user?.background || images.background}
-            alt="profile brafround"
-            width={500}
-            height={300}
-            objectFit="cover"
+            alt="background"
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            style={{ objectFit: "cover" }}
+            className={Style.bg}
           />
+          <div className={Style.overlay} />
         </div>
 
-        <div className={Style.FollowerTabCard_box_profile}>
-          <Link
-            href={{
-              pathname: "/userNFT",
-              query: { seller: el.seller },
-            }}
-          >
+        <div className={Style.avatarContainer}>
+          <Link href={{ pathname: "/userNFT", query: { seller: el.seller } }}>
             <Image
-              className={Style.FollowerTabCard_box_profile_img}
-              alt="profile picture"
-              width={50}
-              height={50}
               src={user?.photo || images.avatar}
+              alt="avatar"
+              width={90}
+              height={90}
+              className={Style.avatar}
             />
           </Link>
         </div>
 
-        <div className={Style.FollowerTabCard_box_info}>
-          <div className={Style.FollowerTabCard_box_info_name}>
-            <h4>
-              {el.seller?.slice(0, 10)}...
-              {""}{" "}
-            </h4>
-            <p>
-              {userDetail.name || ""} - {el.total || 0} ZELL
-            </p>
-          </div>
+        <div className={Style.info}>
+          <h4 className={Style.name}>
+            {el.seller?.slice(0, 6)}...{el.seller?.slice(-4)}
+            {userDetail?.verified && <MdVerified className={Style.verified} />}
+          </h4>
+          <p className={Style.stats}>
+            {userDetail.name || "Unknown"} • {el.total || 0} ZELL
+          </p>
 
-          <div className={Style.FollowerTabCard_box_info_following}>
-            {accountUser !== accountFollowing &&
-              (isFollowing ? (
-                <Button
-                  btnName="UnFollow"
-                  onClick={follow}
-                  icon={<AiFillCheckCircle style={{ marginRight: "8px" }} />}
-                />
-              ) : (
-                <Button
-                  btnName="Follow"
-                  onClick={follow}
-                  icon={<AiOutlineUserAdd style={{ marginRight: "8px" }} />}
-                />
-              ))}
-          </div>
+          {accountUser !== accountFollowing &&
+            (isFollowing ? (
+              <button
+                className={`${Style.followBtn} ${Style.following}`}
+                onClick={follow}
+                disabled={isLoading}
+              >
+                <AiFillCheckCircle /> Đang theo dõi
+              </button>
+            ) : (
+              <button
+                className={Style.followBtn}
+                onClick={follow}
+                disabled={isLoading}
+              >
+                <AiOutlineUserAdd /> Theo dõi
+              </button>
+            ))}
         </div>
       </div>
     </div>

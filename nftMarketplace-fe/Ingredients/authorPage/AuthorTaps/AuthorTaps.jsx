@@ -4,69 +4,21 @@ import { TiArrowSortedDown, TiArrowSortedUp, TiTick } from "react-icons/ti";
 
 import Style from "./AuthorTap.module.css";
 
-const AuthorTaps = ({
-  setCollectiables,
-  setCreated,
-  setLike,
-  setFollower,
-  setFollowing,
-}) => {
+const AuthorTaps = ({ setCollectiables, setCreated }) => {
   const [openList, setOpenList] = useState(false);
   const [activeBtn, setActiveBtn] = useState(1);
   const [selectedMenu, setSelectedMenu] = useState("Most Recent");
 
-  const listArray = [
-    "Created By Admin",
-    "Most Appreciated",
-    "Most Discussed",
-    "Most Viewed",
-  ];
-
-  const openDropDownList = () => {
-    if (!openList) {
-      setOpenList(true);
-    } else {
-      setOpenList(false);
-    }
-  };
-
   const openTab = (e) => {
     const btnText = e.target.innerText;
-    if (btnText == "Listed NFTs") {
+    if (btnText == "NFT được niêm yết") {
       setCollectiables(true);
       setCreated(false);
-      setFollower(false);
-      setFollowing(false);
-      setLike(false);
       setActiveBtn(1);
-    } else if (btnText == "Own NFT") {
+    } else if (btnText == "NFT sở hữu") {
       setCollectiables(false);
       setCreated(true);
-      setFollower(false);
-      setFollowing(false);
-      setLike(false);
       setActiveBtn(2);
-    } else if (btnText == "Liked") {
-      setCollectiables(false);
-      setCreated(false);
-      setFollower(false);
-      setFollowing(false);
-      setLike(true);
-      setActiveBtn(3);
-    } else if (btnText == "Following") {
-      setCollectiables(false);
-      setCreated(false);
-      setFollower(false);
-      setFollowing(true);
-      setLike(false);
-      setActiveBtn(4);
-    } else if (btnText == "Followers") {
-      setCollectiables(false);
-      setCreated(false);
-      setFollower(true);
-      setFollowing(false);
-      setLike(false);
-      setActiveBtn(5);
     }
   };
 
@@ -79,31 +31,13 @@ const AuthorTaps = ({
               className={`${activeBtn == 1 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Listed NFTs
+              NFT được niêm yết
             </button>
             <button
               className={`${activeBtn == 2 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Own NFT
-            </button>
-            <button
-              className={`${activeBtn == 3 ? Style.active : ""}`}
-              onClick={(e) => openTab(e)}
-            >
-              Liked
-            </button>
-            <button
-              className={`${activeBtn == 4 ? Style.active : ""}`}
-              onClick={(e) => openTab(e)}
-            >
-              Following
-            </button>
-            <button
-              className={`${activeBtn == 5 ? Style.active : ""}`}
-              onClick={(e) => openTab(e)}
-            >
-              Followers
+              NFT sở hữu
             </button>
           </div>
         </div>

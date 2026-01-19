@@ -25,7 +25,7 @@ const SearchBar = ({ onHandleSearch, onClearSearch }) => {
         <BsSearch className={Style.SearchBar_box_icon} />
         <input
           type="text"
-          placeholder="Type yout keyword..."
+          placeholder="Nhập từ khóa của bạn..."
           onChange={(e) => setSearchItem(e.target.value)}
           value={searchItem}
         />

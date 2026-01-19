@@ -198,7 +198,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                 fileExtension,
                 fileSize,
                 createdAt,
-                token
+                token,
               );
             }}
             classStyle={Style.upload_box_btn_style}
@@ -265,7 +265,7 @@ const Upload = ({ uploadToIPFS, createNFT }) => {
                 <br />
 
                 <Button
-                  btnName="Close"
+                  btnName="Đóng"
                   onClick={() => setShowPreview(false)}
                   classStyle={Style.upload_box_btn_style}
                 />

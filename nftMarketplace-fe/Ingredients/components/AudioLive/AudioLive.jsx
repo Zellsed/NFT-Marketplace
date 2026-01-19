@@ -12,8 +12,8 @@ const AudioLive = () => {
 
   useEffect(() => {
     fetchNFTs().then((item) => {
-      setFistNft(item);
-      setNftsNew(item);
+      setFistNft(item.items);
+      setNftsNew(item.items);
     });
   }, []);
 

@@ -34,9 +34,9 @@ const collection = () => {
       <CellectionProfile />
       <br />
       <br />
-      <NFTCardTwo NFTData={nfts?.slice(0, 12)} />
+      {/* <NFTCardTwo NFTData={nfts?.slice(0, 12)} /> */}
       <Filter />
-      <Slider NFTData={nfts} />
+      {/* <Slider NFTData={nfts} /> */}
       <Brand />
     </div>
   );

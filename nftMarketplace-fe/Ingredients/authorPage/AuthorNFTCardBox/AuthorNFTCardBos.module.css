@@ -1,108 +1,148 @@
 .AuthorNFTCardBox {
   width: 100%;
-  margin-bottom: 14rem;
-}
-
-.AuthorNFTCardBox_box {
-  width: 80%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-}
-
-.mainTitle {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--icons-color);
-  margin: 2rem 0;
-  text-align: center;
-  padding-bottom: 1rem;
-  border-bottom: 3px solid var(--icons-color);
-}
-
-.nftSections {
-  width: 100%;
+  max-width: 80%;
+  margin: 0 auto 10rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .nftSection {
+  background: var(--main-bg-color);
+  border-radius: 1.2rem;
+  padding: 2.5rem 2rem;
   margin-bottom: 4rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
 }
 
 .sectionTitle {
-  font-size: 2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--icons-color);
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 3px;
+  background: var(--icons-color);
+  margin: 0.6rem auto 0;
+  border-radius: 2px;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.standardBlock {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.standardTitle {
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--icons-color);
-  margin: 3rem 0 1.5rem 0;
-  text-align: center;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--shadow-dark-color);
+  margin-bottom: 1.2rem;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--icons-color);
 }
 
 .emptyState {
   text-align: center;
-  padding: 4rem 2rem;
-  color: var(--icons-color);
-  font-size: 1.2rem;
-  background-color: var(--main-bg-color);
-  border-radius: 1rem;
-  margin: 2rem auto;
-  width: 80%;
-  box-shadow: 0px 2px 5px var(--icons-color);
-}
-
-.noNFTText {
-  text-align: center;
-  color: var(--icons-color);
+  padding: 3rem 2rem;
   font-size: 1.1rem;
-  margin: 2rem 0;
-  padding: 1rem;
-  background-color: var(--main-bg-color);
-  border-radius: 0.5rem;
-  font-style: italic;
+  color: var(--icons-color);
+  opacity: 0.75;
 }
 
-.debugInfo {
-  text-align: left;
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: var(--shadow-dark-color);
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  margin: 1.5rem 0 3rem 0;
+  padding: 0.75rem 1.25rem;
+
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
 }
 
-.debugInfo p {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+.pagination span {
+  min-width: 80px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffd700;
 }
 
-.debugInfo ul {
-  margin: 0;
-  padding-left: 1.5rem;
+.pagination button {
+  padding: 0.55rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  color: #000;
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
 }
 
-.debugInfo li {
-  margin-bottom: 0.3rem;
+.pagination button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.4);
 }
 
-@media screen and (max-width: 35em) {
-  .AuthorNFTCardBox_box {
-    width: 90%;
-    grid-template-columns: 1fr;
-  }
+.pagination button:disabled {
+  background: #444;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
 
-  .mainTitle {
-    font-size: 2rem;
+@media (max-width: 768px) {
+  .nftSection {
+    padding: 2rem 1.2rem;
   }
 
   .sectionTitle {
     font-size: 1.5rem;
   }
+
+  .standardTitle {
+    font-size: 1.1rem;
+  }
 }
 
-@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-  .AuthorNFTCardBox_box {
-    width: 90%;
-    grid-template-columns: repeat(2, 1fr);
+@media screen and (max-width: 480px) {
+  .pagination {
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .pagination button {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .pagination span {
+    font-size: 0.9rem;
+    min-width: 60px;
   }
 }

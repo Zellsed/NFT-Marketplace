@@ -5,7 +5,7 @@ import {
   MdOutlineContentCopy,
   MdManageAccounts,
 } from "react-icons/md";
-
+import { TiTick } from "react-icons/ti";
 import Style from "./Form.module.css";
 import {
   TiSocialFacebook,
@@ -23,6 +23,21 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
   const [facebook, setFacebook] = useState("");
   const [twitter, setTwitter] = useState("");
   const [instagram, setInstagram] = useState("");
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(data.account);
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
 
   const router = useRouter();
 
@@ -45,7 +60,7 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
       data,
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
 
     router.push("/").then(() => {
@@ -58,7 +73,7 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
       <div className={Style.Form_box}>
         <form>
           <div className={Style.Form_box_input}>
-            <label htmlFor="name">Username</label>
+            <label htmlFor="name">Tên người dùng</label>
             <input
               type="text"
               placeholder={data.name}
@@ -69,7 +84,7 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
           </div>
 
           <div className={Style.Form_box_input}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">E-mail</label>
             <div className={Style.Form_box_input_box}>
               <div className={Style.Form_box_input_box_icon}>
                 <HiOutlineMail />
@@ -84,7 +99,7 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
           </div>
 
           <div className={Style.Form_box_input}>
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Mô tả</label>
             <textarea
               name=""
               id=""
@@ -93,7 +108,7 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
               placeholder={
                 information.description
                   ? information.description
-                  : "something about yourself in few words"
+                  : "Vài lời giới thiệu ngắn gọn về bản thân bạn"
               }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -160,21 +175,25 @@ const Form = ({ data, information, background, isImgUploading, token }) => {
           </div>
 
           <div className={Style.Form_box_input}>
-            <label htmlFor="wallet">Wallet address</label>
+            <label htmlFor="wallet">Địa chỉ ví</label>
             <div className={Style.Form_box_input_box}>
               <div className={Style.Form_box_input_box_icon}>
                 <MdManageAccounts />
               </div>
               <input type="text" readOnly placeholder={data.account} />
-              <div className={Style.Form_box_input_box_icon}>
-                <MdOutlineContentCopy />
+              <div
+                className={Style.Form_box_input_box_icon}
+                onClick={handleCopy}
+                style={{ cursor: "pointer" }}
+              >
+                {copied ? <TiTick color="#22c55e" /> : <MdOutlineContentCopy />}
               </div>
             </div>
           </div>
 
           <div className={Style.Form_box_btn}>
             <Button
-              btnName="Upload profile"
+              btnName="Tải lên"
               onClick={(e) => handleUpdateUser(e)}
               classStyle={Style.button}
             />

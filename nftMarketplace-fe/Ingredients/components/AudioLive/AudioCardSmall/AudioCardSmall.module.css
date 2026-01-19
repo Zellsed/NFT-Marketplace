@@ -12,6 +12,14 @@
   cursor: pointer;
 }
 
+.audioPlayer_box_info h4 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
 .audioPlayer_box:hover {
   box-shadow: var(--box-shadow);
 }

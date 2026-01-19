@@ -33,7 +33,7 @@ const Account = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/single-user`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       setData(response.data.user);
@@ -63,7 +63,7 @@ const Account = () => {
         console.error("Error updating profile image:", error);
       }
     },
-    [token, uploadToIPFS]
+    [token, uploadToIPFS],
   );
 
   const onDropBackground = useCallback(
@@ -78,7 +78,7 @@ const Account = () => {
         console.error("Error updating background image:", error);
       }
     },
-    [token, uploadToIPFS]
+    [token, uploadToIPFS],
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -126,7 +126,7 @@ const Account = () => {
             height={150}
             className={Style.account_box_img_img}
           />
-          <p className={Style.account_box_img_para}>Change Image</p>
+          <p className={Style.account_box_img_para}>Thay đổi hình ảnh</p>
         </div>
 
         <div className={Style.account_box_from}>

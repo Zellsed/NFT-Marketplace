@@ -15,18 +15,6 @@
   justify-content: center;
 }
 
-@media screen and (max-width: 35em) {
-  .banner_container {
-    width: 90%;
-  }
-}
-
-@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-  .banner_container {
-    width: 90%;
-  }
-}
-
 .sectionTitle {
   width: 100%;
   font-size: 1.8rem;
@@ -54,6 +42,68 @@
   transition: all 0.3s ease;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  margin: 1.5rem 0 3rem 0;
+  padding: 0.75rem 1.25rem;
+
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.pagination span {
+  min-width: 80px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffd700;
+}
+
+.pagination button {
+  padding: 0.55rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  color: #000;
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+}
+
+.pagination button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.4);
+}
+
+.pagination button:disabled {
+  background: #444;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+@media screen and (max-width: 35em) {
+  .banner_container {
+    width: 90%;
+  }
+}
+
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .banner_container {
+    width: 90%;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .searchPage {
     padding: 1rem;
@@ -65,5 +115,22 @@
 
   .noNFTText {
     font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .pagination {
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .pagination button {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .pagination span {
+    font-size: 0.9rem;
+    min-width: 60px;
   }
 }

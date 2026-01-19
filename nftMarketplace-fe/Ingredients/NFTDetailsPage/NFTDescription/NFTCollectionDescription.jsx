@@ -63,18 +63,10 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
     }
   };
 
-  const openTabs = (e) => {
-    const btnText = e.target.innerText;
-
-    if (btnText == "Bid History") {
-      setHistory(true);
-      setProvanance(false);
-      setOwner(false);
-    } else if (btnText == "Provanance") {
-      setHistory(false);
-      setProvanance(true);
-      setOwner(false);
-    }
+  const openTabs = (tab) => {
+    setHistory(tab === "history");
+    setProvanance(tab === "provenance");
+    setOwner(tab === "owner");
   };
 
   const openOwmer = () => {
@@ -93,9 +85,8 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
   const bidHistory = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history-nft1155/${nft.tokenId}`,
       );
-
       setBidHtr(statusResponse.data);
     } catch (error) {
       console.error(error);
@@ -105,9 +96,8 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
   const provenanceNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance-nft1155/${nft.tokenId}`,
       );
-
       setProvance(statusResponse.data);
     } catch (error) {
       console.error(error);
@@ -117,7 +107,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
   const accountOwnerNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner?id=${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner-nft1155/${nft.tokenId}`,
       );
 
       setOwnerNft(statusResponse.data);
@@ -130,7 +120,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
     const fetchEthPrice = async () => {
       try {
         const response = await axios.get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
         );
 
         setUsdPrice(response.data.ethereum.usd);
@@ -165,20 +155,6 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
       <div className={Style.NFTDescription_box}>
         <div className={Style.NFTDescription_box_share}>
           <p>{nft.category}</p>
-          <div className={Style.NFTDescription_box_share_box}>
-            <BsThreeDots
-              className={Style.NFTDescription_box_share_box_icon}
-              onClick={() => openNFTMenu()}
-            />
-
-            {NFTMenu && (
-              <div className={Style.NFTDescription_box_share_box_social}>
-                <a href="#">
-                  <MdOutlineDeleteSweep /> Delete item
-                </a>
-              </div>
-            )}
-          </div>
         </div>
         <div className={Style.NFTDescription_box_profile}>
           <h1>
@@ -194,7 +170,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                 className={Style.NFTDescription_box_profile_box_left_img}
               />
               <div className={Style.NFTDescription_box_profile_box_left_info}>
-                <small>Creator</small> <br />
+                <small>Người tạo</small> <br />
                 <Link
                   href={{
                     pathname: "/userNFT",
@@ -213,11 +189,11 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
             <p>
               {userInformation.description
                 ? userInformation.description
-                : "NFTs are created using blockchain technology, enabling the verification of ownership and the uniqueness of digital assets. Each NFT is a non-fungible token that can represent images, videos, music, or any other digital content."}
+                : "NFT được tạo ra bằng công nghệ blockchain, cho phép xác thực quyền sở hữu và tính độc nhất của tài sản số. Mỗi NFT là một token không thể thay thế, có thể đại diện cho hình ảnh, video, nhạc hoặc bất kỳ nội dung số nào khác."}
             </p>
             <br />
             <p>
-              <MdTimer /> <span>NFT is created from: </span>
+              <MdTimer /> <span>NFT được tạo từ: </span>
             </p>
 
             <div className={Style.NFTDescription_box_profile_biding_box_timer}>
@@ -241,7 +217,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                   Style.NFTDescription_box_profile_biding_box_price_bid
                 }
               >
-                <small>Current Bid</small>
+                <small>Tổng giá</small>
                 <p>{formatRawValue(nft.totalPrice)} ZELL </p>
               </div>
             </div>
@@ -249,15 +225,15 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
             <div
               className={Style.NFTDescription_box_profile_biding_box_quantity}
             >
-              <small className={Style.quantity_title}>Quantity</small>
+              <small className={Style.quantity_title}>Số lượng</small>
               <div className={Style.quantity_box}>
                 <div className={Style.quantity_item}>
-                  <small>Available</small>
+                  <small>Khả dụng</small>
                   <p>{nft.amountAvailable || 0}</p>
                 </div>
                 <div className={Style.quantity_divider}></div>
                 <div className={Style.quantity_item}>
-                  <small>Total</small>
+                  <small>Tổng cộng</small>
                   <p>{nft.amount || 0}</p>
                 </div>
               </div>
@@ -268,20 +244,20 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                 Style.NFTDescription_box_profile_biding_box_pricePerItem
               }
             >
-              <small>Price per NFT</small>
+              <small>Giá mỗi NFT</small>
               <p>{nft.price} ZELL </p>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
               {currentAccount == nft.seller?.toLowerCase() ? (
-                <p>You cannot buy your own NFT</p>
+                <p>Bạn không thể mua NFT của chính mình</p>
               ) : currentAccount == nft.owner?.toLowerCase() ? (
                 <Button
                   icon=<FaWallet />
-                  btnName="List on Marketplace"
+                  btnName="Đăng bán trên Marketplace"
                   onClick={() =>
                     router.push(
-                      `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`
+                      `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`,
                     )
                   }
                   classStyle={Style.button}
@@ -290,7 +266,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                 <>
                   <Button
                     icon=<FaWallet />
-                    btnName="Buy NFT"
+                    btnName="Mua NFT"
                     onClick={() => setShowQuantityInput(true)}
                     classStyle={Style.button}
                   />
@@ -298,8 +274,8 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                   {showQuantityInput && (
                     <div className={Style.modalOverlay}>
                       <div className={Style.modalContent}>
-                        <h3>Buy NFT</h3>
-                        <p>Available: {nft.amountAvailable || 0}</p>
+                        <h3>Mua NFT</h3>
+                        <p>Khả dụng : {nft.amountAvailable || 0}</p>
 
                         <input
                           type="number"
@@ -316,7 +292,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                         <div className={Style.modalButtons}>
                           <Button
                             icon=<FaWallet />
-                            btnName="Confirm Buy"
+                            btnName="Xác nhận mua"
                             onClick={() => {
                               if (
                                 buyQuantity > 0 &&
@@ -334,7 +310,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
                             className={Style.cancelBtn}
                             onClick={() => setShowQuantityInput(false)}
                           >
-                            Cancel
+                            Hủy bỏ
                           </button>
                         </div>
                       </div>
@@ -345,9 +321,11 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
-              <button onClick={(e) => openTabs(e)}>Bid History</button>
-              <button onClick={(e) => openTabs(e)}>Provanance</button>
-              <button onClick={() => openOwmer()}>Owner</button>
+              <button onClick={() => openTabs("history")}>
+                Lịch sử đấu giá
+              </button>
+              <button onClick={() => openTabs("provenance")}>Nguồn gốc</button>
+              <button onClick={() => openTabs("owner")}>Chủ sở hữu</button>
             </div>
 
             {history && (

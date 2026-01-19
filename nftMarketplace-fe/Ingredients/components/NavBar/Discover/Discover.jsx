@@ -6,7 +6,6 @@ import Style from "./Discover.module.css";
 const Discover = ({ token, information }) => {
   const tokendetected = [
     { name: "Chuyển tiền", link: "transferFunds" },
-    { name: "Bộ sưu tập", link: "collection" },
     { name: "Tìm kiếm", link: "searchPage" },
     { name: "Trang cá nhân tác giả", link: "author" },
     { name: "Cài đặt tài khoản", link: "account" },
@@ -15,7 +14,6 @@ const Discover = ({ token, information }) => {
 
   const noTokendetected = [
     { name: "Chuyển tiền", link: "transferFunds" },
-    { name: "Bộ sưu tập", link: "collection" },
     { name: "Tìm kiếm", link: "searchPage" },
   ];
 

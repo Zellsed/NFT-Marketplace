@@ -32,31 +32,49 @@ const SearchPage = () => {
   const [page1155, setPage1155] = useState(1);
   const [totalPages1155, setTotalPages1155] = useState(1);
 
+  const [category, setCategory] = useState(null);
+
   useEffect(() => {
-    const loadNFTs = async () => {
+    const load721 = async () => {
       try {
         setLoading(true);
-        const items721 = await fetchNFTs({ page, limit: 3 });
-        const items1155 = await fetchNFTs1155({ page, limit: 3 });
-        console.log("items1155", items1155);
+        const items721 = await fetchNFTs({ page, limit: 8, category });
 
         setNfts721(items721.items || []);
         setNfts721Copy(items721.items || []);
         setTotalPages(items721.totalPages || 1);
-
-        setNfts1155(items1155.items || []);
-        setNfts1155Copy(items1155.items || []);
-        setTotalPages1155(items1155.totalPages || 1);
-      } catch (error) {
-        console.error(error);
-        setError("Please reload the browser");
+      } catch (e) {
+        setError("Không thể tải NFT ERC-721");
       } finally {
         setLoading(false);
       }
     };
 
-    loadNFTs();
-  }, [page]);
+    load721();
+  }, [page, category]);
+
+  useEffect(() => {
+    const load1155 = async () => {
+      try {
+        setLoading(true);
+        const items1155 = await fetchNFTs1155({
+          page: page1155,
+          limit: 8,
+          category,
+        });
+
+        setNfts1155(items1155.items || []);
+        setNfts1155Copy(items1155.items || []);
+        setTotalPages1155(items1155.totalPages || 1);
+      } catch (e) {
+        setError("Không thể tải NFT ERC-1155");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load1155();
+  }, [page1155, category]);
 
   const onHandleSearch = (value) => {
     const query = value.toLowerCase();
@@ -77,6 +95,12 @@ const SearchPage = () => {
     setNfts1155(nfts1155Copy);
   };
 
+  const onSelectCategory = (cat) => {
+    setCategory(cat);
+    setPage(1);
+    setPage1155(1);
+  };
+
   return (
     <div className={Style.searchPage}>
       <div className={Style.banner_container}>
@@ -87,7 +111,8 @@ const SearchPage = () => {
         onHandleSearch={onHandleSearch}
         onClearSearch={onClearSearch}
       />
-      <Filter />
+
+      <Filter onSelectCategory={onSelectCategory} />
 
       {loading ? (
         <Loader />
@@ -102,7 +127,7 @@ const SearchPage = () => {
 
           <div className={Style.pagination}>
             <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-              Prev
+              Trước
             </button>
 
             <span>
@@ -113,7 +138,7 @@ const SearchPage = () => {
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next
+              Tiếp
             </button>
           </div>
 
@@ -129,7 +154,7 @@ const SearchPage = () => {
               disabled={page1155 === 1}
               onClick={() => setPage1155((p) => p - 1)}
             >
-              Prev
+              Trước
             </button>
 
             <span>
@@ -138,9 +163,9 @@ const SearchPage = () => {
 
             <button
               disabled={page1155 === totalPages1155}
-              onClick={() => setNfts1155((p) => p + 1)}
+              onClick={() => setPage1155((p) => p + 1)}
             >
-              Next
+              Tiếp
             </button>
           </div>
           <Brand />
