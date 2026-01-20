@@ -65,9 +65,15 @@ export class NftMarketplaceController {
   }
 
   @ApiBearerAuth()
-  @Get('slider-data')
-  async getSliderData(@Req() req: Request) {
+  @Get('slider-data/721')
+  async getSliderDataNft721(@Req() req: Request) {
     return await this.nftMarketplaceService.getSliderData(req.requestTime);
+  }
+
+  @ApiBearerAuth()
+  @Get('slider-data/1155')
+  async getSliderDataNft1155(@Req() req: Request) {
+    return await this.nftMarketplaceService.getSliderDataNft1155(req.requestTime);
   }
 
   @Get('total-transaction-marketplace-all')

@@ -32,7 +32,12 @@ import {
 } from 'src/core/lib/database/entities';
 import { getListNFTDto, getNFTDto } from './dto/getNft.dto';
 
-import { CryptoLegend, DefaultPaging, History, SpentType } from 'src/common/enum';
+import {
+  CryptoLegend,
+  DefaultPaging,
+  History,
+  SpentType,
+} from 'src/common/enum';
 import slugify from 'slugify';
 import {
   createBuyNFT1155DTo,
@@ -463,7 +468,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const qb = this.nftRepo
@@ -532,11 +537,90 @@ export class NftMarketplaceService {
     };
   }
 
+  async getAllNfts721excludingVideosAndMusic(
+    requestTime: string,
+    body: getNFTDto,
+  ) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      category,
+    } = body;
+
+    const qb = this.nftRepo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.token_id' as 'tokenId',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.price' as 'price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .andWhere('nft.sold = :sold', { sold: false })
+      .andWhere('metadata.category NOT IN (:...excludeCategories)', {
+        excludeCategories: ['Music', 'Video'],
+      })
+      .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nftRepo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft721: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
   async getAllMyNft721Listed(req: Request, body: getNFTDto) {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -620,7 +704,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -704,7 +788,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const qb = this.nft1155Repo
@@ -778,11 +862,95 @@ export class NftMarketplaceService {
     };
   }
 
+  async getAllNfts1155excludingVideosAndMusic(
+    requestTime: string,
+    body: getNFTDto,
+  ) {
+    const {
+      page = DefaultPaging.PAGE,
+      limit = DefaultPaging.LIMIT,
+      category,
+    } = body;
+
+    const qb = this.nft1155Repo
+      .createQueryBuilder('nft')
+      .select([
+        'nft.id' as 'id',
+        'nft.item_id' as 'item_id',
+        'nft.token_id' as 'token_id',
+        'nft.nft_contract' as 'nft_contract',
+        'nft.seller' as 'seller',
+        'nft.owner' as 'owner',
+        'nft.amount' as 'amount',
+        'nft.amount_available' as 'amount_available',
+        'nft.price' as 'price',
+        'nft.total_price' as 'total_price',
+        'nft.sold' as 'sold',
+        'nft.metadata_id' as 'metadata_id',
+        'metadata.token_uri' as 'token_uri',
+        'metadata.name' as 'name',
+        'metadata.description' as 'description',
+        'metadata.pinata_data' as 'tokenURI',
+        'metadata.category' as 'category',
+        'metadata.file_extension' as 'fileExtension',
+        'metadata.file_size' as 'fileSize',
+        'nft.created_at' as 'created_at',
+        'nft.updated_at' as 'updated_at',
+      ])
+      .leftJoin('nft.metadata', 'metadata')
+      .where('nft.sold = :sold', { sold: false })
+      .andWhere('metadata.category NOT IN (:...excludeCategories)', {
+        excludeCategories: ['Music', 'Video'],
+      })
+      .orderBy('nft.created_at', 'DESC');
+
+    if (category) {
+      qb.andWhere('metadata.category = :category', { category: category });
+    }
+
+    const [data, totalRows] = await Promise.all([
+      qb
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getRawMany(),
+
+      qb.getCount(),
+    ]);
+
+    const convertedData = await Promise.all(
+      data.map(async (item) => {
+        const existingNft = await this.nft1155Repo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingLinkNft = await this.likeRepo.find({
+          where: { nft1155: { id: existingNft.id } },
+        });
+
+        return {
+          ...item,
+          like: existingLinkNft.length,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      totalRows: totalRows,
+      data: convertedData,
+    };
+  }
+
   async getAllMyNft1155Listed(req: Request, body: getNFTDto) {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -871,7 +1039,7 @@ export class NftMarketplaceService {
     const {
       page = DefaultPaging.PAGE,
       limit = DefaultPaging.LIMIT,
-      category
+      category,
     } = body;
 
     const existUser = await this.userRepo.findOne({
@@ -958,7 +1126,11 @@ export class NftMarketplaceService {
   }
 
   async getSliderData(requestTime: string) {
-    const data = await this.getAllNfts(requestTime, { page: 1, limit: 5, category: CryptoLegend.ARTS });
+    const data = await this.getAllNfts721excludingVideosAndMusic(requestTime, {
+      page: 1,
+      limit: 5,
+      category: CryptoLegend.ARTS,
+    });
 
     if (!data) {
       return;
@@ -967,6 +1139,57 @@ export class NftMarketplaceService {
     const convertedData = await Promise.all(
       (await data).data.map(async (item) => {
         const existingNft = await this.nftRepo.findOne({
+          where: { id: item.nft_id },
+        });
+
+        if (!existingNft) {
+          throw new Error('Nft not found');
+        }
+
+        const existingUser = await this.userRepo.findOne({
+          where: { account: existingNft.seller.toLowerCase() },
+        });
+
+        if (!existingUser) {
+          throw new Error('User not found');
+        }
+
+        const existingUserInformation = await this.userInformationRepo.findOne({
+          where: { id: existingUser.id },
+        });
+
+        if (!existingUserInformation) {
+          throw new Error('User Information not found');
+        }
+
+        return {
+          ...item,
+          user: existingUser,
+          userInformation: existingUserInformation,
+        };
+      }),
+    );
+
+    return {
+      status: 'success',
+      requestTime: requestTime,
+      data: convertedData,
+    };
+  }
+
+  async getSliderDataNft1155(requestTime: string) {
+    const data = await this.getAllNfts1155excludingVideosAndMusic(requestTime, {
+      page: 1,
+      limit: 5,
+    });
+
+    if (!data) {
+      return;
+    }
+
+    const convertedData = await Promise.all(
+      (await data).data.map(async (item) => {
+        const existingNft = await this.nft1155Repo.findOne({
           where: { id: item.nft_id },
         });
 
