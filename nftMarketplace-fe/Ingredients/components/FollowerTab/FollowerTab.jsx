@@ -79,14 +79,6 @@ const FollowerTab = ({ TopCreator }) => {
             <button onClick={() => openPopular()}>
               <RiUserFollowFill /> Phổ biến
             </button>
-
-            {/* <button onClick={() => openFollower()}>
-              <RiUserFollowFill /> Following
-            </button> */}
-
-            {/* <button onClick={() => openNows()}>
-              <RiAwardLine /> NoteWorthy
-            </button> */}
           </div>
         </div>
       </div>
@@ -98,22 +90,6 @@ const FollowerTab = ({ TopCreator }) => {
           ))}
         </div>
       )}
-
-      {/* {following && (
-        <div className={Style.followerTab_box}>
-          {FollowingArray.map((el, i) => (
-            <FollowerTabCard key={i + 1} i={i} el={el} />
-          ))}
-        </div>
-      )} */}
-
-      {/* {news && (
-        <div className={Style.followerTab_box}>
-          {NewsArray.map((el, i) => (
-            <FollowerTabCard key={i + 1} i={i} el={el} />
-          ))}
-        </div>
-      )} */}
     </div>
   );
 };

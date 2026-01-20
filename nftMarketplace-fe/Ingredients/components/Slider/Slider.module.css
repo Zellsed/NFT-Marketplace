@@ -1,3 +1,28 @@
+.empty {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+.empty_box {
+  background: linear-gradient(145deg, #1f1f1f, #141414);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 3rem 4rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.empty_icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
 .slider {
   width: 100%;
 }

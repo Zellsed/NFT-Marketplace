@@ -37,7 +37,7 @@ const SliderCard = ({ el, i }) => {
 
           <div className={Style.sliderCard_box_price_time}>
             <MdTimer />
-            <span>{format(Number(el.createdAt), "vi")}</span>
+            <span>{format(new Date(el.createdAt), "vi")}</span>
           </div>
         </div>
       </div>

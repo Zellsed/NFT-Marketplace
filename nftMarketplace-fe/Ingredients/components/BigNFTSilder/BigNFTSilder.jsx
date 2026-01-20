@@ -10,7 +10,7 @@ import Button from "../Button/Button";
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
-const BigNFTSilder = () => {
+const BigNFTSilder = ({ Tab }) => {
   const { getSliderData } = useContext(NFTMarketplaceContext);
 
   const [idNumber, setIdNumber] = useState(0);
@@ -36,8 +36,10 @@ const BigNFTSilder = () => {
     const fetchSliderData = async () => {
       try {
         setIsLoading(true);
-        const data = await getSliderData();
-        setSliderData(data);
+        setIdNumber(0);
+
+        const data = await getSliderData({ Tab });
+        setSliderData(data || []);
       } catch (error) {
         console.error("Error fetching latest NFTs:", error);
       } finally {
@@ -45,8 +47,8 @@ const BigNFTSilder = () => {
       }
     };
 
-    fetchSliderData();
-  }, [getSliderData]);
+    if (Tab) fetchSliderData();
+  }, [Tab, getSliderData]);
 
   if (isLoading) {
     return (

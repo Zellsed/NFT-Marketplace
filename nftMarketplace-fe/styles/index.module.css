@@ -1,0 +1,102 @@
+.toggleContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  background-color: var(--main-bg-color);
+}
+
+.toggleBox {
+  background-color: var(--shadow-dark-color);
+  padding: 5px;
+  border-radius: 50px;
+  display: flex;
+  gap: 10px;
+  box-shadow: var(--box-shadow);
+}
+
+.toggleBox button {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--icons-color);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.toggleBox button.activeBtn {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:hover {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:hover {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:active {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:active {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:focus {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:focus {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:disabled {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:disabled {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:disabled:hover {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:disabled:hover {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:disabled:active {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:disabled:active {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button:disabled:focus {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}
+
+.toggleBox button.activeBtn:disabled:focus {
+  background-color: var(--icons-color);
+  color: var(--main-bg-color);
+}

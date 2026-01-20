@@ -645,12 +645,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const getSliderData = async () => {
+  const getSliderData = async ({ Tab } = {}) => {
     try {
       const sliderData = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/slider-data`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-marketplace/slider-data/${Tab}`,
       );
-
       const items = await Promise.all(
         sliderData.data.data.map(async (e) => {
           return {
@@ -676,7 +675,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
           };
         }),
       );
-
       return items;
     } catch (error) {
       setError("Error while fetching slider data");
