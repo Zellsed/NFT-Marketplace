@@ -42,7 +42,7 @@ export default function UnstakeModal({
   return (
     <div className={Style.modal_overlay} onClick={onClose}>
       <div className={Style.modal_content} onClick={(e) => e.stopPropagation()}>
-        <h2>{isEarly ? "Early Unstake" : "Confirm Unstake"}</h2>
+        <h2>{isEarly ? "Rút sớm" : "Xác nhận rút"}</h2>
 
         <div className={Style.modal_nft}>
           <img src={stake.pinataData || "/placeholder-nft.png"} alt="NFT" />
@@ -50,12 +50,12 @@ export default function UnstakeModal({
             <p>
               <strong>{stake.name || `NFT #${stake.tokenId}`}</strong>
             </p>
-            <p>Original Reward: ~{stake.estimatedReward?.toFixed(2)} WEB</p>
+            <p>Phần thưởng gốc: ~{stake.estimatedReward?.toFixed(2)} WEB</p>
             {isEarly && (
               <>
-                <p className={Style.penalty}>Penalty: -50%</p>
+                <p className={Style.penalty}>Hình phạt: -50%</p>
                 <p className={Style.final_reward}>
-                  Final Reward: ~{finalReward.toFixed(2)} WEB
+                  Phần thưởng cuối cùng: ~{finalReward.toFixed(2)} WEB
                 </p>
               </>
             )}
@@ -65,15 +65,15 @@ export default function UnstakeModal({
         {isEarly && (
           <div className={Style.warning_message}>
             <p>
-              ⚠️ You are unstaking early! You will receive only 50% of your
-              rewards.
+              ⚠️Bạn đang rút tiền đặt cọc sớm! Bạn sẽ chỉ nhận được 50% số tiền
+              thưởng của mình.
             </p>
           </div>
         )}
 
         <div className={Style.modal_actions}>
           <button onClick={onClose} className={Style.btn_cancel}>
-            Cancel
+            Hủy bỏ
           </button>
           <button
             onClick={handleConfirm}
@@ -83,10 +83,10 @@ export default function UnstakeModal({
             }`}
           >
             {isLoading
-              ? "Processing..."
+              ? "Xử lý..."
               : isEarly
-              ? "Confirm Early Unstake"
-              : "Confirm Unstake"}
+              ? "Xác nhận việc rút vốn sớm"
+              : "Xác nhận rút tiền đặt cọc"}
           </button>
         </div>
       </div>
