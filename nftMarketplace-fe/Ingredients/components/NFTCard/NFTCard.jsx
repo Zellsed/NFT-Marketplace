@@ -1,52 +1,30 @@
 import React, { useState } from "react";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { BsImages } from "react-icons/bs";
-import Image from "next/image";
-import { format } from "timeago.js";
-
-import Style from "./NFTCard.module.css";
-import images from "../../../img";
-import Link from "next/link";
+import { AiFillHeart } from "react-icons/ai";
 import { MdTimer } from "react-icons/md";
+import Image from "next/image";
+import Link from "next/link";
+import Style from "./NFTCard.module.css";
 
 const ITEMS_PER_PAGE = 8;
 
 const NFTCard = ({ NFTData }) => {
-  const [like, setLike] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const likeNft = () => setLike(!like);
 
   const totalItems = NFTData?.length || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentItems = NFTData?.slice(startIndex, endIndex) || [];
+  const currentItems =
+    NFTData?.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE,
+    ) || [];
 
-  const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  if (totalItems === 0) {
+  if (totalItems === 0)
     return (
-      <div className={Style.NFTCardContainer}>
-        <div className={Style.empty}>
-          <div className={Style.empty_box}>
-            <span className={Style.empty_icon}>📦</span>
-            <h3>Chưa có dữ liệu</h3>
-            <p>
-              Hiện tại chưa có NFT nào để hiển thị.
-              <br />
-              Vui lòng thử lại sau hoặc chọn danh mục khác.
-            </p>
-          </div>
-        </div>
+      <div className={Style.empty_box}>
+        <span className={Style.empty_icon}>📦</span>
+        <h3>Chưa có dữ liệu cho mục này</h3>
       </div>
     );
-  }
 
   return (
     <div className={Style.NFTCardContainer}>
@@ -59,35 +37,44 @@ const NFTCard = ({ NFTData }) => {
           >
             <div className={Style.NFTCard_box}>
               <div className={Style.NFTCard_box_img}>
-                {el.fileExtension === "mp4" || el.fileExtension === "webm" ? (
+                {el.fileExtension === "mp4" ? (
                   <video
                     controls
                     autoPlay
                     muted
                     loop
-                    className={Style.NFTCard_box_img_video}
+                    className={Style.NFTCard_box_img_img}
                   >
-                    <source
-                      src={el.pinataData}
-                      type={`video/${el.fileExtension}`}
-                    />
+                    <source src={el.pinataData} type="video/mp4" />
                   </video>
                 ) : ["mp3", "wav", "ogg"].includes(el.fileExtension) ? (
                   <div className={Style.audioContainer}>
-                    <audio
-                      controls
-                      className={Style.NFTCardTwo_box_NFT_audio_element}
-                    >
-                      <source
-                        src={el.pinataData}
-                        type={`audio/${el.fileExtension}`}
-                      />
-                    </audio>
+                    <div className={Style.audioGlow}></div>
+
+                    <div className={Style.audioDiscContainer}>
+                      <div className={Style.audioDisc}>
+                        <div className={Style.audioDiscCenter}></div>
+                      </div>
+                      <div className={Style.audioWavesCustom}>
+                        {[...Array(12)].map((_, index) => (
+                          <span key={index} className={Style.waveBar}></span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={Style.audioPlayerWrapper}>
+                      <audio controls className={Style.customAudioTag}>
+                        <source
+                          src={el.pinataData}
+                          type={`audio/${el.fileExtension}`}
+                        />
+                      </audio>
+                    </div>
                   </div>
                 ) : (
                   <Image
                     src={el.pinataData}
-                    alt="NFT image"
+                    alt="NFT"
                     className={Style.NFTCard_box_img_img}
                     width={500}
                     height={500}
@@ -98,50 +85,27 @@ const NFTCard = ({ NFTData }) => {
 
               <div className={Style.NFTCard_box_update}>
                 <div className={Style.NFTCard_box_update_left}>
-                  <div
-                    className={Style.NFTCard_box_update_left_like}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      likeNft();
-                    }}
-                  >
-                    <AiFillHeart
-                      className={Style.NFTCard_box_update_left_like_icon}
-                    />
-                    {el.likes}
+                  <div className={Style.likeBtn}>
+                    <AiFillHeart /> {el.likes || 0}
                   </div>
                 </div>
-
                 <div className={Style.NFTCard_box_update_right}>
-                  <div className={Style.NFTCard_box_update_right_info}>
+                  <div className={Style.timerBox}>
                     <MdTimer />{" "}
-                    <span>
-                      {new Date(el.createdAt).toLocaleString("vi-VN", {
-                        hour12: false,
-                      })}
-                    </span>
+                    <span>{new Date(el.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
 
-              <div className={Style.NFTCard_box_update_details}>
-                <div className={Style.NFTCard_box_update_details_price}>
-                  <div className={Style.NFTCard_box_update_details_price_box}>
+              <div className={Style.NFTCard_box_details}>
+                <div className={Style.details_price_skew}>
+                  <div className={Style.details_content}>
                     <h4 className={Style.nftTitle}>
-                      {el.name.slice(0, 20)} #{el.tokenId}
+                      {el.name} #{el.tokenId}
                     </h4>
-
-                    <div
-                      className={Style.NFTCard_box_update_details_price_box_box}
-                    >
-                      <div
-                        className={
-                          Style.NFTCard_box_update_details_price_box_bid
-                        }
-                      >
-                        <small>Giá hiện tại</small>
-                        <p>{el.price} ZELL</p>
-                      </div>
+                    <div className={Style.price_box}>
+                      <small>Giá hiện tại</small>
+                      <p>{el.price} ZELL</p>
                     </div>
                   </div>
                 </div>
@@ -153,33 +117,17 @@ const NFTCard = ({ NFTData }) => {
 
       {totalPages > 1 && (
         <div className={Style.pagination}>
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={Style.pageBtn}
-          >
-            Trước
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {Array.from({ length: totalPages }, (_, i) => (
             <button
-              key={page}
-              onClick={() => goToPage(page)}
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
               className={`${Style.pageBtn} ${
-                currentPage === page ? Style.active : ""
+                currentPage === i + 1 ? Style.active : ""
               }`}
             >
-              {page}
+              {i + 1}
             </button>
           ))}
-
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={Style.pageBtn}
-          >
-            Tiếp
-          </button>
         </div>
       )}
     </div>

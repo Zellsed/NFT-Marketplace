@@ -1,31 +1,28 @@
-import React, { useState } from "react";
-
+import React from "react";
 import Style from "./AudioCardSmall.module.css";
+import { TbMusic } from "react-icons/tb";
 
 const AudioCardSmall = ({ NFTData }) => {
   return (
-    <div className={Style.audioPlayer}>
-      <div className={Style.audioPlayer_box}>
-        <div className={Style.audioPlayer_box_info}>
-          <h4>{NFTData.name}</h4>
-          <h5>#{NFTData.tokenId}</h5>
-          <div className={Style.audioPlayer_box_info_box}>
-            <div className={Style.audioPlayer_box_info_box_price}>
-              <small>Price</small>
-              <p>{NFTData.price} ETH</p>
-            </div>
+    <div className={Style.audioSmall}>
+      <div className={Style.audioSmall_box}>
+        <div className={Style.audioSmall_left}>
+          <div className={Style.mini_disc}>
+            <TbMusic />
+          </div>
+          <div className={Style.audioSmall_info}>
+            <h4>{NFTData.name}</h4>
+            <p>{NFTData.price} ZELL</p>
           </div>
         </div>
 
-        <div className={Style.audioPlayer_box_audio}>
-          <div className={Style.audioContainer}>
-            <audio controls className={Style.audioElement}>
-              <source
-                src={NFTData.pinataData}
-                type={`audio/${NFTData.fileExtension}`}
-              />
-            </audio>
-          </div>
+        <div className={Style.audioSmall_right}>
+          <audio controls className={Style.mini_audio}>
+            <source
+              src={NFTData.pinataData}
+              type={`audio/${NFTData.fileExtension}`}
+            />
+          </audio>
         </div>
       </div>
     </div>

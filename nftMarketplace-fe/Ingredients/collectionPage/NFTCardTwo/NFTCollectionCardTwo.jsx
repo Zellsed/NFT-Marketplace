@@ -40,19 +40,29 @@ const NFTCollectionCardTwo = ({ NFTData }) => {
                   </video>
                   <div className={Style.media_badge}>VIDEO</div>
                 </div>
-              ) : el.fileExtension === "mp3" ||
-                el.fileExtension === "wav" ||
-                el.fileExtension === "ogg" ? (
-                <div className={Style.media_container}>
-                  <div className={Style.audio_container}>
-                    <audio controls className={Style.audio_element}>
+              ) : ["mp3", "wav", "ogg"].includes(el.fileExtension) ? (
+                <div className={Style.audioContainer}>
+                  <div className={Style.audioGlow}></div>
+
+                  <div className={Style.audioDiscContainer}>
+                    <div className={Style.audioDisc}>
+                      <div className={Style.audioDiscCenter}></div>
+                    </div>
+                    <div className={Style.audioWavesCustom}>
+                      {[...Array(12)].map((_, index) => (
+                        <span key={index} className={Style.waveBar}></span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={Style.audioPlayerWrapper}>
+                    <audio controls className={Style.customAudioTag}>
                       <source
                         src={el.pinataData}
                         type={`audio/${el.fileExtension}`}
                       />
                     </audio>
                   </div>
-                  <div className={Style.media_badge}>AUDIO</div>
                 </div>
               ) : (
                 <div className={Style.media_container}>
