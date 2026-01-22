@@ -77,32 +77,32 @@ const ReSellToken = () => {
               />
             )
           ) : (
-            <p>Loading NFT preview...</p>
+            <p>Đang tải bản xem trước NFT...</p>
           )}
         </div>
 
         <div className={Style.reSellToken_info}>
-          <h1 className={Style.title}>Resell Your NFT</h1>
+          <h1 className={Style.title}>Bán NFT của bạn</h1>
           {name && <h2>{name}</h2>}
           {description && <p className={Style.desc}>{description}</p>}
 
           <div className={Style.details}>
             {category && (
               <p>
-                <strong>Category:</strong> {category}
+                <strong>Loại:</strong> {category}
               </p>
             )}
           </div>
 
           <div className={Style.priceInput}>
-            <label htmlFor="price">Set Resell Price</label>
+            <label htmlFor="price">Đặt giá bán lại</label>
             <div className={Style.priceField}>
               <input
                 id="price"
                 type="number"
                 min={0.001}
                 step="0.001"
-                placeholder="Enter price (WEB)"
+                placeholder="Nhập giá (WEB)"
                 onChange={(e) => setPrice(e.target.value)}
               />
               <FaEthereum className={Style.ethIcon} />
@@ -110,7 +110,7 @@ const ReSellToken = () => {
           </div>
 
           <Button
-            btnName="List NFT for Sale"
+            btnName="Đăng bán"
             classStyle={Style.resellBtn}
             onClick={resell}
           />

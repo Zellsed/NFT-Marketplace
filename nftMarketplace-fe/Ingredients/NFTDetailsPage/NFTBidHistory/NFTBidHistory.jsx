@@ -34,13 +34,13 @@ const NFTBidHistory = ({ dataTab }) => {
 
                 {el.history.historyType === "sell" && (
                   <div className={Style.NFTBidHistory_box_action}>
-                    Create and sell at - <span>{el.history.price} ZELL</span>
+                    Tạo và bán tại - <span>{el.history.price} ZELL</span>
                   </div>
                 )}
 
                 {el.history.historyType === "resell" && (
                   <div className={Style.NFTBidHistory_box_action}>
-                    Buy and resell at - <span>{el.history.price} ZELL</span>
+                    Mua và bán lại tại - <span>{el.history.price} ZELL</span>
                   </div>
                 )}
 

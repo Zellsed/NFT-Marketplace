@@ -95,7 +95,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const bidHistory = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history/${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/bid-history/${nft.tokenId}`,
       );
 
       setBidHtr(statusResponse.data);
@@ -107,7 +107,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const provenanceNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance/${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/provenance/${nft.tokenId}`,
       );
 
       setProvance(statusResponse.data);
@@ -119,7 +119,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
   const accountOwnerNft = async () => {
     try {
       const statusResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner/${nft.tokenId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/nft-details/owner/${nft.tokenId}`,
       );
 
       setOwnerNft(statusResponse.data);
@@ -179,7 +179,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
     const fetchEthPrice = async () => {
       try {
         const response = await axios.get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
         );
 
         setUsdPrice(response.data.ethereum.usd);
@@ -241,7 +241,7 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
             btnName="Niêm yết trên thị trường"
             onClick={() =>
               router.push(
-                `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`
+                `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&token=${token}`,
               )
             }
             classStyle={Style.button}
@@ -315,13 +315,13 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
 
           <div className={Style.popup_footer}>
             <Button
-              btnName="Cancel"
+              btnName="Hủy bỏ"
               onClick={handleCloseStakePopup}
               classStyle={`${Style.button} ${Style.cancel_button}`}
             />
             <Button
               icon=<FaLock />
-              btnName={isStaking ? "Staking..." : "Confirm Stake"}
+              btnName={isStaking ? "Đặt cược..." : "Xác nhận đặt cọc"}
               onClick={handleStakeNFT}
               disabled={isStaking}
               classStyle={`${Style.button} ${Style.confirm_button}`}

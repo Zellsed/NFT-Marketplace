@@ -32,7 +32,7 @@ const Login = () => {
         currentAccount,
         email,
         password,
-      }
+      },
     );
 
     const token = reponse.data.access_token;
@@ -103,13 +103,13 @@ const Login = () => {
               </div>
             </div>
 
-            <p className={Style.forgetPassword}>
+            {/* <p className={Style.forgetPassword}>
               <a href="#">Forget password?</a>
-            </p>
+            </p> */}
           </div>
 
           <Button
-            btnName="Continue"
+            btnName="Tiếp tục"
             classStyle={Style.button}
             onClick={handleSignUp}
           />

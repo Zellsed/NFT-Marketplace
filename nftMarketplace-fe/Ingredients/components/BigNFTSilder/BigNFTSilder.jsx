@@ -148,7 +148,7 @@ const BigNFTSilder = ({ Tab }) => {
               </div>
             </div>
 
-            <div className={Style.bigNFTSlider_box_left_buttons}>
+            {/* <div className={Style.bigNFTSlider_box_left_buttons}>
               <Button
                 btnName="Xem chi tiết"
                 onClick={() =>
@@ -159,7 +159,7 @@ const BigNFTSilder = ({ Tab }) => {
                 }
                 classStyle={Style.bigNFTSlider_btn_primary}
               />
-            </div>
+            </div> */}
 
             <div className={Style.bigNFTSlider_box_left_controls}>
               <div className={Style.bigNFTSlider_box_left_navigation}>

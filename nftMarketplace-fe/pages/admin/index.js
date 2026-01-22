@@ -119,8 +119,10 @@ const AdminPage = () => {
           getBaseCoinRates(),
         ]);
 
-        setNfts721(nfts721Data || []);
-        setNfts1155(nfts1155Data || []);
+        console.log("nfts721Data", nfts721Data);
+
+        setNfts721(nfts721Data.items || []);
+        setNfts1155(nfts1155Data.items || []);
         setTransactions(txs || []);
         setMarketplaceStats({
           totalCount: marketplaceStats.totalCount || 0,
@@ -249,7 +251,7 @@ const AdminPage = () => {
               <h3>Cài đặt hiện tại</h3>
               <div className={Style.currentSettings}>
                 <div className={Style.currentSetting}>
-                  <span className={Style.settingLabel}>Listing Price:</span>
+                  <span className={Style.settingLabel}>Giá niêm yết:</span>
                   <span className={Style.settingValue}>
                     {listingPrice}
                     <div className={Style.rawValue}>({listingPrice} WEB)</div>
@@ -282,7 +284,7 @@ const AdminPage = () => {
                               nft.sold ? Style.statusSold : Style.statusListed
                             }
                           >
-                            {nft.sold ? "Sold" : "Listed"}
+                            {nft.sold ? "Đã bán" : "Đã liệt kê"}
                           </span>
                         </td>
                       </tr>
@@ -305,9 +307,10 @@ const AdminPage = () => {
                     <tr>
                       <th>ID vật phẩm</th>
                       <th>Mã Token</th>
+                      <th>Người bán</th>
                       <th>Số lượng khả dụng</th>
                       <th>Giá (WEB)</th>
-                      <th>Người bán</th>
+                      <th>Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -315,9 +318,18 @@ const AdminPage = () => {
                       <tr key={nft.itemId}>
                         <td>{nft.itemId}</td>
                         <td>{nft.tokenId}</td>
+                        <td className={Style.address}>{nft.seller}</td>
                         <td>{nft.amountAvailable}</td>
                         <td>{nft.price}</td>
-                        <td className={Style.address}>{nft.seller}</td>
+                        <td>
+                          <span
+                            className={
+                              nft.sold ? Style.statusSold : Style.statusListed
+                            }
+                          >
+                            {nft.sold ? "Đã bán" : "Đã liệt kê"}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -562,8 +574,8 @@ const AdminPage = () => {
                             onClick={() => {
                               setSelectedUserTransactions(
                                 purchaseHistory.filter(
-                                  (tx) => tx.account === user.address
-                                )
+                                  (tx) => tx.account === user.address,
+                                ),
                               );
                               setIsModalOpen(true);
                             }}
