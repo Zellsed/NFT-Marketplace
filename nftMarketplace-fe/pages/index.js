@@ -120,7 +120,7 @@ const Home = () => {
             heading="NFT nổi bật"
             paragraph="Khám phá những NFT nổi bật nhất trong mọi lĩnh vực của cuộc sống."
           />
-          <NFTCard NFTData={currentNFTs} />
+          <NFTCard NFTData={currentNFTs} Tab={activeTab} />
           <Brand />
         </>
       )}

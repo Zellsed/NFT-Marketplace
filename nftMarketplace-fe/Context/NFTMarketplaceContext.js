@@ -653,7 +653,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const items = await Promise.all(
         sliderData.data.data.map(async (e) => {
           return {
-            price: e.nft_price,
+            price: e.nft_price ? e.nft_price : 0,
+            amount: e.amount ? e.amount : 0,
+            amountAvailable: e.amount_available ? e.amount_available : 0,
+            totalPrice: e.total_price ? e.total_price : 0,
             tokenId: e.token_id,
             seller: e.nft_seller,
             owner: e.nft_owner,

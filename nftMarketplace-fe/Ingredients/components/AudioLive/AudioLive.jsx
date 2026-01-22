@@ -76,13 +76,13 @@ const AudioLive = ({ Tab }) => {
           <>
             <div className={Style.audioLive_box_left}>
               {leftAudios.map((nft, index) => (
-                <AudioCard key={index} NFTData={nft} />
+                <AudioCard key={index} NFTData={nft} Tab={Tab} />
               ))}
             </div>
 
             <div className={Style.audioLive_box_right}>
               {rightAudios.map((nft, index) => (
-                <AudioCardSmall key={index} NFTData={nft} />
+                <AudioCardSmall key={index} NFTData={nft} Tab={Tab} />
               ))}
             </div>
           </>

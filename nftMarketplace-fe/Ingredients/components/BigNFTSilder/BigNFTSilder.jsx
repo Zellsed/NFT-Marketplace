@@ -3,6 +3,7 @@ import Image from "next/image";
 import { AiFillHeart, AiFillAppstore, AiOutlineAppstore } from "react-icons/ai";
 import { MdVerified } from "react-icons/md";
 import { TbArrowBigLeftLines, TbArrowBigRightLine } from "react-icons/tb";
+import { useRouter } from "next/router";
 
 import Style from "./BigNFTSilder.module.css";
 import images from "../../../img";
@@ -11,11 +12,14 @@ import Button from "../Button/Button";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const BigNFTSilder = ({ Tab }) => {
+  const router = useRouter();
   const { getSliderData } = useContext(NFTMarketplaceContext);
 
   const [idNumber, setIdNumber] = useState(0);
   const [sliderData, setSliderData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const detailPath = Tab === "721" ? "/NFT-details" : "/NFTCollection-details";
 
   const inc = useCallback(() => {
     setIdNumber((prev) => (prev + 1 < sliderData.length ? prev + 1 : 0));
@@ -77,6 +81,7 @@ const BigNFTSilder = ({ Tab }) => {
           <div className={Style.bigNFTSlider_box_left_content}>
             <div className={Style.bigNFTSlider_box_left_badge}>
               <span>Mới</span>
+              <span>-</span>
               <span>Bộ sưu tập vừa ra mắt</span>
             </div>
 
@@ -146,7 +151,12 @@ const BigNFTSilder = ({ Tab }) => {
             <div className={Style.bigNFTSlider_box_left_buttons}>
               <Button
                 btnName="Xem chi tiết"
-                onClick={() => {}}
+                onClick={() =>
+                  router.push({
+                    pathname: detailPath,
+                    query: el,
+                  })
+                }
                 classStyle={Style.bigNFTSlider_btn_primary}
               />
             </div>

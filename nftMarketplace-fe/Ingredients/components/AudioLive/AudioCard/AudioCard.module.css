@@ -1,6 +1,7 @@
 .audioCard {
   width: 100%;
   position: relative;
+  cursor: pointer;
 }
 
 .audioCard_box {

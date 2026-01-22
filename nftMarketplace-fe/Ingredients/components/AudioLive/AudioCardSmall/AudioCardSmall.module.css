@@ -1,5 +1,6 @@
 .audioSmall {
   width: 100%;
+  cursor: pointer;
 }
 
 .audioSmall_box {

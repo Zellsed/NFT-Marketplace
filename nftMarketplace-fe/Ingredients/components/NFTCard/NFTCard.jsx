@@ -7,8 +7,11 @@ import Style from "./NFTCard.module.css";
 
 const ITEMS_PER_PAGE = 8;
 
-const NFTCard = ({ NFTData }) => {
+const NFTCard = ({ NFTData, Tab }) => {
+  console.log("NFTData", NFTData);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const detailPath = Tab === "721" ? "/NFT-details" : "/NFTCollection-details";
 
   const totalItems = NFTData?.length || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -32,7 +35,10 @@ const NFTCard = ({ NFTData }) => {
         {currentItems.map((el, i) => (
           <Link
             key={i}
-            href={{ pathname: "/NFT-details", query: el }}
+            href={{
+              pathname: detailPath,
+              query: el,
+            }}
             className={Style.NFTCard_box_wrapper}
           >
             <div className={Style.NFTCard_box}>

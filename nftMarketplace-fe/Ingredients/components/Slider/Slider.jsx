@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
-
 import Style from "./Slider.module.css";
 import SliderCard from "./SliderCard/SliderCard";
 
@@ -49,23 +47,6 @@ const Slider = ({ NFTData = [] }) => {
   return (
     <div className={Style.slider}>
       <div className={Style.slider_box}>
-        <div className={Style.slider_box_button}>
-          <div className={Style.slider_box_button_btn}>
-            <div
-              className={Style.slider_box_button_btn_icon}
-              onClick={() => handleScroll("left")}
-            >
-              <TiArrowLeftThick />
-            </div>
-            <div
-              className={Style.slider_box_button_btn_icon}
-              onClick={() => handleScroll("right")}
-            >
-              <TiArrowRightThick />
-            </div>
-          </div>
-        </div>
-
         <motion.div className={Style.slider_box_itmes} ref={dragSlider}>
           <motion.div
             className={Style.slider_box_item}
