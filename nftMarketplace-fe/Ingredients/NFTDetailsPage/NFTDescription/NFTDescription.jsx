@@ -37,11 +37,11 @@ import axios from "axios";
 const NFTDescription = ({ nft, userInformation, user, token }) => {
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
-  const [history, setHistory] = useState(true);
-  const [provanance, setProvanance] = useState(false);
-  const [owner, setOwner] = useState(false);
+
   const [usdPrice, setUsdPrice] = useState(null);
   const [isStaked, setIsStaked] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("history");
 
   const [bidHtr, setBidHtr] = useState([]);
   const [provance, setProvance] = useState([]);
@@ -64,29 +64,8 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
     }
   };
 
-  const openTabs = (e) => {
-    const btnText = e.target.innerText;
-
-    if (btnText == "Bid History") {
-      setHistory(true);
-      setProvanance(false);
-      setOwner(false);
-    } else if (btnText == "Provanance") {
-      setHistory(false);
-      setProvanance(true);
-      setOwner(false);
-    }
-  };
-
-  const openOwmer = () => {
-    if (!owner) {
-      setOwner(true);
-      setHistory(false);
-      setProvanance(false);
-    } else {
-      setOwner(false);
-      setHistory(true);
-    }
+  const openTab = (tab) => {
+    setActiveTab(tab);
   };
 
   const { buyNFT, currentAccount, checkIfNFTIsStaked, stakeNFT721 } =
@@ -419,28 +398,46 @@ const NFTDescription = ({ nft, userInformation, user, token }) => {
               )}
             </div>
 
-            <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
-              <button onClick={(e) => openTabs(e)}>Lịch sử đấu giá</button>
-              <button onClick={(e) => openTabs(e)}>Nguồn gốc</button>
-              <button onClick={() => openOwmer()}>Chủ sở hữu</button>
-            </div>
+            {/* <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
+              <button
+                className={activeTab === "history" ? Style.active_tab : ""}
+                onClick={() => openTab("history")}
+              >
+                Lịch sử đấu giá
+              </button>
 
-            {history && (
+              <button
+                className={activeTab === "provenance" ? Style.active_tab : ""}
+                onClick={() => openTab("provenance")}
+              >
+                Nguồn gốc
+              </button>
+
+              <button
+                className={activeTab === "owner" ? Style.active_tab : ""}
+                onClick={() => openTab("owner")}
+              >
+                Chủ sở hữu
+              </button>
+            </div> */}
+
+            {/* {activeTab === "history" && (
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
                 <NFTBidHistory dataTab={bidHtr} />
               </div>
             )}
-            {provanance && (
+
+            {activeTab === "provenance" && (
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
                 <NFTBidProvance dataTab={provance} />
               </div>
             )}
 
-            {owner && (
+            {activeTab === "owner" && (
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
-                <NFTBidOwner dataTab={ownerNft} icon=<MdVerified /> />
+                <NFTBidOwner dataTab={ownerNft} icon={<MdVerified />} />
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

@@ -320,7 +320,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
               )}
             </div>
 
-            <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
+            {/* <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
               <button onClick={() => openTabs("history")}>
                 Lịch sử đấu giá
               </button>
@@ -343,7 +343,7 @@ const NFTCollectionDescription = ({ nft, userInformation, user, token }) => {
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
                 <NFTBidOwner dataTab={ownerNft} icon=<MdVerified /> />
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

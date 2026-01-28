@@ -7,22 +7,25 @@ import images from "../../../img";
 import Link from "next/link";
 
 const NFTBidOwner = ({ dataTab }) => {
+  console.log("dataTab", dataTab);
+  const { existNft, history, information, user } = dataTab;
+
   return (
     <div className={Style.NFTBidOwner}>
-      {dataTab.ownerNft && (
+      {existNft && (
         <div className={Style.NFTBidOwner_owner}>
-          <h2>Owner Nft</h2>
+          <h2>Chủ sở hữu Nft</h2>
 
           <div className={Style.NFTBidOwner_owner_info}>
             <Link
               href={{
                 pathname: "/userNFT",
-                query: `seller=${dataTab.ownerNft.user.account}`,
+                query: `seller=${user.account}}`,
               }}
             >
               <div className={Style.NFTBidOwner_owner_info_box}>
                 <Image
-                  src={dataTab.ownerNft.information.photo || images.avatar}
+                  src={information?.photo || images.avatar}
                   alt="profile image"
                   width={40}
                   height={40}
@@ -31,13 +34,11 @@ const NFTBidOwner = ({ dataTab }) => {
 
                 <div className={Style.NFTBidOwner_owner_info_box_info}>
                   <h3 className={Style.NFTBidOwner_owner_info_box_name}>
-                    {dataTab.ownerNft.user.name} -{" "}
-                    {dataTab.ownerNft.user.account}
+                    {user.name} - {user.account}
                   </h3>
 
                   <div className={Style.NFTBidOwner_owner_info_box_action}>
-                    Owner NFT price -{" "}
-                    <span>{dataTab.ownerNft.history.price} ZELL</span>
+                    Giá NFT của chủ sở hữu - <span>{history.price} ZELL</span>
                   </div>
 
                   <small className={Style.NFTBidOwner_owner_info_box_time}>
@@ -49,60 +50,7 @@ const NFTBidOwner = ({ dataTab }) => {
                       hour: "2-digit",
                       minute: "2-digit",
                       second: "2-digit",
-                    }).format(Number(dataTab.ownerNft.history.createdAt))}
-                  </small>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {dataTab.ownerNft && dataTab.createNft && (
-        <hr className={Style.separator} />
-      )}
-
-      {dataTab.createNft && (
-        <div className={Style.NFTBidOwner_owner}>
-          <h2>Create Nft</h2>
-
-          <div className={Style.NFTBidOwner_owner_info}>
-            <Link
-              href={{
-                pathname: "/userNFT",
-                query: `seller=${dataTab.createNft.user.account}`,
-              }}
-            >
-              <div className={Style.NFTBidOwner_owner_info_box}>
-                <Image
-                  src={dataTab.createNft.information.photo || images.avatar}
-                  alt="profile image"
-                  width={40}
-                  height={40}
-                  className={Style.NFTBidOwner_owner_info_box_img}
-                />
-
-                <div className={Style.NFTBidOwner_owner_info_box_info}>
-                  <h3 className={Style.NFTBidOwner_owner_info_box_name}>
-                    {dataTab.createNft.user.name} -{" "}
-                    {dataTab.createNft.user.account}
-                  </h3>
-
-                  <div className={Style.NFTBidOwner_owner_info_box_action}>
-                    Create NFT price -{" "}
-                    <span>{dataTab.createNft.history.price} ZELL</span>
-                  </div>
-
-                  <small className={Style.NFTBidOwner_owner_info_box_time}>
-                    <MdTimer className={Style.NFTBidOwner_box_icon} />
-                    {new Intl.DateTimeFormat("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    }).format(Number(dataTab.createNft.history.createdAt))}
+                    }).format(Number(history.createdAt))}
                   </small>
                 </div>
               </div>

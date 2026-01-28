@@ -94,11 +94,11 @@ const NFTCollectionCardTwo = ({ NFTData }) => {
             <div className={Style.NFTCardTwo_box_price}>
               <div className={Style.NFTCardTwo_box_price_content}>
                 <div className={Style.NFTCardTwo_box_price_box}>
-                  <small>Current Bid</small>
+                  <small>Giá hiện tại</small>
                   <p>{el.price} ZELL</p>
                   {el.amountAvailable && (
                     <div className={Style.amount_container}>
-                      <span className={Style.amount_label}>Quantity:</span>
+                      <span className={Style.amount_label}>Số lượng:</span>
                       <span className={Style.amount_value}>
                         {el.amountAvailable}
                       </span>
