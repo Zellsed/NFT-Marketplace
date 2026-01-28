@@ -165,7 +165,41 @@ export class NftDetailsService {
       where: { tokenId: existNft.tokenId, historyType: History.SELL },
     });
 
-    return existNftHistory;
+    const existUser = await this.userRepo.findOne({
+      where: { account: existNftHistory.seller.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return null;
+    }
+
+    const existUserInformation = await this.userInformationRepo.findOne({
+      where: { user: { id: existUser.id } },
+    });
+
+    if (!existUserInformation) {
+      throw new Error('User Info not found');
+    }
+
+    existNftHistory.createdAt = new Date(existNftHistory.createdAt);
+
+    return {
+      history: {
+        id: existNftHistory.id,
+        historyType: existNftHistory.historyType,
+        createdAt: new Date(existNftHistory.createdAt).getTime(),
+        owner: existNftHistory.owner,
+        seller: existNftHistory.seller,
+        price: existNftHistory.price,
+        tokenId: existNftHistory.tokenId,
+      },
+
+      user: existUser,
+
+      information: existUserInformation,
+
+      existNft: existNft,
+    };
   }
 
   async getProvenanceNFT1155(nftId: number) {
@@ -192,7 +226,45 @@ export class NftDetailsService {
       throw new Error('Nft not found');
     }
 
-    return existNft;
+    const existNftHistory = await this.nftHistoryRepo.findOne({
+      where: { tokenId: existNft.tokenId, historyType: History.SELL },
+    });
+
+    const existUser = await this.userRepo.findOne({
+      where: { account: existNftHistory.seller.toLowerCase() },
+    });
+
+    if (!existUser) {
+      return null;
+    }
+
+    const existUserInformation = await this.userInformationRepo.findOne({
+      where: { user: { id: existUser.id } },
+    });
+
+    if (!existUserInformation) {
+      throw new Error('User Info not found');
+    }
+
+    existNftHistory.createdAt = new Date(existNftHistory.createdAt);
+
+    return {
+      history: {
+        id: existNftHistory.id,
+        historyType: existNftHistory.historyType,
+        createdAt: new Date(existNftHistory.createdAt).getTime(),
+        owner: existNftHistory.owner,
+        seller: existNftHistory.seller,
+        price: existNftHistory.price,
+        tokenId: existNftHistory.tokenId,
+      },
+
+      user: existUser,
+
+      information: existUserInformation,
+
+      existNft: existNft,
+    };
   }
 
   async getOwnerNFT1155(nftId: number) {
